@@ -14,7 +14,7 @@ public class TimerManager : GameSingleton<TimerManager>
     public event Action OnTimerDepleted;
     public event Action<float> OnTimerChanged;
 
-    void Awake()
+    void Start()
     {
         
         currentTimer = maxTimer;
