@@ -40,7 +40,11 @@ public class TimerManager : GameSingleton<TimerManager>
         currentTimer = Mathf.Min(currentTimer + amount, maxTimer);
         OnTimerChanged?.Invoke(currentTimer / maxTimer);
     }
-
+    public void ReduceTime(float seconds)
+    {
+        currentTimer = Mathf.Max(currentTimer - seconds, 0f);
+        OnTimerChanged?.Invoke(currentTimer);
+    }
     public void ModifyDecayRate(float modifier)
     {
         decayRate *= modifier; // for upgrades or buffs

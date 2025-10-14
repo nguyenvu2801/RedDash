@@ -8,6 +8,7 @@ public class Movement : MonoBehaviour
     [SerializeField] private float dashSpeed = 40f; // used for lerp speed
     [SerializeField] private float dashCooldown = 0.5f;
     [SerializeField] private float recoveryAfterMiss = 0.5f; // penalty time multiplier when miss
+    [SerializeField] private float dashHitRadius = 1.5f;
 
     Rigidbody2D rb;
     Vector2 dashTarget;
@@ -18,6 +19,7 @@ public class Movement : MonoBehaviour
     // For drag-to-dash
     bool isDragging = false;
     Vector2 startDragPos;
+    Vector2 dashDir; 
 
     // Events to communicate hits/misses
     public Action OnDashStart;
@@ -30,7 +32,8 @@ public class Movement : MonoBehaviour
         cooldownTimer -= Time.deltaTime;
         if (!dashing && cooldownTimer <= 0f)
         {
-            if (Input.touchCount > 0) // Mobile touch input
+            // Touch input
+            if (Input.touchCount > 0)
             {
                 Touch touch = Input.GetTouch(0);
                 if (touch.phase == TouchPhase.Began)
@@ -42,14 +45,14 @@ public class Movement : MonoBehaviour
                 if (isDragging && touch.phase == TouchPhase.Ended)
                 {
                     Vector2 endPos = Camera.main.ScreenToWorldPoint(touch.position);
-                    Vector2 dir = endPos - startDragPos; // direction of drag, opposite of slingshot
-                    if (dir.sqrMagnitude < 0.001f) dir = Vector2.up; // fallback
+                    Vector2 dir = endPos - startDragPos;
+                    if (dir.sqrMagnitude < 0.001f) dir = Vector2.up;
                     dir.Normalize();
                     StartDash(dir);
                     isDragging = false;
                 }
             }
-            else // PC mouse input
+            else // Mouse input (for testing)
             {
                 if (Input.GetMouseButtonDown(0))
                 {
@@ -60,8 +63,8 @@ public class Movement : MonoBehaviour
                 if (isDragging && Input.GetMouseButtonUp(0))
                 {
                     Vector2 endPos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
-                    Vector2 dir = endPos - startDragPos; // direction of drag, opposite of slingshot
-                    if (dir.sqrMagnitude < 0.001f) dir = Vector2.up; // fallback
+                    Vector2 dir = endPos - startDragPos;
+                    if (dir.sqrMagnitude < 0.001f) dir = Vector2.up;
                     dir.Normalize();
                     StartDash(dir);
                     isDragging = false;
@@ -77,7 +80,7 @@ public class Movement : MonoBehaviour
 
             if (Vector2.Distance(transform.position, dashTarget) < 0.1f)
             {
-                EndDash(false); // ended without colliding
+                EndDash(false);
             }
         }
     }
@@ -86,6 +89,7 @@ public class Movement : MonoBehaviour
     {
         dashing = true;
         dashTimer = 0f;
+        dashDir = dir; 
         dashTarget = (Vector2)transform.position + dir * dashDistance;
         cooldownTimer = dashCooldown;
         OnDashStart?.Invoke();
@@ -94,19 +98,28 @@ public class Movement : MonoBehaviour
     public void EndDash(bool hit)
     {
         dashing = false;
-        // Slight penalty on miss: you could call recovery/punish elsewhere
         OnDashEnd?.Invoke(hit);
+
+        if (EnemyManager.Instance != null)
+        {
+            EnemyManager.Instance.NotifyDashHit(transform.position, dashDir, dashSpeed, dashHitRadius);
+        }
+        if (TimerManager.Instance != null)
+        {
+            if (hit)
+                TimerManager.Instance.AddTime(1f);
+            else
+                TimerManager.Instance.ReduceTime(1f);
+        }
     }
 
-    // Called by collision with enemy: stop dash and register hit
     void OnTriggerEnter2D(Collider2D col)
     {
         if (!dashing) return;
         if (col.CompareTag("Enemy") || col.CompareTag("EnergyNode"))
         {
             dashing = false;
-            OnDashEnd?.Invoke(true);
-            // Optionally push through multiple enemies if piercing is on
+            EndDash(true); 
         }
     }
 }
