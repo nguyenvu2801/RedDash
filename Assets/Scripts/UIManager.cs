@@ -11,12 +11,13 @@ public class UIManager : GameSingleton<UIManager>
     void Start()
     {
         TimerManager.Instance.OnTimerChanged += UpdateUI;
+        
     }
 
     void UpdateUI(float percent)
     {
         timerBar.fillAmount = percent;
-        screenEdgeWarning.color = new Color(1, 0, 0, Mathf.Lerp(0f, 0.5f, 1 - percent));
+        screenEdgeWarning.color = new Color(1, 0, 0, Mathf.Lerp(0f, 1f, 1 - percent));
 
         //if (percent < 0.2f)
         //    AudioManager.Instance.PlayHeartbeatFast();
