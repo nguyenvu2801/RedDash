@@ -1,52 +1,67 @@
 using UnityEngine;
 using System;
 using System.Collections;
+using System.Collections.Generic;
 
 [RequireComponent(typeof(Rigidbody2D))]
 public class Movement : MonoBehaviour
 {
-    [Header("Dash settings")]
-    [SerializeField] private float dashMaxDistance = 6f;          // max distance
-    [SerializeField] private float dashDuration = 0.18f;         // how long dash lasts (seconds)
-    [SerializeField] private float dashCooldown = 0.5f;
-    [SerializeField] private float recoveryAfterMiss = 1.8f;     // multiplier for cooldown when miss
-    [SerializeField] private float dashHitRadius = 1.0f;
-    [SerializeField] private float minDragDistance = 0.1f;       // smallest drag considered intentional
-    [SerializeField] private LayerMask dashHitMask;              // which layers count as hit (Enemy, EnergyNode)
+    [Header("Base Dash settings")]
+    [SerializeField] private float baseDashMaxDistance = 6f;
+    [SerializeField] private float dashDuration = 0.18f;
+    [SerializeField] private float baseDashCooldown = 0.5f;
+    [SerializeField] private float baseRecoveryAfterMiss = 1.8f;
+    [SerializeField] private float baseDashHitRadius = 1.0f;
+    [SerializeField] private float minDragDistance = 0.1f;
+    [SerializeField] private LayerMask dashHitMask;
     [SerializeField] private AnimationCurve dashCurve = AnimationCurve.EaseInOut(0, 0, 1, 1);
 
-    // movement / physics
+    private float effectiveDashMaxDistance;
+    private float effectiveDashCooldown;
+    private float effectiveRecoveryAfterMiss;
+    private float effectiveDashHitRadius;
+
     Rigidbody2D rb;
     Vector2 storedVelocityBeforeDash = Vector2.zero;
-
-    // input / drag
     bool isDragging = false;
     Vector2 startDragPos;
-
-    // state
     bool dashing = false;
     float cooldownTimer = 0f;
 
-    // Events
     public Action OnDashStart;
-    public Action<bool> OnDashEnd; // bool = hit or miss
+    public Action<bool> OnDashEnd;
 
     void Awake()
     {
         rb = GetComponent<Rigidbody2D>();
-        if (dashCurve == null)
-            dashCurve = AnimationCurve.EaseInOut(0, 0, 1, 1);
+        if (dashCurve == null) dashCurve = AnimationCurve.EaseInOut(0, 0, 1, 1);
+        ApplyUpgrades();
+    }
+
+    private void ApplyUpgrades()
+    {
+        if (UpgradeManager.Instance != null)
+        {
+            effectiveDashMaxDistance = baseDashMaxDistance + UpgradeManager.Instance.GetStatModifier(StatType.DashRange);
+            effectiveDashCooldown = baseDashCooldown * UpgradeManager.Instance.GetStatModifier(StatType.DashCooldown);
+            effectiveRecoveryAfterMiss = baseRecoveryAfterMiss * UpgradeManager.Instance.GetStatModifier(StatType.DashRecovery);
+            effectiveDashHitRadius = baseDashHitRadius + UpgradeManager.Instance.GetStatModifier(StatType.DashImpactRadius);
+        }
+        else
+        {
+            effectiveDashMaxDistance = baseDashMaxDistance;
+            effectiveDashCooldown = baseDashCooldown;
+            effectiveRecoveryAfterMiss = baseRecoveryAfterMiss;
+            effectiveDashHitRadius = baseDashHitRadius;
+        }
     }
 
     void Update()
     {
-        // timers
         cooldownTimer -= Time.deltaTime;
 
-        // input allowed only if not currently dashing and off cooldown
         if (!dashing && cooldownTimer <= 0f)
         {
-            // Touch input
             if (Input.touchCount > 0)
             {
                 Touch touch = Input.GetTouch(0);
@@ -62,7 +77,7 @@ public class Movement : MonoBehaviour
                     isDragging = false;
                 }
             }
-            else // Mouse input (testing)
+            else
             {
                 if (Input.GetMouseButtonDown(0))
                 {
@@ -84,15 +99,12 @@ public class Movement : MonoBehaviour
         Vector2 raw = end - start;
         if (raw.sqrMagnitude < minDragDistance * minDragDistance)
         {
-            // treat as short tap: default to current facing/up
             raw = Vector2.up;
         }
 
         Vector2 dir = raw.normalized;
-
-        // scale distance by drag length but clamp to max
-        float dragLen = Mathf.Clamp(raw.magnitude, 0f, dashMaxDistance);
-        float distance = Mathf.Lerp(dashMaxDistance * 0.4f, dashMaxDistance, dragLen / dashMaxDistance);
+        float dragLen = Mathf.Clamp(raw.magnitude, 0f, effectiveDashMaxDistance);
+        float distance = Mathf.Lerp(effectiveDashMaxDistance * 0.4f, effectiveDashMaxDistance, dragLen / effectiveDashMaxDistance);
 
         StartCoroutine(DashRoutine(dir, distance));
     }
@@ -102,7 +114,6 @@ public class Movement : MonoBehaviour
         dashing = true;
         OnDashStart?.Invoke();
 
-        // store velocity, zero it to make dash deterministic then blend back
         storedVelocityBeforeDash = rb.velocity;
         rb.velocity = Vector2.zero;
 
@@ -112,69 +123,71 @@ public class Movement : MonoBehaviour
         float elapsed = 0f;
         bool hit = false;
 
-        // move using curve in small time steps, checking for hits each frame
+        int pierceCount = (int)UpgradeManager.Instance.GetStatModifier(StatType.PierceCount);
+        List<Collider2D> hitColliders = new List<Collider2D>();
+
         while (elapsed < dashDuration)
         {
             float t = elapsed / dashDuration;
             float eased = dashCurve.Evaluate(t);
             Vector2 desiredPos = Vector2.Lerp(startPos, targetPos, eased);
 
-            // check for collision along the short segment from current position to desiredPos
             Vector2 moveDir = desiredPos - rb.position;
             float moveDist = moveDir.magnitude;
 
             if (moveDist > 0.0001f)
             {
-                RaycastHit2D hitInfo = Physics2D.CircleCast(rb.position, dashHitRadius, moveDir.normalized, moveDist + 0.01f, dashHitMask);
-                if (hitInfo.collider != null)
+                RaycastHit2D hitInfo = Physics2D.CircleCast(rb.position, effectiveDashHitRadius, moveDir.normalized, moveDist + 0.01f, dashHitMask);
+                if (hitInfo.collider != null && !hitColliders.Contains(hitInfo.collider))
                 {
-                    // register hit at point of collision
                     hit = true;
-                    rb.MovePosition(hitInfo.point - moveDir.normalized * 0.01f); // put slightly before contact
-                    break;
+                    hitColliders.Add(hitInfo.collider);
+                    // Damage logic here if needed, + UpgradeManager.Instance.GetStatModifier(StatType.DashDamage)
+
+                    if (pierceCount > 0)
+                    {
+                        pierceCount--;
+                        rb.MovePosition(hitInfo.point + moveDir.normalized * 0.01f);
+                    }
+                    else
+                    {
+                        rb.MovePosition(hitInfo.point - moveDir.normalized * 0.01f);
+                        break;
+                    }
+                }
+                else
+                {
+                    rb.MovePosition(desiredPos);
                 }
             }
-
-            rb.MovePosition(desiredPos);
+            else
+            {
+                rb.MovePosition(desiredPos);
+            }
 
             elapsed += Time.deltaTime;
             yield return null;
         }
 
-        // if we finished loop without early hit, ensure we reach final target (unless interrupted)
-        if (!hit)
+        if (pierceCount >= 0 || !hit)
         {
-            // final check: if there's an overlap at target
-            RaycastHit2D finalHit = Physics2D.CircleCast(rb.position, dashHitRadius, (targetPos - rb.position).normalized, Vector2.Distance(rb.position, targetPos) + 0.01f, dashHitMask);
-            if (finalHit.collider != null)
-            {
-                hit = true;
-                rb.MovePosition(finalHit.point - (targetPos - rb.position).normalized * 0.01f);
-            }
-            else
-            {
-                rb.MovePosition(targetPos);
-            }
+            rb.MovePosition(targetPos);
         }
 
-        // Report to managers (keep your original behavior)
         if (EnemyManager.Instance != null)
         {
-            EnemyManager.Instance.NotifyDashHit(transform.position, direction, distance / dashDuration, dashHitRadius);
+            EnemyManager.Instance.NotifyDashHit(transform.position, direction, distance / dashDuration, effectiveDashHitRadius);
         }
         if (TimerManager.Instance != null)
         {
-            if (hit) TimerManager.Instance.AddTime(1f);
+            if (hit) TimerManager.Instance.AddTime(1f); // Base, adjusted in AddTime
             else TimerManager.Instance.ReduceTime(1f);
         }
 
-        // event
         OnDashEnd?.Invoke(hit);
 
-        // apply cooldown (penalty on miss)
-        cooldownTimer = dashCooldown * (hit ? 1f : recoveryAfterMiss);
+        cooldownTimer = effectiveDashCooldown * (hit ? 1f : effectiveRecoveryAfterMiss);
 
-        // gently blend back to stored velocity so player doesn't snap
         float blendTime = 0.08f;
         float b = 0f;
         while (b < blendTime)
@@ -190,8 +203,7 @@ public class Movement : MonoBehaviour
 
     void OnDrawGizmosSelected()
     {
-        // visualize dash hit radius at player position
         Gizmos.color = Color.cyan;
-        Gizmos.DrawWireSphere(transform.position, dashHitRadius);
+        Gizmos.DrawWireSphere(transform.position, effectiveDashHitRadius);
     }
 }

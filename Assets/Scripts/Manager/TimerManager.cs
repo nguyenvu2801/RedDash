@@ -5,10 +5,17 @@ using UnityEngine;
 
 public class TimerManager : GameSingleton<TimerManager>
 {
-    [Header("Timer Settings")]
-    public float maxTimer = 5f;
+    [Header("Base Timer Settings")]
+    [SerializeField] private float baseMaxTimer = 5f;
+    [SerializeField] private float baseDecayRate = 1f;
+    [SerializeField] private float baseHitRechargeAmount = 1f; // Base for AddTime
+
+    private float effectiveMaxTimer;
+    private float effectiveDecayRate;
+    private float effectiveHitRechargeAmount;
+    private bool usedLastBreath = false; // To prevent repeat
+
     public float currentTimer;
-    public float decayRate = 1f; // per second
     public bool isActive = true;
 
     public event Action OnTimerDepleted;
@@ -16,20 +23,48 @@ public class TimerManager : GameSingleton<TimerManager>
 
     void Start()
     {
-        
-        currentTimer = maxTimer;
+        ApplyUpgrades();
+        currentTimer = effectiveMaxTimer;
+    }
+
+    private void ApplyUpgrades()
+    {
+        if (UpgradeManager.Instance != null)
+        {
+            effectiveMaxTimer = baseMaxTimer + UpgradeManager.Instance.GetStatModifier(StatType.MaxTimer);
+            effectiveDecayRate = baseDecayRate * UpgradeManager.Instance.GetStatModifier(StatType.TimerDecayRate);
+            effectiveHitRechargeAmount = baseHitRechargeAmount + UpgradeManager.Instance.GetStatModifier(StatType.HitRechargeAmount);
+        }
+        else
+        {
+            effectiveMaxTimer = baseMaxTimer;
+            effectiveDecayRate = baseDecayRate;
+            effectiveHitRechargeAmount = baseHitRechargeAmount;
+        }
     }
 
     void Update()
     {
         if (!isActive) return;
 
-        currentTimer -= decayRate * Time.deltaTime;
-        currentTimer = Mathf.Clamp(currentTimer, 0, maxTimer);
-        OnTimerChanged?.Invoke(currentTimer / maxTimer);
+        currentTimer -= effectiveDecayRate * Time.deltaTime;
+        currentTimer = Mathf.Clamp(currentTimer, 0, effectiveMaxTimer);
+        OnTimerChanged?.Invoke(currentTimer / effectiveMaxTimer);
 
         if (currentTimer <= 0)
         {
+            float grace = UpgradeManager.Instance?.GetStatModifier(StatType.DeathGraceWindow) ?? 0f;
+            currentTimer += grace; // Apply grace
+            if (currentTimer > 0) return;
+
+            if (UpgradeManager.Instance != null && UpgradeManager.Instance.GetStatModifier(StatType.LastBreath) > 0 && !usedLastBreath)
+            {
+                usedLastBreath = true;
+                currentTimer = 3f; // Placeholder: time for final dash
+                // Trigger "final dash" mode/UI/sound
+                return;
+            }
+
             isActive = false;
             OnTimerDepleted?.Invoke();
         }
@@ -37,16 +72,18 @@ public class TimerManager : GameSingleton<TimerManager>
 
     public void AddTime(float amount)
     {
-        currentTimer = Mathf.Min(currentTimer + amount, maxTimer);
-        OnTimerChanged?.Invoke(currentTimer / maxTimer);
+        currentTimer = Mathf.Min(currentTimer + amount + effectiveHitRechargeAmount, effectiveMaxTimer);
+        OnTimerChanged?.Invoke(currentTimer / effectiveMaxTimer);
     }
+
     public void ReduceTime(float seconds)
     {
         currentTimer = Mathf.Max(currentTimer - seconds, 0f);
-        OnTimerChanged?.Invoke(currentTimer);
+        OnTimerChanged?.Invoke(currentTimer / effectiveMaxTimer);
     }
+
     public void ModifyDecayRate(float modifier)
     {
-        decayRate *= modifier; // for upgrades or buffs
+        effectiveDecayRate *= modifier; // Temp buffs
     }
 }

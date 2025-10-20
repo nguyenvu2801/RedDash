@@ -1,40 +1,56 @@
 using System;
-using System.Collections;
 using UnityEngine;
 
 public class ComboManager : GameSingleton<ComboManager>
-{ 
-
-    [Header("Combo Settings")]
+{
+    [Header("Base Combo Settings")]
     [SerializeField] private int maxCombo = 999;
-    [SerializeField] private float comboResetTime = 3.0f;         // seconds until combo resets
-    [SerializeField] private float damageMultiplierPerCombo = 0.02f; // additive per combo step (e.g. 0.08 = +8% per combo)
-    [SerializeField] private float extraTimePerEnemyBase = 0.25f; // extra time added per enemy hit (in seconds)
-    [SerializeField] private AnimationCurve multiplierCurve = null; // optional curve to shape multiplier
+    [SerializeField] private float baseComboResetTime = 3.0f;
+    [SerializeField] private float baseDamageMultiplierPerCombo = 0.02f;
+    [SerializeField] private float baseExtraTimePerEnemy = 0.25f;
+    [SerializeField] private AnimationCurve multiplierCurve = null;
 
-    public Action<int, float> OnComboChanged; // (currentCombo, percentTimeLeft)
+    private float effectiveComboResetTime;
+    private float effectiveDamageMultiplierPerCombo;
+    private float effectiveExtraTimePerEnemy;
+
+    public Action<int, float> OnComboChanged;
     public Action OnComboReset;
 
     int currentCombo = 0;
     float comboTimer = 0f;
-    Coroutine comboCoroutine;
 
     void Start()
     {
         if (multiplierCurve == null)
         {
-            // default linear-ish curve
             multiplierCurve = new AnimationCurve(new Keyframe(0, 1f), new Keyframe(10, 1.8f));
+        }
+        ApplyUpgrades();
+    }
+
+    private void ApplyUpgrades()
+    {
+        if (UpgradeManager.Instance != null)
+        {
+            effectiveComboResetTime = baseComboResetTime + UpgradeManager.Instance.GetStatModifier(StatType.ComboBonusDuration);
+            effectiveDamageMultiplierPerCombo = baseDamageMultiplierPerCombo + UpgradeManager.Instance.GetStatModifier(StatType.DashComboPower);
+            effectiveExtraTimePerEnemy = baseExtraTimePerEnemy + UpgradeManager.Instance.GetStatModifier(StatType.HitRechargeAmount); // Shared
+        }
+        else
+        {
+            effectiveComboResetTime = baseComboResetTime;
+            effectiveDamageMultiplierPerCombo = baseDamageMultiplierPerCombo;
+            effectiveExtraTimePerEnemy = baseExtraTimePerEnemy;
         }
     }
 
     void Update()
     {
-        // optional: keep timer updating so UI can sample percent easily without coroutine
         if (currentCombo > 0)
         {
             comboTimer -= Time.deltaTime;
-            OnComboChanged?.Invoke(currentCombo, Mathf.Clamp01(comboTimer / comboResetTime));
+            OnComboChanged?.Invoke(currentCombo, Mathf.Clamp01(comboTimer / effectiveComboResetTime));
             if (comboTimer <= 0f)
             {
                 ResetCombo();
@@ -45,25 +61,32 @@ public class ComboManager : GameSingleton<ComboManager>
     public void RegisterEnemyHit()
     {
         currentCombo = Mathf.Min(currentCombo + 1, maxCombo);
-        comboTimer = comboResetTime;
+        comboTimer = effectiveComboResetTime;
 
         OnComboChanged?.Invoke(currentCombo, 1f);
 
-        // add extra time per enemy according to combo multiplier
         float multiplier = GetDamageMultiplier();
-        float extraTime = extraTimePerEnemyBase * multiplier;
+        float extraTime = effectiveExtraTimePerEnemy * multiplier;
         if (TimerManager.Instance != null)
             TimerManager.Instance.AddTime(extraTime);
+
+        if (UpgradeManager.Instance != null)
+        {
+            float critChance = UpgradeManager.Instance.GetStatModifier(StatType.CriticalDashChance);
+            if (UnityEngine.Random.value < critChance)
+            {
+                TimerManager.Instance.AddTime(extraTime); // Double time placeholder
+                // Add extra damage if applicable
+            }
+        }
     }
 
     public int GetCombo() => currentCombo;
 
     public float GetDamageMultiplier()
     {
-        // base multiplier from curve * additive per combo
-        // Approach: use curve (indexed by combo) then add linear bonus.
         float curveVal = multiplierCurve.Evaluate(Mathf.Clamp(currentCombo, 0, multiplierCurve.keys[multiplierCurve.length - 1].time));
-        float additive = 1f + (currentCombo - 1) * damageMultiplierPerCombo;
+        float additive = 1f + (currentCombo - 1) * effectiveDamageMultiplierPerCombo;
         return Mathf.Max(1f, curveVal * additive);
     }
 
