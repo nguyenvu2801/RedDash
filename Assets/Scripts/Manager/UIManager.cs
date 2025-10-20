@@ -13,6 +13,7 @@ public class UIManager : GameSingleton<UIManager>
     [SerializeField] private Image comboMeterFill;    // circular or horizontal fill image
     [SerializeField] private RectTransform comboPopupRoot; // scale/animate this when combo grows
     [SerializeField] private TextMeshProUGUI comboText; // use TextMeshProUGUI if desired
+    [SerializeField] private TextMeshProUGUI currencyText;
     [SerializeField] private float comboPopupScale = 1.6f;
     [SerializeField] private float comboPopupTime = 0.25f;
 
@@ -34,7 +35,10 @@ public class UIManager : GameSingleton<UIManager>
     {
         timerBar.fillAmount = percent;
         screenEdgeWarning.color = new Color(1, 0, 0, Mathf.Lerp(0f, 1f, 1 - percent));
-
+        if (CurrencyManager.Instance != null)
+        {
+            currencyText.text = "Essence: " + CurrencyManager.Instance.GetCurrency().ToString();
+        }
         // Scale effect: from 2x when timer starts to 1x when timer ends
         scaleTween?.Kill();
 
