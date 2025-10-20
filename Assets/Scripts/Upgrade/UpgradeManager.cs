@@ -24,7 +24,7 @@ public class UpgradeManager : GameSingleton<UpgradeManager>
         // Reset to defaults: 0 for additive, 1 for multiplicative reductions
         foreach (StatType stat in Enum.GetValues(typeof(StatType)))
         {
-            bool isReduction = stat == StatType.TimerDecayRate || stat == StatType.DashCooldown || stat == StatType.DashRecovery;
+            bool isReduction = stat == StatType.TimerDecayRate || stat == StatType.DashCooldown;
             if (isReduction)
             {
                 statModifiers[stat] = 1f - statModifiers[stat];

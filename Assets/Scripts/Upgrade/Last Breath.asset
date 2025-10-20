@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 39aeb6a8d579dab4db58c435a6f534af, type: 3}
   m_Name: Last Breath
   m_EditorClassIdentifier: 
-  upgradeName: 
+  upgradeName: Last Dash
   description: 
   statType: 16
   levels: []

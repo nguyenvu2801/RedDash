@@ -9,7 +9,6 @@ public enum StatType
     DashCooldown,          // Multiplicative: <1 for shorter
     DashDamage,            // Additive: +damage
     PierceCount,           // Additive: +count
-    DashRecovery,          // Multiplicative: <1 for less penalty
     CriticalDashChance,    // Additive: +chance (0-1)
     DashImpactRadius,      // Additive: +radius
     DashComboPower,        // Additive: +multi per combo

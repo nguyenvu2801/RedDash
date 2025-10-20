@@ -18,7 +18,6 @@ public class Movement : MonoBehaviour
 
     private float effectiveDashMaxDistance;
     private float effectiveDashCooldown;
-    private float effectiveRecoveryAfterMiss;
     private float effectiveDashHitRadius;
 
     Rigidbody2D rb;
@@ -44,14 +43,12 @@ public class Movement : MonoBehaviour
         {
             effectiveDashMaxDistance = baseDashMaxDistance + UpgradeManager.Instance.GetStatModifier(StatType.DashRange);
             effectiveDashCooldown = baseDashCooldown * UpgradeManager.Instance.GetStatModifier(StatType.DashCooldown);
-            effectiveRecoveryAfterMiss = baseRecoveryAfterMiss * UpgradeManager.Instance.GetStatModifier(StatType.DashRecovery);
             effectiveDashHitRadius = baseDashHitRadius + UpgradeManager.Instance.GetStatModifier(StatType.DashImpactRadius);
         }
         else
         {
             effectiveDashMaxDistance = baseDashMaxDistance;
             effectiveDashCooldown = baseDashCooldown;
-            effectiveRecoveryAfterMiss = baseRecoveryAfterMiss;
             effectiveDashHitRadius = baseDashHitRadius;
         }
     }
@@ -184,8 +181,6 @@ public class Movement : MonoBehaviour
         }
 
         OnDashEnd?.Invoke(hit);
-
-        cooldownTimer = effectiveDashCooldown * (hit ? 1f : effectiveRecoveryAfterMiss);
 
         float blendTime = 0.08f;
         float b = 0f;
