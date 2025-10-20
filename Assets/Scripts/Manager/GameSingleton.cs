@@ -18,16 +18,17 @@ public class GameSingleton<T> : MonoBehaviour where T : Component
                 _instance = FindFirstObjectByType<T>();
                 if (_instance == null)
                 {
-                    GameObject obj = new GameObject
-                    {
-                        name = typeof(T).Name + "_AutoCreated"
-                    };
-                    _instance = obj.AddComponent<T>();
+                    // Optionally log a warning instead of creating
+                    Debug.LogWarning($"No instance of {typeof(T).Name} found in the scene. Add one manually.");
+                    return null;  
                 }
             }
             return _instance;
         }
     }
+
+    // Add this flag to control persistence (set in child classes or inspector)
+    [SerializeField] protected bool persistAcrossScenes = false;
 
     protected virtual void Awake()
     {
@@ -41,7 +42,28 @@ public class GameSingleton<T> : MonoBehaviour where T : Component
             return;
         }
 
+        // Duplicate check: Destroy this if another instance exists
+        if (_instance != null && _instance != this)
+        {
+            Destroy(gameObject);
+            return;
+        }
+
         _instance = this as T;
+
+        // Optional persistence
+        if (persistAcrossScenes)
+        {
+            DontDestroyOnLoad(gameObject);
+        }
+    }
+
+    // Optional: Reset on destroy to allow re-creation in new scenes
+    protected virtual void OnDestroy()
+    {
+        if (_instance == this)
+        {
+            _instance = null;
+        }
     }
 }
-
