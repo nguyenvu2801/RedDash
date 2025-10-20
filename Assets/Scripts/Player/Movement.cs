@@ -180,8 +180,7 @@ public class Movement : MonoBehaviour
         }
         if (TimerManager.Instance != null)
         {
-            if (hit) TimerManager.Instance.AddTime(1f); // Base, adjusted in AddTime
-            else TimerManager.Instance.ReduceTime(1f);
+            if (!hit) TimerManager.Instance.ReduceTime(1f);
         }
 
         OnDashEnd?.Invoke(hit);

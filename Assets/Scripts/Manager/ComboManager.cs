@@ -35,7 +35,6 @@ public class ComboManager : GameSingleton<ComboManager>
         {
             effectiveComboResetTime = baseComboResetTime + UpgradeManager.Instance.GetStatModifier(StatType.ComboBonusDuration);
             effectiveDamageMultiplierPerCombo = baseDamageMultiplierPerCombo + UpgradeManager.Instance.GetStatModifier(StatType.DashComboPower);
-            effectiveExtraTimePerEnemy = baseExtraTimePerEnemy + UpgradeManager.Instance.GetStatModifier(StatType.HitRechargeAmount); // Shared
         }
         else
         {
@@ -67,9 +66,7 @@ public class ComboManager : GameSingleton<ComboManager>
 
         float multiplier = GetDamageMultiplier();
         float extraTime = effectiveExtraTimePerEnemy * multiplier;
-        if (TimerManager.Instance != null)
-            TimerManager.Instance.AddTime(extraTime);
-
+       
         if (UpgradeManager.Instance != null)
         {
             float critChance = UpgradeManager.Instance.GetStatModifier(StatType.CriticalDashChance);

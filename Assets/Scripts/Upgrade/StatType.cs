@@ -2,7 +2,7 @@ public enum StatType
 {
     MaxTimer,              // Additive: +seconds
     TimerDecayRate,        // Multiplicative: <1 for slower decay
-    HitRechargeAmount,     // Additive: +seconds per hit
+    KillRechargeAmount,     // Additive: +seconds per hit
     ComboBonusDuration,    // Additive: +seconds to reset time
     DeathGraceWindow,      // Additive: +seconds grace on 0
     DashRange,             // Additive: +distance
@@ -15,6 +15,6 @@ public enum StatType
     DashComboPower,        // Additive: +multi per combo
     EssenceGain,           // Additive: +essence per kill
     DropMagnetRadius,      // Additive: +radius
-    RelicDropRate,         // Additive: +chance (0-1)
+    IncreaseComboDuration,         // Additive: +chance (0-1)
     LastBreath             // Level >0 enables
 }

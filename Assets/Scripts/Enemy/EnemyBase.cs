@@ -71,7 +71,27 @@ public class EnemyBase : MonoBehaviour
     {
         StopAllCoroutines();
         isStunned = false;
-        manager.DespawnEnemy(this);
+
+        // --- Time reward on kill ---
+        if (TimerManager.Instance != null)
+        {
+            // Base kill time (tweakable)
+            float baseKillTime = 1f;
+
+            // Add upgrade-based bonus (reuse HitRechargeAmount stat or create a new stat if you prefer)
+            float upgradeBonus = 0f;
+            if (UpgradeManager.Instance != null)
+                upgradeBonus = UpgradeManager.Instance.GetStatModifier(StatType.KillRechargeAmount);
+
+            // Optionally scale by combo multiplier (so a kill during a big combo gives more time)
+            float comboMult = 1f;
+            if (ComboManager.Instance != null)
+                comboMult = ComboManager.Instance.GetDamageMultiplier();
+
+            float totalTimeToAdd = (baseKillTime + upgradeBonus) * comboMult;
+            TimerManager.Instance.AddTime(totalTimeToAdd);
+        }
+
     }
 
     public virtual void OnDashHit(Vector2 dashDirection, float power)

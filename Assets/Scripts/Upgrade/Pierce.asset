@@ -10,10 +10,10 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 39aeb6a8d579dab4db58c435a6f534af, type: 3}
-  m_Name: aaa
+  m_Name: Pierce
   m_EditorClassIdentifier: 
-  upgradeName: 
+  upgradeName: Soul splitter
   description: 
-  statType: 0
+  statType: 8
   levels: []
   prerequisites: []

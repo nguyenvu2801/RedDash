@@ -8,7 +8,7 @@ public class TimerManager : GameSingleton<TimerManager>
     [Header("Base Timer Settings")]
     [SerializeField] private float baseMaxTimer = 5f;
     [SerializeField] private float baseDecayRate = 1f;
-    [SerializeField] private float baseHitRechargeAmount = 1f; // Base for AddTime
+    [SerializeField] private float baseKillRechargeAmount = 1f; // Base for AddTime
 
     private float effectiveMaxTimer;
     private float effectiveDecayRate;
@@ -33,13 +33,13 @@ public class TimerManager : GameSingleton<TimerManager>
         {
             effectiveMaxTimer = baseMaxTimer + UpgradeManager.Instance.GetStatModifier(StatType.MaxTimer);
             effectiveDecayRate = baseDecayRate * UpgradeManager.Instance.GetStatModifier(StatType.TimerDecayRate);
-            effectiveHitRechargeAmount = baseHitRechargeAmount + UpgradeManager.Instance.GetStatModifier(StatType.HitRechargeAmount);
+            effectiveHitRechargeAmount = baseKillRechargeAmount + UpgradeManager.Instance.GetStatModifier(StatType.KillRechargeAmount);
         }
         else
         {
             effectiveMaxTimer = baseMaxTimer;
             effectiveDecayRate = baseDecayRate;
-            effectiveHitRechargeAmount = baseHitRechargeAmount;
+            effectiveHitRechargeAmount = baseKillRechargeAmount;
         }
     }
 

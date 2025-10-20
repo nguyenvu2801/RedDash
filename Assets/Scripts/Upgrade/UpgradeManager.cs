@@ -25,9 +25,11 @@ public class UpgradeManager : GameSingleton<UpgradeManager>
         foreach (StatType stat in Enum.GetValues(typeof(StatType)))
         {
             bool isReduction = stat == StatType.TimerDecayRate || stat == StatType.DashCooldown || stat == StatType.DashRecovery;
-            statModifiers[stat] = isReduction ? 1f : 0f;
+            if (isReduction)
+            {
+                statModifiers[stat] = 1f - statModifiers[stat];
+            }
         }
-
         foreach (var upgrade in allUpgrades)
         {
             if (purchasedLevels.TryGetValue(upgrade.upgradeName, out int level) && level > 0)
@@ -98,30 +100,62 @@ public class UpgradeManager : GameSingleton<UpgradeManager>
 
     private void SaveProgress()
     {
-        PlayerPrefs.SetInt("Essence", essence);
+        SaveData data = new SaveData();
+        data.essence = essence;
         foreach (var kv in purchasedLevels)
         {
-            PlayerPrefs.SetInt("Upgrade_" + kv.Key, kv.Value);
+            data.upgrades.Add(new UpgradeEntry { name = kv.Key, level = kv.Value });
         }
-        PlayerPrefs.Save();
+
+        string json = JsonUtility.ToJson(data, true); // 'true' for pretty-print (optional for readability)
+        string filePath = Application.persistentDataPath + "/upgrades.json";
+        System.IO.File.WriteAllText(filePath, json);
     }
 
     private void LoadProgress()
     {
-        essence = PlayerPrefs.GetInt("Essence", 0);
-        foreach (var upgrade in allUpgrades)
+        string filePath = Application.persistentDataPath + "/upgrades.json";
+        if (System.IO.File.Exists(filePath))
         {
-            int lvl = PlayerPrefs.GetInt("Upgrade_" + upgrade.upgradeName, 0);
-            if (lvl > 0) purchasedLevels[upgrade.upgradeName] = lvl;
+            string json = System.IO.File.ReadAllText(filePath);
+            SaveData data = JsonUtility.FromJson<SaveData>(json);
+            essence = data.essence;
+            foreach (var entry in data.upgrades)
+            {
+                purchasedLevels[entry.name] = entry.level;
+            }
+        }
+        else
+        {
+            essence = 0; // Default for new game
+            purchasedLevels.Clear();
         }
     }
 
     // For testing
     public void ResetProgress()
     {
-        PlayerPrefs.DeleteAll();
+        string filePath = Application.persistentDataPath + "/upgrades.json";
+        if (System.IO.File.Exists(filePath))
+        {
+            System.IO.File.Delete(filePath);
+        }
         essence = 0;
         purchasedLevels.Clear();
         ApplyAllUpgrades();
     }
+   
+}
+[Serializable]
+public class SaveData
+{
+    public int essence;
+    public List<UpgradeEntry> upgrades = new List<UpgradeEntry>();
+}
+
+[Serializable]
+public class UpgradeEntry
+{
+    public string name;
+    public int level;
 }
