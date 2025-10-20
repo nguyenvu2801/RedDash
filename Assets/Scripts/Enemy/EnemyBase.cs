@@ -76,7 +76,20 @@ public class EnemyBase : MonoBehaviour
 
     public virtual void OnDashHit(Vector2 dashDirection, float power)
     {
-        TakeDamage(Mathf.CeilToInt(power));
+        int baseDamage = Mathf.CeilToInt(power);
+        float damageMultiplier = 1f;
+        if (ComboManager.Instance != null)
+            damageMultiplier = ComboManager.Instance.GetDamageMultiplier();
+
+        int finalDamage = Mathf.CeilToInt(baseDamage * damageMultiplier);
+
+        TakeDamage(finalDamage);
+
+        // Notify combo manager (per-enemy)
+        if (ComboManager.Instance != null)
+            ComboManager.Instance.RegisterEnemyHit();
+
+        // Knockback (unchanged except referencing manager coroutine)
         EnemyManager.Instance.RunCoroutine(Knockback(dashDirection, 0.3f * power));
     }
 
