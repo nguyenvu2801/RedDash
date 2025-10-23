@@ -1,20 +1,21 @@
 using UnityEngine;
 using System;
 using System.Collections;
+using System.Collections.Generic;
 
 [RequireComponent(typeof(Rigidbody2D))]
 public class Movement : MonoBehaviour
 {
     [Header("Dash settings")]
-    [SerializeField] private float dashMaxDistance = 6f;          // max distance
-    [SerializeField] private float dashDuration = 0.18f;         // how long dash lasts (seconds)
-    [SerializeField] private float dashCooldown = 0.5f;
-    [SerializeField] private float recoveryAfterMiss = 1.8f;     // multiplier for cooldown when miss
+    [SerializeField] private float dashDuration = 0.18f;
+    [SerializeField] private float minDragDistance = 0.1f;
     [SerializeField] private float dashHitRadius = 1.0f;
-    [SerializeField] private float minDragDistance = 0.1f;       // smallest drag considered intentional
     [SerializeField] private LayerMask dashHitMask;              // which layers count as hit (Enemy, EnergyNode)
     [SerializeField] private AnimationCurve dashCurve = AnimationCurve.EaseInOut(0, 0, 1, 1);
 
+    private float DashRange;
+    private float DashCooldown;
+    private float DashPenalty;
     // movement / physics
     Rigidbody2D rb;
     Vector2 storedVelocityBeforeDash = Vector2.zero;
@@ -36,8 +37,10 @@ public class Movement : MonoBehaviour
         rb = GetComponent<Rigidbody2D>();
         if (dashCurve == null)
             dashCurve = AnimationCurve.EaseInOut(0, 0, 1, 1);
-    }
+        // Compute all stats
+        ComputeDashStats();
 
+    }
     void Update()
     {
         // timers
@@ -91,8 +94,8 @@ public class Movement : MonoBehaviour
         Vector2 dir = raw.normalized;
 
         // scale distance by drag length but clamp to max
-        float dragLen = Mathf.Clamp(raw.magnitude, 0f, dashMaxDistance);
-        float distance = Mathf.Lerp(dashMaxDistance * 0.4f, dashMaxDistance, dragLen / dashMaxDistance);
+        float dragLen = Mathf.Clamp(raw.magnitude, 0f, DashRange);
+        float distance = Mathf.Lerp(DashRange * 0.4f, DashRange, dragLen / DashRange);
 
         StartCoroutine(DashRoutine(dir, distance));
     }
@@ -172,7 +175,7 @@ public class Movement : MonoBehaviour
         OnDashEnd?.Invoke(hit);
 
         // apply cooldown (penalty on miss)
-        cooldownTimer = dashCooldown * (hit ? 1f : recoveryAfterMiss);
+        cooldownTimer = DashCooldown;
 
         // gently blend back to stored velocity so player doesn't snap
         float blendTime = 0.08f;
@@ -187,7 +190,19 @@ public class Movement : MonoBehaviour
 
         dashing = false;
     }
-
+    private void ComputeDashStats()
+    {
+        DashRange = UpgradeManager.Instance.ComputeStat(UpgradeType.DashRange);
+        DashCooldown = UpgradeManager.Instance.ComputeStat(UpgradeType.DashCooldown);
+        DashPenalty = UpgradeManager.Instance.ComputeStat(UpgradeType.DashPenalty);
+    }
+    public bool Upgrade(UpgradeType type)
+    {
+        bool success = UpgradeManager.Instance.TryUpgrade(type, out string msg);
+        if (success) ComputeDashStats();
+        Debug.Log(msg);
+        return success;
+    }
     void OnDrawGizmosSelected()
     {
         // visualize dash hit radius at player position

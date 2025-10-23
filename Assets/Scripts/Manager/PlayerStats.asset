@@ -1,0 +1,113 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 335448b0aabaadf4ba37daeac7108678, type: 3}
+  m_Name: PlayerStats
+  m_EditorClassIdentifier: 
+  upgrades:
+  - type: 0
+    baseValue: 300
+    incrementPerLevel: 30
+    maxLevel: 10
+    baseCost: 200
+    costIncrement: 50
+    costMultiplier: 1.5
+  - type: 1
+    baseValue: 5
+    incrementPerLevel: -0.3
+    maxLevel: 7
+    baseCost: 200
+    costIncrement: 50
+    costMultiplier: 1.5
+  - type: 4
+    baseValue: 0
+    incrementPerLevel: 1
+    maxLevel: 3
+    baseCost: 200
+    costIncrement: 50
+    costMultiplier: 1.5
+  - type: 5
+    baseValue: 3
+    incrementPerLevel: 0.5
+    maxLevel: 6
+    baseCost: 200
+    costIncrement: 50
+    costMultiplier: 1.5
+  - type: 8
+    baseValue: 5
+    incrementPerLevel: -0.2
+    maxLevel: 7
+    baseCost: 200
+    costIncrement: 50
+    costMultiplier: 1.5
+  - type: 6
+    baseValue: 0.5
+    incrementPerLevel: -0.05
+    maxLevel: 5
+    baseCost: 200
+    costIncrement: 50
+    costMultiplier: 1.5
+  - type: 9
+    baseValue: 0.01
+    incrementPerLevel: 0.02
+    maxLevel: 10
+    baseCost: 200
+    costIncrement: 50
+    costMultiplier: 1.5
+  - type: 10
+    baseValue: 0.01
+    incrementPerLevel: 0.01
+    maxLevel: 5
+    baseCost: 200
+    costIncrement: 50
+    costMultiplier: 1.5
+  - type: 11
+    baseValue: 0
+    incrementPerLevel: 0.05
+    maxLevel: 10
+    baseCost: 200
+    costIncrement: 50
+    costMultiplier: 1.5
+  - type: 3
+    baseValue: 3
+    incrementPerLevel: 1
+    maxLevel: 7
+    baseCost: 200
+    costIncrement: 50
+    costMultiplier: 1.5
+  - type: 7
+    baseValue: 1
+    incrementPerLevel: 1
+    maxLevel: 8
+    baseCost: 200
+    costIncrement: 50
+    costMultiplier: 1.5
+  - type: 12
+    baseValue: 1
+    incrementPerLevel: 0.5
+    maxLevel: 5
+    baseCost: 200
+    costIncrement: 50
+    costMultiplier: 1.5
+  - type: 13
+    baseValue: 0
+    incrementPerLevel: 1
+    maxLevel: 3
+    baseCost: 200
+    costIncrement: 50
+    costMultiplier: 1.5
+  - type: 2
+    baseValue: 2
+    incrementPerLevel: 0.5
+    maxLevel: 6
+    baseCost: 200
+    costIncrement: 50
+    costMultiplier: 1.5

@@ -4,13 +4,13 @@ using System.Collections.Generic;
 using System.IO;
 using UnityEngine;
 [Serializable]
-public class PlayerData
+public class PlayerCurrencyData
 {
-    public int currency;  // e.g., coins or gems
+    public int currency;  
 }
 public class CurrencyManager : GameSingleton<CurrencyManager>
 {
-    private PlayerData playerData;
+    private PlayerCurrencyData playerData;
     private string savePath;
 
     void Start()
@@ -24,12 +24,12 @@ public class CurrencyManager : GameSingleton<CurrencyManager>
         if (File.Exists(savePath))
         {
             string json = File.ReadAllText(savePath);
-            playerData = JsonUtility.FromJson<PlayerData>(json);
+            playerData = JsonUtility.FromJson<PlayerCurrencyData>(json);
             Debug.Log("Loaded currency: " + playerData.currency);
         }
         else
         {
-            playerData = new PlayerData { currency = 0 };  // Starting amount
+            playerData = new PlayerCurrencyData { currency = 0 };  // Starting amount
             SaveCurrency();
             Debug.Log("New player data created with starting currency: 0");
         }
