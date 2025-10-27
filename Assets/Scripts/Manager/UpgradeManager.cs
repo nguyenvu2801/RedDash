@@ -8,7 +8,7 @@ public class UpgradeManager : MonoBehaviour
     public static UpgradeManager Instance;
 
     [Header("Config")]
-    [SerializeField] private PlayerStats playerStatsConfig;  // Single config now
+    public PlayerStats playerStatsConfig;  // Single config now
 
     // Shared levels for ALL upgrades (as before)
     private Dictionary<UpgradeType, int> upgradeLevels = new Dictionary<UpgradeType, int>();
