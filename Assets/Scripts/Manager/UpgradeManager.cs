@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.IO;
@@ -12,7 +13,7 @@ public class UpgradeManager : MonoBehaviour
 
     // Shared levels for ALL upgrades (as before)
     private Dictionary<UpgradeType, int> upgradeLevels = new Dictionary<UpgradeType, int>();
-
+    public static event Action<UpgradeType> OnUpgradeSuccessful;
     void Awake()
     {
         if (Instance == null)
@@ -62,8 +63,10 @@ public class UpgradeManager : MonoBehaviour
 
         upgradeLevels[type] = currentLevel + 1;
         SaveUpgradeLevels();
+        OnUpgradeSuccessful?.Invoke(type);
         message = $"Upgraded successfully! Cost: {cost}.";
         return true;
+        
     }
 
     // Compute stat (as before)

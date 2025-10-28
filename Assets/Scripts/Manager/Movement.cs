@@ -37,9 +37,14 @@ public class Movement : MonoBehaviour
         rb = GetComponent<Rigidbody2D>();
         if (dashCurve == null)
             dashCurve = AnimationCurve.EaseInOut(0, 0, 1, 1);
+        UpgradeManager.OnUpgradeSuccessful += HandleUpgrade;
         // Compute all stats
         ComputeDashStats();
 
+    }
+    void OnDestroy()
+    {
+        UpgradeManager.OnUpgradeSuccessful -= HandleUpgrade;
     }
     void Update()
     {
@@ -190,18 +195,24 @@ public class Movement : MonoBehaviour
 
         dashing = false;
     }
-    private void ComputeDashStats()
+    private void HandleUpgrade(UpgradeType type)
+    {
+        if (IsDashRelevant(type))
+        {
+            ComputeDashStats();
+        }
+    }
+    private bool IsDashRelevant(UpgradeType type)
+    {
+        return type == UpgradeType.DashRange ||
+               type == UpgradeType.DashCooldown ||
+               type == UpgradeType.DashPenalty;
+    }
+    public void ComputeDashStats()
     {
         DashRange = UpgradeManager.Instance.ComputeStat(UpgradeType.DashRange);
         DashCooldown = UpgradeManager.Instance.ComputeStat(UpgradeType.DashCooldown);
         DashPenalty = UpgradeManager.Instance.ComputeStat(UpgradeType.DashPenalty);
-    }
-    public bool Upgrade(UpgradeType type)
-    {
-        bool success = UpgradeManager.Instance.TryUpgrade(type, out string msg);
-        if (success) ComputeDashStats();
-        Debug.Log(msg);
-        return success;
     }
     void OnDrawGizmosSelected()
     {
