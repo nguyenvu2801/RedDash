@@ -17,37 +17,26 @@ public enum AugmentType
 public class AugmentSO : ScriptableObject
 {
     [Serializable]
-    public class UpgradeEntry
+    public class AugmentEntry
     {
-        public UpgradeType type;
+        public AugmentType type;
         public float baseValue;
-        public float incrementPerLevel;
-        public int maxLevel = 10;// Default max, override per entry
-        [Header("Cost Settings")]
-        public int baseCost = 100;
-        public int costIncrement = 50;
-        public float costMultiplier = 1.5f;
+        public float SecondaryValue = 0;
+        public int maxLevel = 5;
 
     }
-    public List<UpgradeEntry> upgrades = new List<UpgradeEntry>
+    public List<AugmentEntry> Augment = new List<AugmentEntry>
     {
-        new UpgradeEntry { type = UpgradeType.MaxTimer,baseValue = 300f, incrementPerLevel = 30f,maxLevel =10,baseCost = 200},
-        new UpgradeEntry { type = UpgradeType.TimerDecayRate,baseValue = 5.0f, incrementPerLevel = -0.3f,maxLevel =7,baseCost = 200},
-        new UpgradeEntry { type = UpgradeType.AnotherLife,baseValue = 0f, incrementPerLevel = 1f,maxLevel =3,baseCost = 200},
-        new UpgradeEntry { type = UpgradeType.DashRange,baseValue = 3f, incrementPerLevel = 0.5f,maxLevel =6,baseCost = 200},
-        new UpgradeEntry { type = UpgradeType.DashPenalty,baseValue = 5f, incrementPerLevel = -0.2f,maxLevel =7,baseCost = 200},
-        new UpgradeEntry { type = UpgradeType.DashCooldown,baseValue = 0.25f, incrementPerLevel = -0.05f,maxLevel =5,baseCost = 200},
-        new UpgradeEntry { type = UpgradeType.Crit,baseValue = 0.01f, incrementPerLevel = 0.02f,maxLevel =10,baseCost = 200},
-        new UpgradeEntry { type = UpgradeType.ComboDamage,baseValue = 0.01f, incrementPerLevel = 0.01f,maxLevel =5,baseCost = 200},
-        new UpgradeEntry { type = UpgradeType.EssenceGain,baseValue = 0f, incrementPerLevel = 0.05f,maxLevel =10,baseCost = 200},
-        new UpgradeEntry { type = UpgradeType.ComboDuration,baseValue = 3.0f, incrementPerLevel = 1f,maxLevel =7,baseCost = 200},
-        new UpgradeEntry { type = UpgradeType.DashDamage,baseValue = 1f, incrementPerLevel = 1f,maxLevel =8,baseCost = 200},
-        new UpgradeEntry { type = UpgradeType.Magnet,baseValue = 1.0f, incrementPerLevel = 0.5f,maxLevel =5,baseCost = 200},
-        new UpgradeEntry { type = UpgradeType.FinalDash,baseValue = 0f, incrementPerLevel = 1f,maxLevel =3,baseCost = 200},
-        new UpgradeEntry { type = UpgradeType.KillRechargeAmount,baseValue = 2.0f, incrementPerLevel = 0.5f,maxLevel =6,baseCost = 200},
+        new AugmentEntry { type = AugmentType.IncreaseLifeForcedMax,baseValue = 0.1f},
+        new AugmentEntry { type = AugmentType.IncreaseCurrency,baseValue = 0.1f},
+        new AugmentEntry { type = AugmentType.IncreaseDamage,baseValue = 0.05f},
+        new AugmentEntry { type = AugmentType.LifeForceGained,baseValue = 0.1f},
+        new AugmentEntry { type = AugmentType.EnemyExplode,baseValue = 10f},
+        new AugmentEntry { type = AugmentType.ReduceDashCD,baseValue = 0.1f,SecondaryValue = 0.3f},
+        new AugmentEntry { type = AugmentType.SuccessDash,baseValue = 0.05f,SecondaryValue = 20f},
     };
-    public UpgradeEntry GetUpgrade(UpgradeType type)
+    public AugmentEntry GetUpgrade(AugmentType type)
     {
-        return upgrades.Find(u => u.type == type);
+        return Augment.Find(u => u.type == type);
     }
 }
