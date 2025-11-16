@@ -4,13 +4,13 @@ using UnityEngine;
 public class EnemyBase : MonoBehaviour
 {
     [HideInInspector] public PoolKey poolKey;
-    protected EnemyManager manager;
-
+    protected SpawnEnemyManager manager;
     [Header("Enemy Stats")]
     [SerializeField] private int maxHP = 3;
     [SerializeField] private float moveSpeed = 2f;
     [SerializeField] private float chaseRange = 8f;
 
+    private int baseMaxHP; // To store the original serialized value
     private int currentHP;
     private Transform player;
     private bool isStunned;
@@ -22,27 +22,29 @@ public class EnemyBase : MonoBehaviour
         var playerObj = GameObject.FindGameObjectWithTag("Player");
         if (playerObj != null)
             player = playerObj.transform;
+        baseMaxHP = maxHP; // Store base on awake
     }
 
-    public virtual void Initialize(EnemyManager manager, PoolKey key)
+    public virtual void Initialize(SpawnEnemyManager manager, PoolKey key, float healthMult = 1f)
     {
         this.manager = manager;
         this.poolKey = key;
+        maxHP = Mathf.CeilToInt(baseMaxHP * healthMult);
         currentHP = maxHP;
         isStunned = false;
     }
 
     protected virtual void Update()
     {
+        if (GameManager.Instance.IsGameOver) return;
+
         if (!isStunned && player != null)
         {
             Vector2 dir = player.position - transform.position;
             float dist = dir.magnitude;
-
             if (dist < chaseRange)
             {
                 rb.MovePosition(rb.position + dir.normalized * moveSpeed * Time.deltaTime);
-
                 // Optional: flip sprite to face player
                 if (dir.x > 0)
                     transform.localScale = new Vector3(1, 1, 1);
@@ -80,17 +82,13 @@ public class EnemyBase : MonoBehaviour
         float damageMultiplier = 1f;
         if (ComboManager.Instance != null)
             damageMultiplier = ComboManager.Instance.GetDamageMultiplier();
-
         int finalDamage = Mathf.CeilToInt(baseDamage * damageMultiplier);
-
         TakeDamage(finalDamage);
-
         // Notify combo manager (per-enemy)
         if (ComboManager.Instance != null)
             ComboManager.Instance.RegisterEnemyHit();
-
         // Knockback (unchanged except referencing manager coroutine)
-        EnemyManager.Instance.RunCoroutine(Knockback(dashDirection, 0.3f * power));
+        SpawnEnemyManager.Instance.RunCoroutine(Knockback(dashDirection, 0.3f * power));
     }
 
     private IEnumerator Knockback(Vector2 dir, float strength)

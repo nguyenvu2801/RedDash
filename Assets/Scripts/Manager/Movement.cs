@@ -15,7 +15,8 @@ public class Movement : MonoBehaviour
 
     private float DashRange;
     private float DashCooldown;
-    private float DashPenalty;
+    private float DashPenalty; //remember to compute these 2 stats 
+    private float DashPower = 1;
     // movement / physics
     Rigidbody2D rb;
     Vector2 storedVelocityBeforeDash = Vector2.zero;
@@ -166,9 +167,9 @@ public class Movement : MonoBehaviour
         }
 
         // Report to managers (keep your original behavior)
-        if (EnemyManager.Instance != null)
+        if (SpawnEnemyManager.Instance != null)
         {
-            EnemyManager.Instance.NotifyDashHit(transform.position, direction, distance / dashDuration, dashHitRadius);
+            SpawnEnemyManager.Instance.NotifyDashHit(transform.position, direction,DashPower, dashHitRadius);
         }
         if (TimerManager.Instance != null)
         {
