@@ -15,9 +15,10 @@ public class SpawnEnemyManager : GameSingleton<SpawnEnemyManager>
     private float spawnTimer;
     private int enemiesToSpawn;
     private int spawnedCount;
-    private float healthMultiplier = 1f;
+    private float healthMultiplier;
 
     public int ActiveEnemiesCount => activeEnemies.Count;
+    public bool IsSpawningDone => spawnedCount >= enemiesToSpawn;
 
     void Start()
     {
@@ -78,17 +79,5 @@ public class SpawnEnemyManager : GameSingleton<SpawnEnemyManager>
         PoolManager.Instance.ReturnToPool(enemy.poolKey, enemy.gameObject);
     }
 
-    public void NotifyDashHit(Vector2 dashPos, Vector2 dashDir, float dashPower, float hitRadius = 1.5f)
-    {
-        // Use 2D physics overlap
-        Collider2D[] hits = Physics2D.OverlapCircleAll(dashPos, hitRadius);
-        foreach (var hit in hits)
-        {
-            EnemyBase enemy = hit.GetComponent<EnemyBase>();
-            if (enemy != null)
-            {
-                enemy.OnDashHit(dashDir, dashPower);
-            }
-        }
-    }
+   
 }

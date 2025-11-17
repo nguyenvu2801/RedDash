@@ -9,7 +9,6 @@ public class EnemyBase : MonoBehaviour
     [SerializeField] private int maxHP = 3;
     [SerializeField] private float moveSpeed = 2f;
     [SerializeField] private float chaseRange = 8f;
-
     private int baseMaxHP; // To store the original serialized value
     private int currentHP;
     private Transform player;
@@ -45,11 +44,6 @@ public class EnemyBase : MonoBehaviour
             if (dist < chaseRange)
             {
                 rb.MovePosition(rb.position + dir.normalized * moveSpeed * Time.deltaTime);
-                // Optional: flip sprite to face player
-                if (dir.x > 0)
-                    transform.localScale = new Vector3(1, 1, 1);
-                else
-                    transform.localScale = new Vector3(-1, 1, 1);
             }
         }
     }

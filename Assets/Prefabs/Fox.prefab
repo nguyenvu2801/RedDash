@@ -143,7 +143,7 @@ BoxCollider2D:
   m_CallbackLayers:
     serializedVersion: 2
     m_Bits: 4294967295
-  m_IsTrigger: 0
+  m_IsTrigger: 1
   m_UsedByEffector: 0
   m_UsedByComposite: 0
   m_Offset: {x: 0, y: 0}
@@ -173,10 +173,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   dashDuration: 0.18
   minDragDistance: 0.1
-  dashHitRadius: 1.5
+  dashHitRadius: 1
   dashHitMask:
     serializedVersion: 2
-    m_Bits: 0
+    m_Bits: 64
   dashCurve:
     serializedVersion: 2
     m_Curve:
