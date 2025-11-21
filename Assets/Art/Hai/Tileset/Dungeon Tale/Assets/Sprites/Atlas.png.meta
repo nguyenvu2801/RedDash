@@ -3,7 +3,7 @@ guid: b631ed305dfd43c488e0f8edf5c829bc
 TextureImporter:
   internalIDToNameTable: []
   externalObjects: {}
-  serializedVersion: 12
+  serializedVersion: 11
   mipmaps:
     mipMapMode: 0
     enableMipMap: 0
@@ -25,7 +25,7 @@ TextureImporter:
   streamingMipmaps: 0
   streamingMipmapsPriority: 0
   vTOnly: 0
-  ignoreMipmapLimit: 0
+  ignoreMasterTextureLimit: 0
   grayScaleToAlpha: 0
   generateCubemap: 6
   cubemapConvolution: 0
@@ -65,7 +65,6 @@ TextureImporter:
   ignorePngGamma: 0
   applyGammaDecoding: 0
   swizzle: 50462976
-  cookieLightType: 1
   platformSettings:
   - serializedVersion: 3
     buildTarget: DefaultTexturePlatform
@@ -77,7 +76,6 @@ TextureImporter:
     crunchedCompression: 0
     allowsAlphaSplitting: 0
     overridden: 0
-    ignorePlatformSupport: 0
     androidETC2FallbackOverride: 0
     forceMaximumCompressionQuality_BC6H_BC7: 0
   - serializedVersion: 3
@@ -90,7 +88,6 @@ TextureImporter:
     crunchedCompression: 0
     allowsAlphaSplitting: 0
     overridden: 0
-    ignorePlatformSupport: 0
     androidETC2FallbackOverride: 0
     forceMaximumCompressionQuality_BC6H_BC7: 0
   - serializedVersion: 3
@@ -103,7 +100,6 @@ TextureImporter:
     crunchedCompression: 0
     allowsAlphaSplitting: 0
     overridden: 0
-    ignorePlatformSupport: 0
     androidETC2FallbackOverride: 0
     forceMaximumCompressionQuality_BC6H_BC7: 0
   - serializedVersion: 3
@@ -116,7 +112,6 @@ TextureImporter:
     crunchedCompression: 0
     allowsAlphaSplitting: 0
     overridden: 0
-    ignorePlatformSupport: 0
     androidETC2FallbackOverride: 0
     forceMaximumCompressionQuality_BC6H_BC7: 0
   - serializedVersion: 3
@@ -129,7 +124,6 @@ TextureImporter:
     crunchedCompression: 0
     allowsAlphaSplitting: 0
     overridden: 0
-    ignorePlatformSupport: 0
     androidETC2FallbackOverride: 0
     forceMaximumCompressionQuality_BC6H_BC7: 0
   - serializedVersion: 3
@@ -142,7 +136,6 @@ TextureImporter:
     crunchedCompression: 0
     allowsAlphaSplitting: 0
     overridden: 0
-    ignorePlatformSupport: 0
     androidETC2FallbackOverride: 0
     forceMaximumCompressionQuality_BC6H_BC7: 0
   spriteSheet:
@@ -4048,240 +4041,240 @@ TextureImporter:
     weights: []
     secondaryTextures: []
     nameFileIdTable:
-      Arrow_Shot: 210736301
-      Carpet_A: -1455102901
+      Item_Poition_Yellow: 371750197
+      Env_Spot: -604045147
+      Sprites_7: -167498857
+      Prop_Env_M: -7795564
+      Wall_L_C: -1583851745
+      Env_Chess_A: -1607882866
+      Decal_V: -1565000509
+      Sprites_15: -1216776964
+      Item_Poition_Blue: 1629623867
+      Sprites_13: 1266135021
+      Patter_D: 465805114
+      Decal_H: -1921173378
+      Item_Sword: 1329060588
+      Env_Ladder_Up: 314639905
+      Item_Map: -1420986800
+      Prop_Env_X: -454100882
+      Env_Ladder_Down: -691281063
+      Floor_D: -1071430000
       Carpet_B: 2080420847
-      Carpet_C: 297017320
-      Carpet_LB: -306366011
-      Carpet_LM: -208765978
-      Carpet_LT: -1301881515
-      Carpet_M: 1322024420
-      Carpet_MB: 334249803
-      Carpet_MT: -951497358
-      Carpet_RB: -827355599
-      Carpet_RM: 1281287869
-      Carpet_RT: -952505449
-      Carpet_Scrap: -1019520017
-      Char_Bat: 94621673
-      Char_Eye: 1725372122
-      Char_Heat: 708095310
-      Char_Rat: 185838283
+      Wall_Down_C: 868169914
+      Main_40: -910495453
+      Prop_Env_J: -1293698945
+      Item_Book_Red: 1834518398
+      FloorTest: 994190775
+      Env_GraveEars: -1183305989
+      Prop_Env_Z: 839971051
+      Env_GraveD: -1279033085
+      Prop_Root_F: 158396877
+      Prop_TreeA: 2061441458
+      Prop_Root_A: 1720678459
       Char_Skeletone: -1797346199
+      Prop_Chain_B: -795952930
+      Floor_Wood: -825250436
+      Carpet_LM: -208765978
+      Char_Rat: 185838283
+      Main_43: -693425257
+      Prop_SC: 1319269089
+      Prop_Chain_A: -1506547402
+      Pattern_C: 1648535880
+      Prop_Root_G: 1448212059
+      Carpet_A: -1455102901
+      Spikes: 297060149
+      Decal_E: -427312282
+      Prop_Env_A: 1984791423
+      Wall_M: -1534721541
+      Decal_AyeB: 1521290738
+      Wall_LD: -957799445
+      Main_30: 689884523
+      Prop_Env_C_L: -1483805919
+      Carpet_RT: -952505449
+      Floor_Flash: 963518308
+      Sprites_16: -1526298439
+      Main_55: -1375031726
+      Wall_R: -1451167010
+      Prop_Web: 303788756
+      Carpet_RM: 1281287869
+      Prop_Pipe_B: 585907288
+      Main_28: 380933780
+      Carpet_C: 297017320
+      Decal_N: 670859671
+      Env_Heart: -1706695883
+      Decal_G: -260046132
+      Env_GraveB: 269235476
+      Item_Heart: 1903202154
+      Decal_J: -68626763
+      Prop_Env_P: 571521046
+      Decal_C: 822998881
+      Env_Lever_On: -1199559167
+      Square: 7482667652216324306
+      Wall_K: -1974119961
+      Prop_Vase_D: -970533305
+      Prop_Bone: -684481851
+      Wall_Up_C: -821544174
+      Pattern_A: 638214910
+      Sprites_11: 40430837
+      Char_Bat: 94621673
+      Env_GraveA: 1418228880
+      Item_Apple: 660100884
+      Floor_A: -1666500734
+      Prop_Hand: -346474338
+      Sprites_20: -1393143337
       Char_Slime: -995825184
       Char_Snake: -1721448698
-      Char_Sunflower: -244875748
-      Char_Trader: 1604015474
-      Coin: 312855636
-      Decal_A: -611147340
-      Decal_AyeA: -2046295738
-      Decal_AyeB: 1521290738
-      Decal_B: -707480132
-      Decal_C: 822998881
-      Decal_D: -30625615
-      Decal_E: -427312282
-      Decal_F: -1691966351
-      Decal_G: -260046132
-      Decal_H: -1921173378
-      Decal_J: -68626763
-      Decal_K: -2058893030
-      Decal_L: 1311229232
-      Decal_M: -34978310
-      Decal_N: 670859671
-      Decal_O: 1795507151
-      Decal_P: -1682592569
-      Decal_ShadeA: 1192379162
-      Decal_ShadeB: 1777575153
-      Decal_Spot: -892691430
-      Decal_Star: 1672001090
-      Decal_U: -1122954699
-      Decal_V: -1565000509
-      Decal_X: 363875753
-      Decal_Z: 1313925640
-      Env_Altar: -37777645
-      Env_Carpet_Large: 1391986762
-      Env_Chess_A: -1607882866
-      Env_Chess_B: -1237704566
-      Env_Chess_C: -1331583336
-      Env_Chess_Small: 1121968279
-      Env_Door_H: -556686816
-      Env_Door_V: -125072430
-      Env_Elder: -850471406
-      Env_Grave: -1531140831
-      Env_GraveA: 1418228880
-      Env_GraveB: 269235476
-      Env_GraveC: -1370119681
-      Env_GraveD: -1279033085
-      Env_GraveEars: -1183305989
-      Env_Heart: -1706695883
-      Env_Key: 1457225418
-      Env_Ladder_Down: -691281063
-      Env_Ladder_Up: 314639905
-      Env_Lever_Off: 99464782
-      Env_Lever_On: -1199559167
-      Env_Sign: -907556744
-      Env_Spot: -604045147
-      Env_lock: 1478665527
-      FloorTest: 994190775
-      Floor_A: -1666500734
-      Floor_B: -1595162582
-      Floor_C: 425766875
-      Floor_D: -1071430000
-      Floor_Dirt: -570979032
-      Floor_Flash: 963518308
-      Floor_Metal: 347329323
-      Floor_Red: 1933650392
-      Floor_Wood: -825250436
-      Hero: 977608448
-      Item_Apple: 660100884
-      Item_Arrow: -1011920623
-      Item_Blue_M: -1733144529
-      Item_Book_Blue: 1434532128
-      Item_Book_Green: -1101730668
-      Item_Book_Red: 1834518398
-      Item_Book_Yellow: 1564639598
-      Item_Dimond: -1310023052
-      Item_Hammer: -642366173
-      Item_Heart: 1903202154
-      Item_Map: -1420986800
-      Item_Poition_Blue: 1629623867
-      Item_Poition_Green: 1151777253
-      Item_Poition_Green_M: -628139667
-      Item_Poition_Red: 366320403
-      Item_Poition_Red_M: 23727020
-      Item_Poition_Yellow: 371750197
-      Item_Poition_Yellow_M: -689076727
-      Item_Scroll_Blue: 238567831
-      Item_Scroll_Green: -927312385
-      Item_Scroll_Red: 513552516
-      Item_Scroll_Yellow: -1506077898
-      Item_Shield: -1272935615
-      Item_Shroom_Blue: -1805323413
-      Item_Shroom_Green: 619746431
-      Item_Shroom_Red: 1668925936
-      Item_Shroom_Yellow: 2010487683
-      Item_Sword: 1329060588
-      Item_candle: 1292866838
-      Light: 945239658
-      Main_28: 380933780
-      Main_30: 689884523
-      Main_40: -910495453
-      Main_41: 1982730360
-      Main_43: -693425257
-      Main_55: -1375031726
-      Main_56: -508323936
-      Main_63: 803133394
-      Patter_D: 465805114
-      Pattern_A: 638214910
-      Pattern_B: -1901435169
-      Pattern_C: 1648535880
-      Prop_Bone: -684481851
-      Prop_Candles: 1372235865
-      Prop_Chain_A: -1506547402
-      Prop_Chain_B: -795952930
-      Prop_Dirt: -886250686
-      Prop_Env_A: 1984791423
-      Prop_Env_B: -284209811
-      Prop_Env_C: 1669285527
-      Prop_Env_C_D: -2012984758
-      Prop_Env_C_L: -1483805919
-      Prop_Env_C_R: -2035963036
-      Prop_Env_C_R_B: 1474633318
-      Prop_Env_D: -1300424757
-      Prop_Env_E: -106724472
-      Prop_Env_F: 664604394
-      Prop_Env_G: 1068092737
-      Prop_Env_H: -1138602866
-      Prop_Env_I: 1883923428
-      Prop_Env_J: -1293698945
-      Prop_Env_K: 863817575
-      Prop_Env_L: 30343017
-      Prop_Env_M: -7795564
-      Prop_Env_O: -262914701
-      Prop_Env_P: 571521046
-      Prop_Env_U: -15204193
-      Prop_Env_X: -454100882
-      Prop_Env_Z: 839971051
-      Prop_GrassA: -1618667294
-      Prop_GrassB: 1708659442
-      Prop_Green: -484180597
-      Prop_Hand: -346474338
-      Prop_Pipe_B: 585907288
-      Prop_Pipe_C: -139847526
-      Prop_Pipe_a: -316403093
-      Prop_Root_A: 1720678459
-      Prop_Root_B: -1584491744
-      Prop_Root_C: 1264957957
-      Prop_Root_D: -99156351
-      Prop_Root_E: -816199579
-      Prop_Root_F: 158396877
-      Prop_Root_G: 1448212059
-      Prop_Root_K: -582687167
-      Prop_SA: 1356355480
-      Prop_SB: -1525626827
-      Prop_SC: 1319269089
-      Prop_Shrooms: -1134052594
-      Prop_Skull: -1752388792
-      Prop_TreeA: 2061441458
-      Prop_TreeB: 1391007285
-      Prop_TreeC: 1789686361
-      Prop_Vase_A: -484646789
-      Prop_Vase_B: -1789572953
-      Prop_Vase_C: 1151381906
-      Prop_Vase_D: -970533305
       Prop_Vase_E: 611425386
-      Prop_Web: 303788756
-      Sign_0: -1344176758
-      Spikes: 297060149
-      Spikes_Act: -159143175
-      Splatter: -1070253990
-      Sprites_10: 1978917565
-      Sprites_11: 40430837
-      Sprites_12: -1905662946
-      Sprites_13: 1266135021
-      Sprites_14: -171698576
-      Sprites_15: -1216776964
-      Sprites_16: -1526298439
-      Sprites_20: -1393143337
-      Sprites_5: 1941039392
-      Sprites_6: 1365476387
-      Sprites_7: -167498857
-      Sprites_8: 1752474752
-      Sprites_9: -1927080401
-      Square: 7482667652216324306
-      Torch: 46112607
-      Wall_A: -336712622
-      Wall_B: 1029825438
-      Wall_C: 2089584849
-      Wall_D: 163553986
-      Wall_Down_A: 921232829
-      Wall_Down_B: 383314352
-      Wall_Down_C: 868169914
-      Wall_Down_D: -879618781
-      Wall_E: 1370030181
-      Wall_F: -1618839282
-      Wall_G: -1411442107
-      Wall_H: 136009948
-      Wall_K: -1974119961
-      Wall_L: -927853154
-      Wall_LD: -957799445
-      Wall_LT: 567960085
-      Wall_L_A: 2090074142
-      Wall_L_B: -1491142985
-      Wall_L_C: -1583851745
-      Wall_M: -1534721541
-      Wall_N: -282417502
-      Wall_O: 945872154
-      Wall_P: 488757355
-      Wall_R: -1451167010
-      Wall_T: -2142120423
-      Wall_U: -1456630376
-      Wall_Up_A: -1518201401
+      Env_Door_H: -556686816
+      Prop_Env_F: 664604394
+      Prop_Vase_C: 1151381906
       Wall_Up_B: 1434614257
-      Wall_Up_C: -821544174
-      Wall_Up_D: 1377285007
-      Wall_Up_E: -5928204
       Wall_Y: 1777538168
-  mipmapLimitGroupName: 
+      Item_Scroll_Blue: 238567831
+      Prop_Pipe_a: -316403093
+      Wall_L: -927853154
+      Wall_Down_D: -879618781
+      Env_Lever_Off: 99464782
+      Floor_B: -1595162582
+      Prop_Root_K: -582687167
+      Floor_Metal: 347329323
+      Prop_Root_B: -1584491744
+      Item_Arrow: -1011920623
+      Env_Key: 1457225418
+      Arrow_Shot: 210736301
+      Item_candle: 1292866838
+      Wall_Up_D: 1377285007
+      Item_Shroom_Green: 619746431
+      Prop_Env_C_R_B: 1474633318
+      Prop_Env_C_R: -2035963036
+      Item_Poition_Green: 1151777253
+      Decal_ShadeA: 1192379162
+      Floor_Red: 1933650392
+      Decal_Z: 1313925640
+      Spikes_Act: -159143175
+      Item_Dimond: -1310023052
+      Decal_Spot: -892691430
+      Main_41: 1982730360
+      Prop_Env_I: 1883923428
+      Prop_SA: 1356355480
+      Decal_ShadeB: 1777575153
+      Item_Book_Green: -1101730668
+      Sprites_8: 1752474752
+      Main_63: 803133394
+      Carpet_LB: -306366011
+      Prop_Env_H: -1138602866
+      Decal_A: -611147340
+      Wall_B: 1029825438
+      Carpet_MT: -951497358
+      Prop_Env_L: 30343017
+      Sprites_10: 1978917565
+      Prop_Env_K: 863817575
+      Wall_U: -1456630376
+      Main_56: -508323936
+      Sprites_6: 1365476387
+      Decal_Star: 1672001090
+      Env_Door_V: -125072430
+      Item_Poition_Red: 366320403
+      Sprites_5: 1941039392
+      Env_Chess_Small: 1121968279
+      Wall_Down_B: 383314352
+      Prop_Env_U: -15204193
+      Prop_Env_G: 1068092737
+      Item_Book_Blue: 1434532128
+      Wall_D: 163553986
+      Prop_GrassB: 1708659442
+      Env_GraveC: -1370119681
+      Prop_Env_B: -284209811
+      Torch: 46112607
+      Coin: 312855636
+      Prop_Dirt: -886250686
+      Wall_L_B: -1491142985
+      Carpet_Scrap: -1019520017
+      Env_Altar: -37777645
+      Env_Elder: -850471406
+      Prop_GrassA: -1618667294
+      Decal_X: 363875753
+      Splatter: -1070253990
+      Sprites_14: -171698576
+      Wall_A: -336712622
+      Item_Book_Yellow: 1564639598
+      Item_Shroom_Yellow: 2010487683
+      Item_Shroom_Blue: -1805323413
+      Wall_N: -282417502
+      Env_Chess_C: -1331583336
+      Sprites_9: -1927080401
+      Decal_AyeA: -2046295738
+      Decal_L: 1311229232
+      Item_Poition_Red_M: 23727020
+      Item_Blue_M: -1733144529
+      Decal_B: -707480132
+      Item_Poition_Green_M: -628139667
+      Char_Trader: 1604015474
+      Item_Scroll_Green: -927312385
+      Prop_SB: -1525626827
+      Env_lock: 1478665527
+      Env_Grave: -1531140831
+      Carpet_LT: -1301881515
+      Wall_Up_E: -5928204
+      Prop_Root_D: -99156351
+      Floor_C: 425766875
+      Env_Sign: -907556744
+      Pattern_B: -1901435169
+      Decal_F: -1691966351
+      Item_Scroll_Red: 513552516
+      Prop_TreeB: 1391007285
+      Prop_Env_D: -1300424757
+      Prop_Green: -484180597
+      Char_Sunflower: -244875748
+      Prop_Candles: 1372235865
+      Wall_H: 136009948
+      Hero: 977608448
+      Char_Eye: 1725372122
+      Carpet_MB: 334249803
+      Carpet_RB: -827355599
+      Prop_Vase_A: -484646789
+      Decal_M: -34978310
+      Sprites_12: -1905662946
+      Item_Shroom_Red: 1668925936
+      Prop_Env_C_D: -2012984758
+      Wall_P: 488757355
+      Prop_Root_E: -816199579
+      Floor_Dirt: -570979032
+      Wall_O: 945872154
+      Wall_LT: 567960085
+      Prop_Skull: -1752388792
+      Prop_Shrooms: -1134052594
+      Env_Chess_B: -1237704566
+      Item_Poition_Yellow_M: -689076727
+      Light: 945239658
+      Item_Hammer: -642366173
+      Decal_U: -1122954699
+      Prop_Env_C: 1669285527
+      Wall_F: -1618839282
+      Prop_Env_O: -262914701
+      Prop_Pipe_C: -139847526
+      Wall_E: 1370030181
+      Wall_Up_A: -1518201401
+      Prop_Env_E: -106724472
+      Decal_K: -2058893030
+      Wall_G: -1411442107
+      Item_Scroll_Yellow: -1506077898
+      Prop_Root_C: 1264957957
+      Wall_L_A: 2090074142
+      Decal_P: -1682592569
+      Decal_D: -30625615
+      Decal_O: 1795507151
+      Wall_C: 2089584849
+      Wall_T: -2142120423
+      Char_Heat: 708095310
+      Sign_0: -1344176758
+      Prop_TreeC: 1789686361
+      Item_Shield: -1272935615
+      Wall_Down_A: 921232829
+      Env_Carpet_Large: 1391986762
+      Carpet_M: 1322024420
+      Prop_Vase_B: -1789572953
+  spritePackingTag: 
   pSDRemoveMatte: 0
   userData: 
   assetBundleName: 
