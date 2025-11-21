@@ -1,7 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.EventSystems;
 
 public class PlayerInteractor : MonoBehaviour
 {
@@ -15,28 +14,10 @@ public class PlayerInteractor : MonoBehaviour
     {
         FindNearestInteractable();
 
-        // keyboard / mouse input
+        // ONLY interact by pressing E
         if (Input.GetKeyDown(KeyCode.E))
         {
             TryInteract();
-        }
-
-        // mouse left click (desktop)
-        if (Input.GetMouseButtonDown(0))
-        {
-            Vector2 wp = Camera.main.ScreenToWorldPoint(Input.mousePosition);
-            TryTapAtPoint(wp);
-        }
-
-        // touch (mobile)
-        if (Input.touchCount > 0)
-        {
-            var touch = Input.GetTouch(0);
-            if (touch.phase == TouchPhase.Ended)
-            {
-                Vector2 wp = Camera.main.ScreenToWorldPoint(touch.position);
-                TryTapAtPoint(wp);
-            }
         }
     }
 
@@ -51,6 +32,7 @@ public class PlayerInteractor : MonoBehaviour
         {
             var inter = c.GetComponentInParent<IInteractable>();
             if (inter == null) continue;
+
             float d = Vector2.SqrMagnitude((Vector2)c.transform.position - (Vector2)transform.position);
             if (d < best)
             {
@@ -77,24 +59,7 @@ public class PlayerInteractor : MonoBehaviour
         }
     }
 
-    void TryTapAtPoint(Vector2 worldPoint)
-    {
-        RaycastHit2D hit = Physics2D.Raycast(worldPoint, Vector2.zero, 0f, interactableLayer);
-        if (hit.collider != null)
-        {
-            var inter = hit.collider.GetComponentInParent<IInteractable>();
-            if (inter != null)
-            {
-                inter.Interact(gameObject);
-                return;
-            }
-        }
-
-        // if no direct tap, fallback to nearest
-        TryInteract();
-    }
-
-    // Optional: visualise radius in editor
+    // Optional: visualise radius
     void OnDrawGizmosSelected()
     {
         Gizmos.color = Color.cyan;

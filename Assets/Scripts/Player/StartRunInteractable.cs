@@ -5,7 +5,7 @@ using UnityEngine.SceneManagement;
 
 public class StartRunInteractable : InteractableBase
 {
-    public string runSceneName = "RunScene";
+    public string runSceneName = "GamePlay";
     public float fadeTime = 0.5f;
     public override void Interact(GameObject interactor)
     {
