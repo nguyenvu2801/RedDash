@@ -6,11 +6,13 @@ using System.Collections.Generic;
 [RequireComponent(typeof(Rigidbody2D))]
 public class Movement : MonoBehaviour
 {
+    public static Movement player;
     [Header("Dash settings")]
     [SerializeField] private float dashDuration = 0.18f;
     [SerializeField] private float minDragDistance = 0.1f;
     [SerializeField] private float dashHitRadius = 1.0f;
     [SerializeField] private LayerMask dashHitMask; // which layers count as hit (Enemy, EnergyNode)
+    [SerializeField] private LayerMask wallMask;
     [SerializeField] private AnimationCurve dashCurve = AnimationCurve.EaseInOut(0, 0, 1, 1);
     private float DashRange;
     private float DashCooldown;
@@ -33,6 +35,7 @@ public class Movement : MonoBehaviour
 
     void Awake()
     {
+        player = this;
         rb = GetComponent<Rigidbody2D>();
         if (dashCurve == null)
             dashCurve = AnimationCurve.EaseInOut(0, 0, 1, 1);
@@ -83,6 +86,16 @@ public class Movement : MonoBehaviour
                     isDragging = false;
                 }
             }
+            if (Input.GetKeyDown(KeyCode.Space))
+            {
+                Vector2 playerPos = rb.position;
+                Vector2 mouseWorldPos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
+
+                Vector2 dashDirection = (mouseWorldPos - playerPos).normalized;
+                float distance = DashRange;
+
+                StartCoroutine(DashRoutine(dashDirection, distance));
+            }
         }
     }
 
@@ -103,48 +116,80 @@ public class Movement : MonoBehaviour
 
     IEnumerator DashRoutine(Vector2 direction, float distance)
     {
+        dashing = true;
         dashHitSomething = false;
         currentDashDirection = direction;
-        dashing = true;
         OnDashStart?.Invoke();
-        // store velocity, zero it to make dash deterministic then blend back
+
         storedVelocityBeforeDash = rb.velocity;
         rb.velocity = Vector2.zero;
+
         Vector2 startPos = rb.position;
-        Vector2 targetPos = startPos + direction * distance;
+
+        // -----------------------------
+        // 1) Wall check
+        // -----------------------------
+        RaycastHit2D hit = Physics2D.Raycast(startPos, direction, distance, wallMask);
+
+        Vector2 targetPos;
+
+        if (hit.collider != null)
+        {
+            // Stop right before the wall
+            targetPos = hit.point - direction * 0.1f;
+        }
+        else
+        {
+            // No wall dash full distance
+            targetPos = startPos + direction * distance;
+        }
+
+        // -----------------------------
+        // 2) Perform dash using curve
+        // -----------------------------
         float elapsed = 0f;
-        // move using curve in small time steps
+
         while (elapsed < dashDuration)
         {
             float t = elapsed / dashDuration;
             float eased = dashCurve.Evaluate(t);
-            Vector2 desiredPos = Vector2.Lerp(startPos, targetPos, eased);
-            rb.MovePosition(desiredPos);
+
+            // Set the position manually (MORE RELIABLE than MovePosition)
+            rb.position = Vector2.Lerp(startPos, targetPos, eased);
+
             elapsed += Time.deltaTime;
             yield return null;
         }
-        // ensure we reach final target
-        rb.MovePosition(targetPos);
 
+        // Ensure exact final position
+        rb.position = targetPos;
+
+        // -----------------------------
+        // 3) Hit or miss logic
+        // -----------------------------
         if (TimerManager.Instance != null)
         {
             if (dashHitSomething) TimerManager.Instance.AddTime(1f);
             else TimerManager.Instance.ReduceTime(1f);
         }
-        // event
+
         OnDashEnd?.Invoke(dashHitSomething);
-        // apply cooldown (penalty on miss)
+
+        // cooldown
         cooldownTimer = DashCooldown;
-        // gently blend back to stored velocity so player doesn't snap
+
         float blendTime = 0.08f;
         float b = 0f;
+
         while (b < blendTime)
         {
             rb.velocity = Vector2.Lerp(Vector2.zero, storedVelocityBeforeDash, b / blendTime);
             b += Time.deltaTime;
             yield return null;
         }
+
         rb.velocity = storedVelocityBeforeDash;
+
         dashing = false;
     }
 

@@ -27,18 +27,28 @@ public class InteractableBase : MonoBehaviour, IInteractable
     {
         if (hovered) return;
         hovered = true;
+
         if (highlightRenderer)
         {
             var c = originalColor;
             c.a = highlightAlpha;
             highlightRenderer.color = c;
         }
+
+        // Show magical floating hint above the player
+        InteractionHintUI.Instance.ShowHint($"Press E to {promptText}", Movement.player.transform);
     }
 
     public virtual void OnHoverExit()
     {
         if (!hovered) return;
         hovered = false;
-        if (highlightRenderer) highlightRenderer.color = originalColor;
+
+        if (highlightRenderer)
+            highlightRenderer.color = originalColor;
+
+        // Hide magical hint
+        InteractionHintUI.Instance.HideHint();
     }
+
 }
