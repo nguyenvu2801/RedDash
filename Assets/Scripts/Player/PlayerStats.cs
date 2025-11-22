@@ -10,6 +10,7 @@ public class PlayerStats :ScriptableObject
     {
         public UpgradeType type;
         public float baseValue;
+        public Sprite icon;
         public float incrementPerLevel;
         public int maxLevel = 10;// Default max, override per entry
         [Header("Cost Settings")]
