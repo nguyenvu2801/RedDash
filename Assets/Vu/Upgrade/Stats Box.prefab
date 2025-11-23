@@ -76,7 +76,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 0, y: 0}
-  m_AnchoredPosition: {x: -49.0453, y: -0.8434}
+  m_AnchoredPosition: {x: -49.045288, y: -0.8433838}
   m_SizeDelta: {x: 322.7226, y: 52.738}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &2076225017161116521
@@ -177,6 +177,8 @@ MonoBehaviour:
   progressFillImage: {fileID: 6026193764415741673}
   upgradeButton: {fileID: 8126492968153573973}
   buttonCostText: {fileID: 4058281966836867701}
+  dividerParent: {fileID: 1290141629487589449}
+  dividerPrefab: {fileID: 8429284443277667754, guid: 1d7e0035a1481a745b7597d12166160a, type: 3}
 --- !u!1 &3225428290344338082
 GameObject:
   m_ObjectHideFlags: 0
@@ -243,7 +245,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: -232997553, guid: 43528fa8363aa2941995f448e229b2f0, type: 3}
+  m_Sprite: {fileID: 0}
   m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1

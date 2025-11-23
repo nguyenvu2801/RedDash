@@ -15,6 +15,7 @@ MonoBehaviour:
   upgrades:
   - type: 0
     baseValue: 300
+    icon: {fileID: -232997553, guid: 43528fa8363aa2941995f448e229b2f0, type: 3}
     incrementPerLevel: 30
     maxLevel: 10
     baseCost: 200
@@ -22,6 +23,7 @@ MonoBehaviour:
     costMultiplier: 1.5
   - type: 1
     baseValue: 5
+    icon: {fileID: 1804143558, guid: 43528fa8363aa2941995f448e229b2f0, type: 3}
     incrementPerLevel: -0.3
     maxLevel: 7
     baseCost: 200
@@ -29,6 +31,7 @@ MonoBehaviour:
     costMultiplier: 1.5
   - type: 4
     baseValue: 0
+    icon: {fileID: 0}
     incrementPerLevel: 1
     maxLevel: 3
     baseCost: 200
@@ -36,6 +39,7 @@ MonoBehaviour:
     costMultiplier: 1.5
   - type: 5
     baseValue: 3
+    icon: {fileID: 0}
     incrementPerLevel: 0.5
     maxLevel: 6
     baseCost: 200
@@ -43,6 +47,7 @@ MonoBehaviour:
     costMultiplier: 1.5
   - type: 8
     baseValue: 5
+    icon: {fileID: 0}
     incrementPerLevel: -0.2
     maxLevel: 7
     baseCost: 200
@@ -50,6 +55,7 @@ MonoBehaviour:
     costMultiplier: 1.5
   - type: 6
     baseValue: 0.5
+    icon: {fileID: 0}
     incrementPerLevel: -0.05
     maxLevel: 5
     baseCost: 200
@@ -57,6 +63,7 @@ MonoBehaviour:
     costMultiplier: 1.5
   - type: 9
     baseValue: 0.01
+    icon: {fileID: 0}
     incrementPerLevel: 0.02
     maxLevel: 10
     baseCost: 200
@@ -64,6 +71,7 @@ MonoBehaviour:
     costMultiplier: 1.5
   - type: 10
     baseValue: 0.01
+    icon: {fileID: 0}
     incrementPerLevel: 0.01
     maxLevel: 5
     baseCost: 200
@@ -71,6 +79,7 @@ MonoBehaviour:
     costMultiplier: 1.5
   - type: 11
     baseValue: 0
+    icon: {fileID: 0}
     incrementPerLevel: 0.05
     maxLevel: 10
     baseCost: 200
@@ -78,6 +87,7 @@ MonoBehaviour:
     costMultiplier: 1.5
   - type: 3
     baseValue: 3
+    icon: {fileID: 0}
     incrementPerLevel: 1
     maxLevel: 7
     baseCost: 200
@@ -85,6 +95,7 @@ MonoBehaviour:
     costMultiplier: 1.5
   - type: 7
     baseValue: 1
+    icon: {fileID: 0}
     incrementPerLevel: 1
     maxLevel: 8
     baseCost: 200
@@ -92,6 +103,7 @@ MonoBehaviour:
     costMultiplier: 1.5
   - type: 12
     baseValue: 1
+    icon: {fileID: 0}
     incrementPerLevel: 0.5
     maxLevel: 5
     baseCost: 200
@@ -99,6 +111,7 @@ MonoBehaviour:
     costMultiplier: 1.5
   - type: 13
     baseValue: 0
+    icon: {fileID: 0}
     incrementPerLevel: 1
     maxLevel: 3
     baseCost: 200
@@ -106,6 +119,7 @@ MonoBehaviour:
     costMultiplier: 1.5
   - type: 2
     baseValue: 2
+    icon: {fileID: 0}
     incrementPerLevel: 0.5
     maxLevel: 6
     baseCost: 200
