@@ -72,20 +72,20 @@ public class Movement : MonoBehaviour
                     isDragging = false;
                 }
             }
-            else // Mouse input (testing)
-            {
-                if (Input.GetMouseButtonDown(0))
-                {
-                    isDragging = true;
-                    startDragPos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
-                }
-                else if (isDragging && Input.GetMouseButtonUp(0))
-                {
-                    Vector2 endPos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
-                    TryStartDashFromDrag(startDragPos, endPos);
-                    isDragging = false;
-                }
-            }
+            //else // Mouse input (testing)
+            //{
+            //    if (Input.GetMouseButtonDown(0))
+            //    {
+            //        isDragging = true;
+            //        startDragPos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
+            //    }
+            //    else if (isDragging && Input.GetMouseButtonUp(0))
+            //    {
+            //        Vector2 endPos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
+            //        TryStartDashFromDrag(startDragPos, endPos);
+            //        isDragging = false;
+            //    }
+            //}
             if (Input.GetKeyDown(KeyCode.Space))
             {
                 Vector2 playerPos = rb.position;
