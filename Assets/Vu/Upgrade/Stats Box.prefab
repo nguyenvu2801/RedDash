@@ -176,6 +176,7 @@ MonoBehaviour:
   iconImage: {fileID: 3864625914921213727}
   progressFillImage: {fileID: 6026193764415741673}
   upgradeButton: {fileID: 8126492968153573973}
+  detailsButton: {fileID: 7072613952187374323}
   buttonCostText: {fileID: 4058281966836867701}
   dividerParent: {fileID: 1290141629487589449}
   dividerPrefab: {fileID: 8429284443277667754, guid: 1d7e0035a1481a745b7597d12166160a, type: 3}
