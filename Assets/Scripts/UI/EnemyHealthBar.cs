@@ -28,17 +28,29 @@ public class EnemyHealthBar : MonoBehaviour
     private Vector3 originalLocalPos;
     private float shakeTimer = 0f;
     private bool visible = false;
+    private void OnEnable()
+    {
+        canvasGroup.alpha = 0f;
+        flashImage.color = new Color(1, 1, 1, 0);
+        visual.localPosition = Vector3.zero;
 
+        fillInstant.fillAmount = 1f;
+        fillDelayed.fillAmount = 1f;
+
+        shakeTimer = 0f;
+        visible = false;
+    }
     public void Init(Transform target)
     {
         this.target = target;
+
         canvasGroup.alpha = 0f;
         visible = false;
 
         originalLocalPos = visual.localPosition;
 
-        // reset effects
         flashImage.color = new Color(1, 1, 1, 0);
+
         fillDelayed.fillAmount = 1f;
         fillInstant.fillAmount = 1f;
     }
@@ -57,11 +69,13 @@ public class EnemyHealthBar : MonoBehaviour
 
     void LateUpdate()
     {
-        if (target == null)
-        {
-            Destroy(gameObject);
-            return;
-        }
+        
+            if (target == null)
+            {
+                PoolManager.Instance.ReturnToPool(PoolKey.enemyHealthBar, gameObject);
+                return;
+           }
+        
 
         // FOLLOW TARGET
         transform.position = target.position + Vector3.up * followYOffset;

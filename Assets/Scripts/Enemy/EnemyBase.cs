@@ -46,10 +46,11 @@ public class EnemyBase : MonoBehaviour
         // Reuse health bar instead of destroying
         if (healthBar == null)
         {
-            GameObject hbObj = Instantiate(UIManager.Instance.enemyHealthBarPrefab);
+            GameObject hbObj = PoolManager.Instance.GetFromPool(PoolKey.enemyHealthBar);
             healthBar = hbObj.GetComponent<EnemyHealthBar>();
-            healthBar.Init(transform);
         }
+
+        healthBar.Init(transform); // ALWAYS re-init when enemy spawns
         healthBar.gameObject.SetActive(true);
         healthBar.SetHP(currentHP, maxHP);
     }
@@ -89,7 +90,9 @@ public class EnemyBase : MonoBehaviour
         isStunned = false;
 
         if (healthBar != null)
-            healthBar.gameObject.SetActive(false);
+        {
+            PoolManager.Instance.ReturnToPool(PoolKey.enemyHealthBar, healthBar.gameObject);
+        }
 
         manager.DespawnEnemy(this);
     }

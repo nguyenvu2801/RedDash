@@ -58,7 +58,8 @@ public class PoolManager : GameSingleton<PoolManager>
 public enum PoolKey
 {
    enemy,
-   damagePopup
+   damagePopup,
+   enemyHealthBar
 }
 
 [System.Serializable]
