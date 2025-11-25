@@ -9,7 +9,7 @@ public class ExperienceManager : GameSingleton<ExperienceManager>
     public int baseExpPerLevel = 200; // starting required exp
     public float expGrowthPerLevel = 1.5f; // scales required exp per level
     public int roomsPassed = 0;
-
+    public event System.Action OnExperienceChanged;
     public void AddExperience(int amount)
     {
         if (currentLevel >= maxLevel) return;
@@ -18,7 +18,7 @@ public class ExperienceManager : GameSingleton<ExperienceManager>
         int scaledAmount = Mathf.CeilToInt(amount * (1f + 0.1f * roomsPassed));
 
         currentExp += scaledAmount;
-
+        OnExperienceChanged?.Invoke();
         // check level up
         int requiredExp = GetExpForLevel(currentLevel);
         if (currentExp >= requiredExp)

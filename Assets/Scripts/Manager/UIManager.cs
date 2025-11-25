@@ -23,7 +23,7 @@ public class UIManager : GameSingleton<UIManager>
     [SerializeField] private float expFillTweenTime = 0.25f;
     private Tween scaleTween;
     private Tween popupTween;
-
+    private Tween expTween;
     void Start()
     {
         TimerManager.Instance.OnTimerChanged += UpdateUI;
@@ -32,6 +32,11 @@ public class UIManager : GameSingleton<UIManager>
         {
             ComboManager.Instance.OnComboChanged += UpdateComboUI;
             ComboManager.Instance.OnComboReset += ResetComboUI;
+        }
+        if (ExperienceManager.Instance != null)
+        {
+            ExperienceManager.Instance.OnExperienceChanged += UpdateExperienceUI;
+            UpdateExperienceUI(); // initialize UI at start
         }
     }
 
@@ -54,25 +59,25 @@ public class UIManager : GameSingleton<UIManager>
             .SetEase(Ease.OutQuad);
     }
     public void UpdateExperienceUI()
+{
+    if (experienceFill == null || ExperienceManager.Instance == null) return;
+
+    int currentExp = ExperienceManager.Instance.currentExp;
+    int currentLevel = ExperienceManager.Instance.currentLevel;
+    int expForNextLevel = ExperienceManager.Instance.GetExpForLevel(currentLevel);
+
+    float targetFill = Mathf.Clamp01((float)currentExp / expForNextLevel);
+
+    // Smooth fill animation
+    expTween?.Kill();
+    expTween = experienceFill.DOFillAmount(targetFill, expFillTweenTime).SetEase(Ease.OutQuad);
+
+    // Update text: "current / max"
+    if (xpText != null)
     {
-        if (experienceFill == null || ExperienceSystem.Instance == null) return;
-
-        int currentExp = ExperienceSystem.Instance.currentExp;
-        int currentLevel = ExperienceSystem.Instance.currentLevel;
-        int expForNextLevel = ExperienceSystem.Instance.GetExpForLevel(currentLevel);
-
-        float targetFill = Mathf.Clamp01((float)currentExp / expForNextLevel);
-
-        // Smooth fill animation
-        expTween?.Kill();
-        expTween = experienceFill.DOFillAmount(targetFill, expFillTweenTime).SetEase(Ease.OutQuad);
-
-        // Update text: "current / max"
-        if (xpText != null)
-        {
-            xpText.text = $"{currentExp} / {expForNextLevel}";
-        }
+        xpText.text = $"{currentExp} / {expForNextLevel}";
     }
+}
 
     private void UpdateComboUI(int combo, float percentTimeLeft)
     {

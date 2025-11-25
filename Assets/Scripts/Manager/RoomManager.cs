@@ -36,8 +36,8 @@ public class RoomManager : GameSingleton<RoomManager>
             roomsPassedText.text = "Rooms Passed: " + (currentRoom - 1);
         }
 
-        // Check if room cleared
-        if (roomActive && SpawnEnemyManager.Instance.ActiveEnemiesCount == 0 && SpawnEnemyManager.Instance.IsSpawningDone)
+        if (roomActive && SpawnEnemyManager.Instance.ActiveEnemiesCount == 0 &&
+     (SpawnEnemyManager.Instance.IsSpawningDone || enemiesToSpawn == 0))
         {
             RoomCleared();
         }
@@ -48,11 +48,18 @@ public class RoomManager : GameSingleton<RoomManager>
         currentHealthMultiplier = Mathf.Pow(healthMultiplierPerRoom, currentRoom - 1);
         enemiesToSpawn = baseEnemiesPerRoom + (currentRoom - 1) * additionalEnemiesPerRoom;
 
-        // Spawn enemies
-        SpawnEnemyManager.Instance.StartSpawning(enemiesToSpawn, currentHealthMultiplier);
+        if (enemiesToSpawn > 0)
+        {
+            SpawnEnemyManager.Instance.StartSpawning(enemiesToSpawn, currentHealthMultiplier);
+            roomActive = true;
+        }
+        else
+        {
+            // No enemies, instantly clear room
+            RoomCleared();
+        }
 
         TimerManager.Instance.isActive = true;
-        roomActive = true;
     }
 
     private void RoomCleared()
