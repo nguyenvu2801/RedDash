@@ -145,7 +145,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   poolKey: 0
-  maxHP: 2
+  maxHP: 5
   moveSpeed: 4
   chaseRange: 15
 --- !u!50 &7334266090611611846

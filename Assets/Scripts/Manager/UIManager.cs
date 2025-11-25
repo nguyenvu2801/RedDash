@@ -6,6 +6,7 @@ using UnityEngine.UI;
 using TMPro; 
 public class UIManager : GameSingleton<UIManager>
 {
+    public GameObject enemyHealthBarPrefab;
     [SerializeField] private Image timerBar;
     [SerializeField] private Image screenEdgeWarning;
 

@@ -14,7 +14,7 @@ public class EnemyBase : MonoBehaviour
     private Transform player;
     private bool isStunned;
     private Rigidbody2D rb;
-
+    private EnemyHealthBar healthBar;
     protected virtual void Awake()
     {
         rb = GetComponent<Rigidbody2D>();
@@ -26,11 +26,22 @@ public class EnemyBase : MonoBehaviour
 
     public virtual void Initialize(SpawnEnemyManager manager, PoolKey key, float healthMult = 1f)
     {
+
         this.manager = manager;
         this.poolKey = key;
+
         maxHP = Mathf.CeilToInt(baseMaxHP * healthMult);
         currentHP = maxHP;
-        isStunned = false;
+
+        // --- SPAWN HEALTH BAR ---
+        if (healthBar == null)
+        {
+            GameObject hb = Instantiate(UIManager.Instance.enemyHealthBarPrefab);
+            healthBar = hb.GetComponent<EnemyHealthBar>();
+            healthBar.Init(transform);
+        }
+
+        healthBar.SetHP(currentHP, maxHP);
     }
 
     protected virtual void Update()
@@ -51,6 +62,10 @@ public class EnemyBase : MonoBehaviour
     public virtual void TakeDamage(int dmg)
     {
         currentHP -= dmg;
+
+        if (healthBar != null)
+            healthBar.SetHP(currentHP, maxHP);
+
         if (currentHP <= 0)
             Die();
         else
@@ -68,6 +83,8 @@ public class EnemyBase : MonoBehaviour
         StopAllCoroutines();
         isStunned = false;
         manager.DespawnEnemy(this);
+        if (healthBar != null)
+            Destroy(healthBar.gameObject);
     }
 
     public virtual void OnDashHit(Vector2 dashDirection, float power)
