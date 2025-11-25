@@ -559,8 +559,8 @@ MonoBehaviour:
   m_ShadowVolumeIntensityEnabled: 0
   m_ShadowVolumeIntensity: 0.75
   m_LocalBounds:
-    m_Center: {x: -0.5331501, y: 0.60020006, z: 0}
-    m_Extent: {x: 4.24675, y: 3.967, z: 0}
+    m_Center: {x: -0.54145, y: 0.60899997, z: 0}
+    m_Extent: {x: 4.24305, y: 3.9633, z: 0}
   m_PointLightInnerAngle: 360
   m_PointLightOuterAngle: 360
   m_PointLightInnerRadius: 0
@@ -1386,7 +1386,6 @@ GameObject:
   - component: {fileID: 757444488}
   - component: {fileID: 757444491}
   - component: {fileID: 757444490}
-  - component: {fileID: 757444489}
   m_Layer: 5
   m_Name: DetaiPanel
   m_TagString: Untagged
@@ -1418,18 +1417,6 @@ RectTransform:
   m_AnchoredPosition: {x: 0, y: 9.511597}
   m_SizeDelta: {x: -53.07, y: -51.2162}
   m_Pivot: {x: 0.5, y: 0.5}
---- !u!114 &757444489
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 757444487}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: ac4aa49e599139c4bb138a2de0591c8f, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!114 &757444490
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1450,7 +1437,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: -855298285791758126, guid: 5d86671b1f0f4284fa0f000ac0f60756, type: 3}
+  m_Sprite: {fileID: 0}
   m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1

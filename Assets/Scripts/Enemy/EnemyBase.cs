@@ -5,114 +5,142 @@ public class EnemyBase : MonoBehaviour
 {
     [HideInInspector] public PoolKey poolKey;
     protected SpawnEnemyManager manager;
+
     [Header("Enemy Stats")]
     [SerializeField] private int maxHP = 3;
     [SerializeField] private float moveSpeed = 2f;
     [SerializeField] private float chaseRange = 8f;
-    private int baseMaxHP; // To store the original serialized value
+
+    private int baseMaxHP;
     private int currentHP;
     private Transform player;
     private bool isStunned;
     private Rigidbody2D rb;
     private EnemyHealthBar healthBar;
+
+    // We track the coroutine handle so we can stop it later
+    private Coroutine knockbackCoroutine;
+
     protected virtual void Awake()
     {
         rb = GetComponent<Rigidbody2D>();
         var playerObj = GameObject.FindGameObjectWithTag("Player");
         if (playerObj != null)
             player = playerObj.transform;
-        baseMaxHP = maxHP; // Store base on awake
+
+        baseMaxHP = maxHP;
     }
 
     public virtual void Initialize(SpawnEnemyManager manager, PoolKey key, float healthMult = 1f)
     {
-
         this.manager = manager;
         this.poolKey = key;
+
+        // Reset state from previous life (critical for pooling!)
+        isStunned = false;
+        StopCurrentKnockback();
 
         maxHP = Mathf.CeilToInt(baseMaxHP * healthMult);
         currentHP = maxHP;
 
-        // --- SPAWN HEALTH BAR ---
+        // Reuse health bar instead of destroying
         if (healthBar == null)
         {
-            GameObject hb = Instantiate(UIManager.Instance.enemyHealthBarPrefab);
-            healthBar = hb.GetComponent<EnemyHealthBar>();
+            GameObject hbObj = Instantiate(UIManager.Instance.enemyHealthBarPrefab);
+            healthBar = hbObj.GetComponent<EnemyHealthBar>();
             healthBar.Init(transform);
         }
-
+        healthBar.gameObject.SetActive(true);
         healthBar.SetHP(currentHP, maxHP);
     }
 
     protected virtual void Update()
     {
-        if (GameManager.Instance.IsGameOver) return;
+        if (GameManager.Instance.IsGameOver || isStunned || player == null) return;
 
-        if (!isStunned && player != null)
+        Vector2 dir = player.position - transform.position;
+        if (dir.sqrMagnitude < chaseRange * chaseRange)
         {
-            Vector2 dir = player.position - transform.position;
-            float dist = dir.magnitude;
-            if (dist < chaseRange)
-            {
-                rb.MovePosition(rb.position + dir.normalized * moveSpeed * Time.deltaTime);
-            }
+            rb.MovePosition(rb.position + dir.normalized * moveSpeed * Time.deltaTime);
         }
     }
 
     public virtual void TakeDamage(int dmg)
     {
         currentHP -= dmg;
-
-        if (healthBar != null)
-            healthBar.SetHP(currentHP, maxHP);
+        healthBar?.SetHP(currentHP, maxHP);
+        DamagePopUpManager.Instance.ShowDamage(dmg, transform.position);
 
         if (currentHP <= 0)
             Die();
         else
-            StartCoroutine(HitVFX());
+            manager.RunCoroutine(HitVFX());
     }
 
-    protected IEnumerator HitVFX()
+    protected virtual IEnumerator HitVFX()
     {
-        // TODO: Add sprite flash or hit effect
+        // TODO: flash sprite, particles, etc.
         yield return null;
     }
 
     protected virtual void Die()
     {
-        StopAllCoroutines();
+        StopCurrentKnockback();
         isStunned = false;
-        manager.DespawnEnemy(this);
+
         if (healthBar != null)
-            Destroy(healthBar.gameObject);
+            healthBar.gameObject.SetActive(false);
+
+        manager.DespawnEnemy(this);
     }
 
     public virtual void OnDashHit(Vector2 dashDirection, float power)
     {
-        int baseDamage = Mathf.CeilToInt(power);
-        float damageMultiplier = 1f;
-        if (ComboManager.Instance != null)
-            damageMultiplier = ComboManager.Instance.GetDamageMultiplier();
-        int finalDamage = Mathf.CeilToInt(baseDamage * damageMultiplier);
-        TakeDamage(finalDamage);
-        // Notify combo manager (per-enemy)
-        if (ComboManager.Instance != null)
-            ComboManager.Instance.RegisterEnemyHit();
-        // Knockback (unchanged except referencing manager coroutine)
-        SpawnEnemyManager.Instance.RunCoroutine(Knockback(dashDirection, 0.3f * power));
+        // Damage
+        float mult = ComboManager.Instance != null ? ComboManager.Instance.GetDamageMultiplier() : 1f;
+        int damage = Mathf.CeilToInt(power * mult);
+        TakeDamage(damage);
+
+        // Combo
+        ComboManager.Instance?.RegisterEnemyHit();
+
+        // Knockback - safely restart
+        StopCurrentKnockback();
+        knockbackCoroutine = manager.RunCoroutine(KnockbackRoutine(dashDirection.normalized, 0.3f * power));
     }
 
-    private IEnumerator Knockback(Vector2 dir, float strength)
+    private IEnumerator KnockbackRoutine(Vector2 direction, float strength)
     {
         isStunned = true;
         float timer = 0.2f;
+
         while (timer > 0f)
         {
-            if (!gameObject.activeInHierarchy) yield break; // stop early if despawned
-            rb.MovePosition(rb.position + dir.normalized * strength * Time.deltaTime);
+            if (!gameObject.activeInHierarchy) // Despawned mid-knockback?
+                yield break;
+
+            rb.MovePosition(rb.position + direction * strength * Time.deltaTime);
             timer -= Time.deltaTime;
             yield return null;
         }
+
         isStunned = false;
+        knockbackCoroutine = null;
+    }
+
+    private void StopCurrentKnockback()
+    {
+        if (knockbackCoroutine != null)
+        {
+            manager.StopCoroutine(knockbackCoroutine);
+            knockbackCoroutine = null;
+        }
+        isStunned = false;
+    }
+
+    // Extra safety when object is returned to pool
+    private void OnDisable()
+    {
+        StopCurrentKnockback();
     }
 }

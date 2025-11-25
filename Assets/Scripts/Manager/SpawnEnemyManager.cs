@@ -47,9 +47,9 @@ public class SpawnEnemyManager : GameSingleton<SpawnEnemyManager>
         spawnTimer = 0f; // Start spawning immediately
     }
 
-    public void RunCoroutine(IEnumerator routine)
+    public Coroutine RunCoroutine(IEnumerator routine)
     {
-        StartCoroutine(routine);
+        return StartCoroutine(routine);
     }
 
     private void SpawnEnemy()

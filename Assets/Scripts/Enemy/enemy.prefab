@@ -146,8 +146,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   poolKey: 0
   maxHP: 5
-  moveSpeed: 4
-  chaseRange: 15
+  moveSpeed: 6
+  chaseRange: 100
 --- !u!50 &7334266090611611846
 Rigidbody2D:
   serializedVersion: 4
