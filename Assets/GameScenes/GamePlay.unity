@@ -330,6 +330,9 @@ MonoBehaviour:
   - poolKey: 2
     prefab: {fileID: 8473739720916134257, guid: b65c8805636368a489432ba1171a16c4, type: 3}
     quantity: 20
+  - poolKey: 3
+    prefab: {fileID: 6642921443973204472, guid: 6728a4273f50105479786c977deacd5e, type: 3}
+    quantity: 20
 --- !u!1 &114628268
 GameObject:
   m_ObjectHideFlags: 0
@@ -864,6 +867,57 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &531812957
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 531812958}
+  - component: {fileID: 531812959}
+  m_Layer: 0
+  m_Name: ExperienceManager
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &531812958
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 531812957}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 1268129363}
+  m_RootOrder: -1
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &531812959
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 531812957}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: cbaed09ecffe1624b99cb7f17cfa8e28, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  persistAcrossScenes: 0
+  currentLevel: 1
+  currentExp: 0
+  maxLevel: 10
+  baseExpPerLevel: 200
+  expGrowthPerLevel: 1.5
+  roomsPassed: 0
 --- !u!1 &561421704
 GameObject:
   m_ObjectHideFlags: 0
@@ -1483,30 +1537,6 @@ MonoBehaviour:
   comboResetTime: 3
   damageMultiplierPerCombo: 0.02
   extraTimePerEnemyBase: 0.25
-  multiplierCurve:
-    serializedVersion: 2
-    m_Curve:
-    - serializedVersion: 3
-      time: 0
-      value: 0
-      inSlope: 1
-      outSlope: 1
-      tangentMode: 34
-      weightedMode: 0
-      inWeight: 0
-      outWeight: 0
-    - serializedVersion: 3
-      time: 1
-      value: 1
-      inSlope: 1
-      outSlope: 1
-      tangentMode: 34
-      weightedMode: 0
-      inWeight: 0
-      outWeight: 0
-    m_PreInfinity: 2
-    m_PostInfinity: 2
-    m_RotationOrder: 4
 --- !u!1 &913786879
 GameObject:
   m_ObjectHideFlags: 0
@@ -2110,6 +2140,7 @@ Transform:
   - {fileID: 869771845}
   - {fileID: 561588368}
   - {fileID: 1070463743}
+  - {fileID: 531812958}
   m_Father: {fileID: 0}
   m_RootOrder: 2
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}

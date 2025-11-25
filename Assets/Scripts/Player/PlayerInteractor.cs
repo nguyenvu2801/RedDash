@@ -58,7 +58,14 @@ public class PlayerInteractor : MonoBehaviour
             current.Interact(gameObject);
         }
     }
-
+    private void OnTriggerEnter2D(Collider2D collision)
+    {
+        ExperienceDrop drop = collision.GetComponent<ExperienceDrop>();
+        if (drop != null)
+        {
+            drop.Collect();
+        }
+    }
     // Optional: visualise radius
     void OnDrawGizmosSelected()
     {

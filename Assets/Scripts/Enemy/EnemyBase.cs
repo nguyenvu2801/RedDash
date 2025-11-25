@@ -10,7 +10,8 @@ public class EnemyBase : MonoBehaviour
     [SerializeField] private int maxHP = 3;
     [SerializeField] private float moveSpeed = 2f;
     [SerializeField] private float chaseRange = 8f;
-
+    [Header("Experience Settings")]
+    [SerializeField] private int baseExp = 10;
     private int baseMaxHP;
     private int currentHP;
     private Transform player;
@@ -88,7 +89,7 @@ public class EnemyBase : MonoBehaviour
     {
         StopCurrentKnockback();
         isStunned = false;
-
+        SpawnExperience();
         if (healthBar != null)
         {
             PoolManager.Instance.ReturnToPool(PoolKey.enemyHealthBar, healthBar.gameObject);
@@ -140,7 +141,19 @@ public class EnemyBase : MonoBehaviour
         }
         isStunned = false;
     }
+    private void SpawnExperience()
+    {
+        if (PoolManager.Instance == null) return;
 
+        GameObject expObj = PoolManager.Instance.GetFromPool(PoolKey.experience);
+        expObj.transform.position = transform.position;
+
+        ExperienceDrop drop = expObj.GetComponent<ExperienceDrop>();
+
+        // Scale experience based on rooms passed
+        int expValue = Mathf.CeilToInt(baseExp * (1f + 0.1f * RoomManager.Instance.CurrentRoomNumber));
+        drop.Init(expValue);
+    }
     // Extra safety when object is returned to pool
     private void OnDisable()
     {

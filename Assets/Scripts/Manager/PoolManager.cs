@@ -59,7 +59,8 @@ public enum PoolKey
 {
    enemy,
    damagePopup,
-   enemyHealthBar
+   enemyHealthBar,
+   experience
 }
 
 [System.Serializable]

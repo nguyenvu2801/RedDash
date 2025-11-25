@@ -17,7 +17,10 @@ public class UIManager : GameSingleton<UIManager>
     [SerializeField] private TextMeshProUGUI currencyText;
     [SerializeField] private float comboPopupScale = 1.6f;
     [SerializeField] private float comboPopupTime = 0.25f;
-
+    [Header("Experience UI")]
+    [SerializeField] private Image experienceFill;      // Assign the fill image in Inspector
+    [SerializeField] private TextMeshProUGUI xpText;     // Text to show "currentXP / maxXP"
+    [SerializeField] private float expFillTweenTime = 0.25f;
     private Tween scaleTween;
     private Tween popupTween;
 
@@ -49,6 +52,26 @@ public class UIManager : GameSingleton<UIManager>
         // Tween the scale smoothly
         scaleTween = screenEdgeWarning.rectTransform.DOScale(targetScale, 0.25f)
             .SetEase(Ease.OutQuad);
+    }
+    public void UpdateExperienceUI()
+    {
+        if (experienceFill == null || ExperienceSystem.Instance == null) return;
+
+        int currentExp = ExperienceSystem.Instance.currentExp;
+        int currentLevel = ExperienceSystem.Instance.currentLevel;
+        int expForNextLevel = ExperienceSystem.Instance.GetExpForLevel(currentLevel);
+
+        float targetFill = Mathf.Clamp01((float)currentExp / expForNextLevel);
+
+        // Smooth fill animation
+        expTween?.Kill();
+        expTween = experienceFill.DOFillAmount(targetFill, expFillTweenTime).SetEase(Ease.OutQuad);
+
+        // Update text: "current / max"
+        if (xpText != null)
+        {
+            xpText.text = $"{currentExp} / {expForNextLevel}";
+        }
     }
 
     private void UpdateComboUI(int combo, float percentTimeLeft)
