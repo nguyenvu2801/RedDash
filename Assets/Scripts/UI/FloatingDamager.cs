@@ -1,5 +1,5 @@
-using UnityEngine;
 using TMPro;
+using UnityEngine;
 using System.Collections;
 
 public class FloatingDamager : MonoBehaviour
@@ -11,15 +11,25 @@ public class FloatingDamager : MonoBehaviour
     public Vector2 randomOffset = new Vector2(0.7f, 0.4f);
 
     private Color startColor;
+    private Coroutine animRoutine;
 
     void Awake()
     {
         startColor = text.color;
     }
 
+    private void OnEnable()
+    {
+        // reset alpha instantly when reused
+        text.color = startColor;
+
+        // reset local position so offset does not accumulate
+        transform.localPosition = Vector3.zero;
+    }
+
     public void Show(int amount)
     {
-        // random slight offset like Hades
+        // random offset
         transform.localPosition += new Vector3(
             Random.Range(-randomOffset.x, randomOffset.x),
             Random.Range(0, randomOffset.y),
@@ -27,9 +37,12 @@ public class FloatingDamager : MonoBehaviour
         );
 
         text.text = amount.ToString();
-        text.color = startColor;
 
-        StartCoroutine(PlayAnim());
+        // stop previously running coroutine (when reused from pool)
+        if (animRoutine != null)
+            StopCoroutine(animRoutine);
+
+        animRoutine = StartCoroutine(PlayAnim());
     }
 
     private IEnumerator PlayAnim()
@@ -38,10 +51,9 @@ public class FloatingDamager : MonoBehaviour
 
         while (t < lifetime)
         {
-            // upward move
             transform.position += Vector3.up * riseSpeed * Time.deltaTime;
 
-            // fade
+            // fade out
             Color c = text.color;
             c.a = Mathf.Lerp(1f, 0f, t / lifetime);
             text.color = c;
@@ -50,6 +62,7 @@ public class FloatingDamager : MonoBehaviour
             yield return null;
         }
 
-        Destroy(gameObject);
+        // return to pool, do not destroy
+        PoolManager.Instance.ReturnToPool(PoolKey.damagePopup, gameObject);
     }
 }
