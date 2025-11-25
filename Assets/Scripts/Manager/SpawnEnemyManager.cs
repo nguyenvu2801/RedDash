@@ -16,10 +16,7 @@ public class SpawnEnemyManager : GameSingleton<SpawnEnemyManager>
     private int enemiesToSpawn;
     private int spawnedCount;
     private float healthMultiplier;
-
     public int ActiveEnemiesCount => activeEnemies.Count;
-    public bool IsSpawningDone => spawnedCount >= enemiesToSpawn;
-
     void Start()
     {
         if (spawnCenter == null && GameObject.FindGameObjectWithTag("Player") != null)
@@ -44,7 +41,8 @@ public class SpawnEnemyManager : GameSingleton<SpawnEnemyManager>
         enemiesToSpawn = count;
         spawnedCount = 0;
         healthMultiplier = healthMult;
-        spawnTimer = 0f; // Start spawning immediately
+        spawnTimer = 0f;
+        activeEnemies.Clear(); // good practice
     }
 
     public Coroutine RunCoroutine(IEnumerator routine)
@@ -74,10 +72,13 @@ public class SpawnEnemyManager : GameSingleton<SpawnEnemyManager>
 
     public void DespawnEnemy(EnemyBase enemy)
     {
-        if (activeEnemies.Contains(enemy))
-            activeEnemies.Remove(enemy);
-        PoolManager.Instance.ReturnToPool(enemy.poolKey, enemy.gameObject);
+        if (activeEnemies.Remove(enemy)) // Remove returns bool
+        {
+            PoolManager.Instance.ReturnToPool(enemy.poolKey, enemy.gameObject);
+
+            // Check win condition here or let RoomManager poll
+        }
     }
 
-   
+    public bool IsRoomCleared => ActiveEnemiesCount <= 0;
 }

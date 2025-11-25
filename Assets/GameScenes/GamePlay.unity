@@ -333,6 +333,9 @@ MonoBehaviour:
   - poolKey: 3
     prefab: {fileID: 6642921443973204472, guid: 6728a4273f50105479786c977deacd5e, type: 3}
     quantity: 20
+  - poolKey: 4
+    prefab: {fileID: 8958846733081109359, guid: a5650d73ba8caa64db192b6a6dacd2d9, type: 3}
+    quantity: 5
 --- !u!1 &114628268
 GameObject:
   m_ObjectHideFlags: 0

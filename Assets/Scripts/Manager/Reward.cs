@@ -9,11 +9,10 @@ public class Reward : InteractableBase
     {
         if (other.CompareTag("Player"))
         {
-            // TODO: Grant actual reward here if needed (e.g., upgrade, points)
-            // For now, just advance
             CurrencyManager.Instance.AddCurrency(10);
             RoomManager.Instance.AdvanceToNextRoom();
-            Destroy(gameObject);
+            PoolManager.Instance.ReturnToPool(PoolKey.reward, gameObject);
+           
         }
     }
 }

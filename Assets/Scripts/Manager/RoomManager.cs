@@ -24,7 +24,6 @@ public class RoomManager : GameSingleton<RoomManager>
     private void Update()
     {
         if (GameManager.Instance.IsGameOver) return;
-
         // Update UI
         if (roomActive && enemiesLeftText != null)
         {
@@ -36,8 +35,7 @@ public class RoomManager : GameSingleton<RoomManager>
             roomsPassedText.text = "Rooms Passed: " + (currentRoom - 1);
         }
 
-        if (roomActive && SpawnEnemyManager.Instance.ActiveEnemiesCount == 0 &&
-     (SpawnEnemyManager.Instance.IsSpawningDone || enemiesToSpawn == 0))
+        if (roomActive && SpawnEnemyManager.Instance.IsRoomCleared)
         {
             RoomCleared();
         }
@@ -48,18 +46,11 @@ public class RoomManager : GameSingleton<RoomManager>
         currentHealthMultiplier = Mathf.Pow(healthMultiplierPerRoom, currentRoom - 1);
         enemiesToSpawn = baseEnemiesPerRoom + (currentRoom - 1) * additionalEnemiesPerRoom;
 
-        if (enemiesToSpawn > 0)
-        {
-            SpawnEnemyManager.Instance.StartSpawning(enemiesToSpawn, currentHealthMultiplier);
-            roomActive = true;
-        }
-        else
-        {
-            // No enemies, instantly clear room
-            RoomCleared();
-        }
+        // Spawn enemies
+        SpawnEnemyManager.Instance.StartSpawning(enemiesToSpawn, currentHealthMultiplier);
 
         TimerManager.Instance.isActive = true;
+        roomActive = true;
     }
 
     private void RoomCleared()
@@ -76,7 +67,7 @@ public class RoomManager : GameSingleton<RoomManager>
         if (rewardPrefab != null && SpawnEnemyManager.Instance.spawnCenter != null)
         {
             // Use PoolManager if reward should be pooled
-            GameObject reward = PoolManager.Instance.GetFromPool(PoolKey.experience);
+            GameObject reward = PoolManager.Instance.GetFromPool(PoolKey.reward);
             reward.transform.position = SpawnEnemyManager.Instance.spawnCenter.position;
             reward.SetActive(true);
         }

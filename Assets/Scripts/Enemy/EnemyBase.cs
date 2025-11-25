@@ -95,7 +95,7 @@ public class EnemyBase : MonoBehaviour
             PoolManager.Instance.ReturnToPool(PoolKey.enemyHealthBar, healthBar.gameObject);
         }
 
-        manager.DespawnEnemy(this);
+        SpawnEnemyManager.Instance.DespawnEnemy(this);
     }
 
     public virtual void OnDashHit(Vector2 dashDirection, float power)

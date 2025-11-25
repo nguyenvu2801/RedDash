@@ -71,7 +71,7 @@ Material:
     - _ColorMask: 15
     - _Cutoff: 0.5
     - _DetailNormalMapScale: 1
-    - _Distortion: 0.9838582
+    - _Distortion: -0.013699323
     - _DstBlend: 0
     - _GlossMapScale: 1
     - _Glossiness: 0.5
