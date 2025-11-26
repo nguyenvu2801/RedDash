@@ -58,6 +58,12 @@ public class ComboManager : GameSingleton<ComboManager>
 
     public void ResetCombo()
     {
+        if (currentCombo >= 20)
+        {
+            int reward = currentCombo / 5; 
+            CurrencyManager.Instance.AddCurrency(reward);
+            Debug.Log($"Combo converted to currency: +{reward}");
+        }
         currentCombo = 0;
         comboTimer = 0f;
         OnComboChanged?.Invoke(0, 0f);
