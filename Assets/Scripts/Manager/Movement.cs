@@ -14,6 +14,7 @@ public class Movement : MonoBehaviour
     [SerializeField] private LayerMask dashHitMask; // which layers count as hit (Enemy, EnergyNode)
     [SerializeField] private LayerMask wallMask;
     [SerializeField] private AnimationCurve dashCurve = AnimationCurve.EaseInOut(0, 0, 1, 1);
+    [SerializeField] private Transform visualTransform;
     private float DashRange;
     private float DashCooldown;
     private float DashPenalty; //remember to compute these 2 stats
@@ -32,7 +33,9 @@ public class Movement : MonoBehaviour
     public Action<bool> OnDashEnd; // bool = hit or miss
     private bool dashHitSomething = false;
     private Vector2 currentDashDirection;
-
+    [SerializeField] private CharacterAnimator animator;
+    [SerializeField] private SpriteRenderer sr;
+    private bool recoveringRotation = false;
     void Awake()
     {
         player = this;
@@ -53,6 +56,11 @@ public class Movement : MonoBehaviour
     {
         // timers
         cooldownTimer -= Time.deltaTime;
+        if (!dashing && !recoveringRotation)
+        {
+            Vector2 mouseWorldPos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
+            sr.flipX = (mouseWorldPos.x < transform.position.x);
+        }
         // input allowed only if not currently dashing and off cooldown
         if (!dashing && cooldownTimer <= 0f)
         {
@@ -121,74 +129,79 @@ public class Movement : MonoBehaviour
         currentDashDirection = direction;
         OnDashStart?.Invoke();
 
+        // Attack animation + face direction (flip off, full rotation)
+        if (animator != null)
+        {
+            animator.PlayAnimation("Attack");
+        }
+        sr.flipX = false;  // Rotation handles all directions
+        float angle = Mathf.Atan2(direction.y, direction.x) * Mathf.Rad2Deg;
+        visualTransform.rotation = Quaternion.Euler(0f, 0f, angle);
+
         storedVelocityBeforeDash = rb.velocity;
         rb.velocity = Vector2.zero;
-
         Vector2 startPos = rb.position;
 
-        // -----------------------------
-        // 1) Wall check
-        // -----------------------------
+        // 1) Wall check (unchanged)
         RaycastHit2D hit = Physics2D.Raycast(startPos, direction, distance, wallMask);
-
         Vector2 targetPos;
-
         if (hit.collider != null)
         {
-            // Stop right before the wall
             targetPos = hit.point - direction * 0.1f;
         }
         else
         {
-            // No wall dash full distance
             targetPos = startPos + direction * distance;
         }
 
-        // -----------------------------
-        // 2) Perform dash using curve
-        // -----------------------------
+        // 2) Perform dash using curve (unchanged)
         float elapsed = 0f;
-
         while (elapsed < dashDuration)
         {
             float t = elapsed / dashDuration;
             float eased = dashCurve.Evaluate(t);
-
-            // Set the position manually (MORE RELIABLE than MovePosition)
             rb.position = Vector2.Lerp(startPos, targetPos, eased);
-
             elapsed += Time.deltaTime;
             yield return null;
         }
-
-        // Ensure exact final position
         rb.position = targetPos;
 
-        // -----------------------------
-        // 3) Hit or miss logic
-        // -----------------------------
+        // 3) Hit or miss logic (unchanged)
         if (TimerManager.Instance != null)
         {
             if (dashHitSomething) TimerManager.Instance.AddTime(1f);
             else TimerManager.Instance.ReduceTime(1f);
         }
-
         OnDashEnd?.Invoke(dashHitSomething);
 
         // cooldown
         cooldownTimer = DashCooldown;
-
-        float blendTime = 0.08f;
-        float b = 0f;
-
-        while (b < blendTime)
+        // Back to Idle
+        if (animator != null)
         {
-            rb.velocity = Vector2.Lerp(Vector2.zero, storedVelocityBeforeDash, b / blendTime);
-            b += Time.deltaTime;
+            animator.PlayAnimation("Idle");
+        }
+        recoveringRotation = true;
+
+        Quaternion startRotation = visualTransform.rotation;
+        float blendTime = 0.08f;
+        float timer = 0f;
+
+        while (timer < blendTime)
+        {
+            float t = timer / blendTime;
+            visualTransform.rotation = Quaternion.RotateTowards(startRotation, Quaternion.identity, 720f * t);
+
+            rb.velocity = Vector2.Lerp(Vector2.zero, storedVelocityBeforeDash, t);
+
+            timer += Time.deltaTime;
             yield return null;
         }
 
+        visualTransform.rotation = Quaternion.identity;
         rb.velocity = storedVelocityBeforeDash;
+        recoveringRotation = false;
+       
 
         dashing = false;
     }

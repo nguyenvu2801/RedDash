@@ -70,7 +70,6 @@ public class CharacterAnimator : MonoBehaviour
                 {
                     // One-shot: Stay on last frame and exit
                     spriteRenderer.sprite = clip.frames[clip.frames.Length - 1];
-                    yield break;
                 }
             }
 
