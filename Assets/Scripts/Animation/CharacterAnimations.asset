@@ -29,10 +29,21 @@ MonoBehaviour:
     frameRate: 16
     loop: 0
   hurt:
-    frames: []
+    frames:
+    - {fileID: -1566026751, guid: d14c7e715b106aa48ab8923a1f973a76, type: 3}
+    - {fileID: 919321801, guid: d14c7e715b106aa48ab8923a1f973a76, type: 3}
+    - {fileID: -508173165, guid: d14c7e715b106aa48ab8923a1f973a76, type: 3}
+    - {fileID: -1140124241, guid: d14c7e715b106aa48ab8923a1f973a76, type: 3}
     frameRate: 10
-    loop: 1
+    loop: 0
   die:
-    frames: []
+    frames:
+    - {fileID: -1566026751, guid: d14c7e715b106aa48ab8923a1f973a76, type: 3}
+    - {fileID: 919321801, guid: d14c7e715b106aa48ab8923a1f973a76, type: 3}
+    - {fileID: -508173165, guid: d14c7e715b106aa48ab8923a1f973a76, type: 3}
+    - {fileID: -1140124241, guid: d14c7e715b106aa48ab8923a1f973a76, type: 3}
+    - {fileID: 2085604867, guid: 29497cc147c44d348bebeca8ea472366, type: 3}
+    - {fileID: -2122444691, guid: 29497cc147c44d348bebeca8ea472366, type: 3}
+    - {fileID: -1876690027, guid: 29497cc147c44d348bebeca8ea472366, type: 3}
     frameRate: 10
-    loop: 1
+    loop: 0
