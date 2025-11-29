@@ -298,11 +298,18 @@ public class Movement : MonoBehaviour
     }
     private IEnumerator DeathSequenceBeforeGameOver()
     {
+        // Small hit-stop effect
         Time.timeScale = 0.1f;
         yield return new WaitForSecondsRealtime(0.06f);
+
         Time.timeScale = 1f;
+
+        // Allow animation to play a bit
         yield return new WaitForSeconds(0.4f);
+
+        // Extra delay for dramatic effect
         yield return new WaitForSeconds(0.4f);
+
         GameManager.Instance.TriggerGameOver();
     }
     void OnDrawGizmosSelected()

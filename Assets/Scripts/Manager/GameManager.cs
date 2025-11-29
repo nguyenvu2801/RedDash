@@ -3,33 +3,45 @@ using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.SceneManagement;
 using DG.Tweening;
-using System;
+using Cinemachine;
 
 public class GameManager : GameSingleton<GameManager>
 {
     [Header("Game Over UI")]
     [SerializeField] private GameObject gameOverPanel;
-    [SerializeField] private Image fadeBackground;     // Black panel that fades in
+    [SerializeField] private Image fadeBackground;     // NEW
     [SerializeField] private Button returnToSafeHouseButton;
-    [Header("Death FX")]
-    [SerializeField] private Image redPulse;       // Transparent red circle or panel
-    [SerializeField] private float redPulseMax = 2.5f;
-    [SerializeField] private float cameraZoomAmount = 0.3f;
-    [SerializeField] private float shakeIntensity = 0.4f;
+
     [Header("Scenes")]
     [SerializeField] private string safeHouseSceneName = "PreRunLobby";
+
+    private CinemachineVirtualCamera vcam;
+    private CinemachineBasicMultiChannelPerlin shakeNoise;
+    private CinemachineFramingTransposer framing;
 
     public bool IsGameOver { get; private set; }
 
     protected override void Awake()
     {
         base.Awake();
-        // Hide panel at start
+
         if (gameOverPanel) gameOverPanel.SetActive(false);
+
+        vcam = FindObjectOfType<CinemachineVirtualCamera>();
+
+        if (vcam)
+        {
+            framing = vcam.GetCinemachineComponent<CinemachineFramingTransposer>();
+            shakeNoise = vcam.GetCinemachineComponent<CinemachineBasicMultiChannelPerlin>();
+        }
+
+        
     }
+
     public void TriggerGameOver()
     {
         if (IsGameOver) return;
+
         IsGameOver = true;
         StartCoroutine(GameOverSequence());
     }
@@ -38,34 +50,63 @@ public class GameManager : GameSingleton<GameManager>
     {
         gameOverPanel.SetActive(true);
 
-        // SCREEN SHAKE (requires DOTween Pro or your shake extension)
-        Camera.main.transform.DOShakePosition(0.3f, shakeIntensity);
+        // *** 1. Slow heavy death moment ***
+        Time.timeScale = 0.25f;
+        Time.fixedDeltaTime = 0.02f * Time.timeScale;
 
-        // CAMERA ZOOM IN
-        Camera.main.transform.DOBlendableLocalMoveBy(
-            new Vector3(0, 0, cameraZoomAmount), 0.5f
-        ).SetEase(Ease.OutQuad);
+        
+           fadeBackground.DOFade(0.18f, 0.45f);  // softer red, slower fade
 
-        // RED PULSE FLASH
-        redPulse.color = new Color(1, 0, 0, 0.35f);
-        redPulse.transform.localScale = Vector3.zero;
-        redPulse.transform.DOScale(redPulseMax, 0.55f).SetEase(Ease.OutCubic);
-        redPulse.DOFade(0, 0.55f);
+        // *** 1c. Camera SHAKE ***
+        StartCoroutine(ShakeCamera(0.2f, 0.4f));
 
-        // BACKGROUND FADE
-        fadeBackground.color = new Color(0, 0, 0, 0);
-        yield return fadeBackground.DOFade(0.95f, 0.8f)
-            .SetEase(Ease.OutCubic).WaitForCompletion();
+        // *** 2. Camera DRAG DOWN (Hades style) ***
+        if (framing != null)
+        {
+            DOTween.To(() => framing.m_TrackedObjectOffset,
+                       x => framing.m_TrackedObjectOffset = x,
+                       new Vector3(0, -0.45f, 0),
+                       1.1f)
+                   .SetEase(Ease.OutCubic);
+        }
 
-        // BUTTON APPEAR
+        // *** 3. Heavy fade-in ***
+        yield return fadeBackground
+            .DOFade(0.88f, 1.6f)   // less dark than before
+            .SetEase(Ease.InOutQuad)
+            .WaitForCompletion();
+
+
+        // Restore timescale (slow)
+        DOTween.To(() => Time.timeScale, x => Time.timeScale = x, 1f, 1.2f);
+        DOTween.To(() => Time.fixedDeltaTime, x => Time.fixedDeltaTime = x, 0.02f, 1.2f);
+
+        // *** 4. Bring in the button (heavy weight) ***
         returnToSafeHouseButton.gameObject.SetActive(true);
-        returnToSafeHouseButton.transform.localScale = Vector3.zero;
-        returnToSafeHouseButton.transform.DOScale(1.1f, 0.4f).SetEase(Ease.OutBack);
-        yield return returnToSafeHouseButton.transform.DOScale(1f, 0.15f).WaitForCompletion();
+        Transform t = returnToSafeHouseButton.transform;
+
+        t.localScale = Vector3.zero;
+        t.DOScale(1.15f, 0.8f).SetEase(Ease.OutBack);
+
+        yield return t.DOScale(1f, 0.2f).WaitForCompletion();
     }
 
+    // *** CAMERA SHAKE FUNCTION ***
+    private IEnumerator ShakeCamera(float duration, float intensity)
+    {
+        if (shakeNoise == null)
+            yield break;
 
-    // Call this from your Button's OnClick()
+        shakeNoise.m_AmplitudeGain = intensity;
+
+        yield return new WaitForSecondsRealtime(duration);
+
+        // smooth out
+        DOTween.To(() => shakeNoise.m_AmplitudeGain,
+                   x => shakeNoise.m_AmplitudeGain = x,
+                   0f, 0.6f);
+    }
+
     public void ReturnToSafeHouse()
     {
         if (IsGameOver)
@@ -74,21 +115,20 @@ public class GameManager : GameSingleton<GameManager>
 
     private IEnumerator LoadSafeHouseWithFade()
     {
-        // Disable button to prevent double click
         returnToSafeHouseButton.interactable = false;
 
         // Fade to full black
-        yield return fadeBackground.DOFade(1f, 0.7f).SetEase(Ease.InCubic).WaitForCompletion();
+        yield return fadeBackground
+            .DOFade(1f, 0.7f)
+            .SetEase(Ease.InCubic)
+            .WaitForCompletion();
 
-        // Reset game state
         IsGameOver = false;
         Time.timeScale = 1f;
 
-        // Load Safe House
         SceneManager.LoadScene(safeHouseSceneName);
     }
 
-    // Optional: Allow pressing any key or tap to return faster
     private void Update()
     {
         if (IsGameOver && Input.anyKeyDown)

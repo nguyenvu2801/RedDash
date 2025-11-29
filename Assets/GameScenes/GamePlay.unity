@@ -1545,7 +1545,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   persistAcrossScenes: 0
-  maxTimer: 5
+  maxTimer: 3
   currentTimer: 0
   decayRate: 1
   isActive: 1
@@ -1919,14 +1919,14 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
-  m_Color: {r: 1, g: 0, b: 0, a: 0}
+  m_Color: {r: 1, g: 1, b: 1, a: 0}
   m_RaycastTarget: 1
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 0}
+  m_Sprite: {fileID: 21300000, guid: 1b5ae99d4b5a00e498ab1e989c0348d0, type: 3}
   m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1
@@ -2872,10 +2872,6 @@ MonoBehaviour:
   gameOverPanel: {fileID: 1226255925}
   fadeBackground: {fileID: 828284964}
   returnToSafeHouseButton: {fileID: 84500655}
-  redPulse: {fileID: 828284964}
-  redPulseMax: 2.5
-  cameraZoomAmount: 0.3
-  shakeIntensity: 0.4
   safeHouseSceneName: PreRunLobby
 --- !u!4 &1268129363
 Transform:
@@ -4143,6 +4139,7 @@ GameObject:
   - component: {fileID: 2141645815}
   - component: {fileID: 2141645817}
   - component: {fileID: 2141645816}
+  - component: {fileID: 2141645818}
   m_Layer: 0
   m_Name: cm
   m_TagString: Untagged
@@ -4220,6 +4217,23 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ac0b09e7857660247b1477e93731de29, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!114 &2141645818
+MonoBehaviour:
+  m_ObjectHideFlags: 3
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2141645814}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 68bb026fafb42b14791938953eaace77, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_NoiseProfile: {fileID: 11400000, guid: 69ce8388f6785dd4c8c39915efece2f4, type: 2}
+  m_PivotOffset: {x: 0, y: 0, z: 0}
+  m_AmplitudeGain: 0
+  m_FrequencyGain: 1.5
+  mNoiseOffsets: {x: 0, y: 0, z: 0}
 --- !u!19719996 &327439345561464704
 TilemapCollider2D:
   m_ObjectHideFlags: 0
