@@ -30,6 +30,7 @@ public class SpawnEnemyManager : GameSingleton<SpawnEnemyManager>
         spawnTimer -= Time.deltaTime;
         if (spawnTimer <= 0f && activeEnemies.Count < maxActiveEnemies && spawnedCount < enemiesToSpawn)
         {
+            Debug.Log("a");
             SpawnEnemy();
             spawnedCount++;
             spawnTimer = spawnInterval;
@@ -55,7 +56,6 @@ public class SpawnEnemyManager : GameSingleton<SpawnEnemyManager>
         PoolKey key = enemyPoolKeys[Random.Range(0, enemyPoolKeys.Count)];
         GameObject enemyObj = PoolManager.Instance.GetFromPool(key);
         if (enemyObj == null) return;
-
         Vector2 randomCircle = Random.insideUnitCircle * spawnRadius;
         Vector3 spawnPos = (spawnCenter != null)
             ? spawnCenter.position + new Vector3(randomCircle.x, randomCircle.y, 0f)

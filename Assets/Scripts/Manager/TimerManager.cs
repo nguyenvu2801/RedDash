@@ -12,7 +12,7 @@ public class TimerManager : GameSingleton<TimerManager>
     public bool isActive = true;
     public event Action OnTimerDepleted;
     public event Action<float> OnTimerChanged;
-
+    public event Action<float> OnPlayerDamaged;
     void Start()
     {
         currentTimer = maxTimer;
@@ -28,8 +28,10 @@ public class TimerManager : GameSingleton<TimerManager>
         OnTimerChanged?.Invoke(currentTimer / maxTimer);
         if (currentTimer <= 0)
         {
-            isActive = false;
+
             OnTimerDepleted?.Invoke();
+            isActive = false;
+            
         }
     }
 
@@ -43,6 +45,12 @@ public class TimerManager : GameSingleton<TimerManager>
     {
         currentTimer = Mathf.Max(currentTimer - seconds, 0f);
         OnTimerChanged?.Invoke(currentTimer);
+        OnPlayerDamaged?.Invoke(seconds);
+        if (currentTimer <= 0f)
+        {
+            OnTimerDepleted?.Invoke();
+            isActive = false;
+        }
     }
 
     public void ModifyDecayRate(float modifier)

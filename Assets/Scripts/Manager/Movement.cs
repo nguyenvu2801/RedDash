@@ -2,6 +2,7 @@ using UnityEngine;
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using UnityEngine.SceneManagement;
 
 [RequireComponent(typeof(Rigidbody2D))]
 public class Movement : MonoBehaviour
@@ -15,6 +16,7 @@ public class Movement : MonoBehaviour
     [SerializeField] private LayerMask wallMask;
     [SerializeField] private AnimationCurve dashCurve = AnimationCurve.EaseInOut(0, 0, 1, 1);
     [SerializeField] private Transform visualTransform;
+
     private float DashRange;
     private float DashCooldown;
     private float DashPenalty; //remember to compute these 2 stats
@@ -36,8 +38,32 @@ public class Movement : MonoBehaviour
     [SerializeField] private CharacterAnimator animator;
     [SerializeField] private SpriteRenderer sr;
     private bool recoveringRotation = false;
+    private bool isDead = false;  // Prevent multiple deaths
+    private Coroutine hurtCoroutine = null;
+
+    private void OnEnable() => SceneManager.sceneLoaded += TrySubscribe;
+    private void OnDisable() => SceneManager.sceneLoaded -= TrySubscribe;
+
+    private void TrySubscribe(Scene _, LoadSceneMode __)
+    {
+        if (TimerManager.Instance is { } tm)
+        {
+            tm.OnPlayerDamaged -= HandleDamage; tm.OnPlayerDamaged += HandleDamage;
+            tm.OnTimerDepleted -= HandleDeath; tm.OnTimerDepleted += HandleDeath;
+        }
+    }
+
+    private void TryUnsubscribeFromTimer()
+    {
+        if (TimerManager.HasInstance && TimerManager.Instance != null)
+        {
+            TimerManager.Instance.OnPlayerDamaged -= HandleDamage;
+            TimerManager.Instance.OnTimerDepleted -= HandleDeath;
+        }
+    }
     void Awake()
     {
+        TrySubscribe(default, default);
         player = this;
         rb = GetComponent<Rigidbody2D>();
         if (dashCurve == null)
@@ -47,13 +73,9 @@ public class Movement : MonoBehaviour
         ComputeDashStats();
     }
 
-    void OnDestroy()
-    {
-        UpgradeManager.OnUpgradeSuccessful -= HandleUpgrade;
-    }
-
     void Update()
     {
+        if (isDead) return;
         // timers
         cooldownTimer -= Time.deltaTime;
         if (!dashing && !recoveringRotation)
@@ -80,22 +102,9 @@ public class Movement : MonoBehaviour
                     isDragging = false;
                 }
             }
-            //else // Mouse input (testing)
-            //{
-            //    if (Input.GetMouseButtonDown(0))
-            //    {
-            //        isDragging = true;
-            //        startDragPos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
-            //    }
-            //    else if (isDragging && Input.GetMouseButtonUp(0))
-            //    {
-            //        Vector2 endPos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
-            //        TryStartDashFromDrag(startDragPos, endPos);
-            //        isDragging = false;
-            //    }
-            //}
             if (Input.GetKeyDown(KeyCode.Space))
             {
+                if (isDead) return;
                 Vector2 playerPos = rb.position;
                 Vector2 mouseWorldPos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
 
@@ -105,10 +114,12 @@ public class Movement : MonoBehaviour
                 StartCoroutine(DashRoutine(dashDirection, distance));
             }
         }
+        Debug.Log(isDead);
     }
 
     void TryStartDashFromDrag(Vector2 start, Vector2 end)
     {
+        if (isDead) return;
         Vector2 raw = end - start;
         if (raw.sqrMagnitude < minDragDistance * minDragDistance)
         {
@@ -176,10 +187,9 @@ public class Movement : MonoBehaviour
 
         // cooldown
         cooldownTimer = DashCooldown;
-        // Back to Idle
-        if (animator != null)
+        if (!isDead && hurtCoroutine == null)
         {
-            animator.PlayAnimation("Idle");
+            animator?.PlayAnimation("Idle");
         }
         recoveringRotation = true;
 
@@ -241,7 +251,54 @@ public class Movement : MonoBehaviour
         DashCooldown = UpgradeManager.Instance.ComputeStat(UpgradeType.DashCooldown);
         DashPenalty = UpgradeManager.Instance.ComputeStat(UpgradeType.DashPenalty);
     }
+    private void HandleDamage(float amount)
+    {
+        if (isDead) return;
 
+        // Stop any previous hurt coroutine
+        if (hurtCoroutine != null)
+            StopCoroutine(hurtCoroutine);
+
+        // Play hurt animation
+        animator?.PlayAnimation("Hurt");
+
+        // Force return to Idle after fixed time (even if dashing!)
+        hurtCoroutine = StartCoroutine(ReturnToIdleAfterHurt());
+    }
+
+    private IEnumerator ReturnToIdleAfterHurt()
+    {
+        yield return new WaitForSeconds(0.25f); // Slightly longer than before
+
+        // Only go back to Idle if we're not dashing and not dead
+        if (!isDead && !dashing)
+        {
+            animator?.PlayAnimation("Idle");
+        }
+        hurtCoroutine = null;
+    }
+    private void HandleDeath()
+    {
+
+        if (isDead) return;
+        isDead = true;
+
+        // Stop all movement
+        rb.velocity = Vector2.zero;
+        dashing = false;
+
+        // Play death animation and STAY on it
+        if (animator != null)
+        {
+            animator.PlayAnimation("Die");
+        }
+
+        // Optional: flash red, screen shake, etc.
+        // StartCoroutine(DeathEffect());
+
+        // Let GameManager handle Game Over screen, sound, etc.
+        GameManager.Instance.TriggerGameOver();
+    }
     void OnDrawGizmosSelected()
     {
         // visualize dash hit radius at player position

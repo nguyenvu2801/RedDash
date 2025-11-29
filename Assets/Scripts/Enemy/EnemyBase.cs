@@ -14,8 +14,9 @@ public class EnemyBase : MonoBehaviour
     [SerializeField] private int baseExp = 10;
     private int baseMaxHP;
     private int currentHP;
-    private Transform player;
-    private bool isStunned;
+    protected Transform player;
+    protected bool isStunned;
+    protected bool isDead = false;
     private Rigidbody2D rb;
     private EnemyHealthBar healthBar;
 
@@ -38,6 +39,7 @@ public class EnemyBase : MonoBehaviour
         this.poolKey = key;
 
         // Reset state from previous life (critical for pooling!)
+        isDead = false;
         isStunned = false;
         StopCurrentKnockback();
 
@@ -58,7 +60,7 @@ public class EnemyBase : MonoBehaviour
 
     protected virtual void Update()
     {
-        if (GameManager.Instance.IsGameOver || isStunned || player == null) return;
+        if (GameManager.Instance.IsGameOver || isDead || isStunned || player == null) return; 
 
         Vector2 dir = player.position - transform.position;
         if (dir.sqrMagnitude < chaseRange * chaseRange)
@@ -87,17 +89,32 @@ public class EnemyBase : MonoBehaviour
 
     protected virtual void Die()
     {
+        if (isDead) return; // Prevent double-death
+        isDead = true;
+
         StopCurrentKnockback();
         isStunned = false;
+
+        // Stop all physics movement immediately
+        if (rb != null)
+        {
+            rb.velocity = Vector2.zero;
+            rb.angularVelocity = 0f;
+            rb.bodyType = RigidbodyType2D.Kinematic; // Optional: makes it ignore physics completely
+        }
+
         SpawnExperience();
+
         if (healthBar != null)
         {
             PoolManager.Instance.ReturnToPool(PoolKey.enemyHealthBar, healthBar.gameObject);
         }
-
-        SpawnEnemyManager.Instance.DespawnEnemy(this);
+        OnDeathStarted();
     }
-
+    protected virtual void OnDeathStarted()
+    {
+        // Thornling will override this to play Die animation + delay despawn
+    }
     public virtual void OnDashHit(Vector2 dashDirection, float power)
     {
         // Damage

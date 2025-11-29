@@ -55,28 +55,23 @@ public class CharacterAnimator : MonoBehaviour
 
     private IEnumerator PlayClip(CharacterAnimation.AnimationClip clip)
     {
+        if (clip.frames == null || clip.frames.Length == 0) yield break;
+
         float delay = 1f / clip.frameRate;
         int frameIndex = 0;
 
-        while (true)
+        while (frameIndex < clip.frames.Length || clip.loop)
         {
             if (frameIndex >= clip.frames.Length)
-            {
-                if (clip.loop)
-                {
-                    frameIndex = 0; // Loop back
-                }
-                else
-                {
-                    // One-shot: Stay on last frame and exit
-                    spriteRenderer.sprite = clip.frames[clip.frames.Length - 1];
-                }
-            }
+                frameIndex = 0;
 
             spriteRenderer.sprite = clip.frames[frameIndex];
             frameIndex++;
 
             yield return new WaitForSeconds(delay);
         }
+
+        
+        spriteRenderer.sprite = clip.frames[clip.frames.Length - 1];
     }
 }

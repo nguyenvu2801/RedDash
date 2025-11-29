@@ -11,10 +11,11 @@ GameObject:
   - component: {fileID: 205343296512375832}
   - component: {fileID: 8292416537743114172}
   - component: {fileID: 2220256240716538079}
-  - component: {fileID: 8220511257619655675}
   - component: {fileID: 7334266090611611846}
+  - component: {fileID: 731747146263354758}
+  - component: {fileID: 2473135831307922019}
   m_Layer: 6
-  m_Name: enemy
+  m_Name: Thornling
   m_TagString: Enemy
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -75,7 +76,7 @@ SpriteRenderer:
   m_LightmapParameters: {fileID: 0}
   m_SortingLayerID: 0
   m_SortingLayer: 0
-  m_SortingOrder: 0
+  m_SortingOrder: 5
   m_Sprite: {fileID: -995825184, guid: b631ed305dfd43c488e0f8edf5c829bc, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
@@ -132,23 +133,6 @@ BoxCollider2D:
   serializedVersion: 2
   m_Size: {x: 1, y: 1.023445}
   m_EdgeRadius: 0
---- !u!114 &8220511257619655675
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 3855193392533343068}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: c51ed5dad314dc042a0d199c1f2b64b0, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  poolKey: 0
-  maxHP: 5
-  moveSpeed: 6
-  chaseRange: 100
-  baseExp: 10
 --- !u!50 &7334266090611611846
 Rigidbody2D:
   serializedVersion: 4
@@ -176,3 +160,40 @@ Rigidbody2D:
   m_SleepingMode: 1
   m_CollisionDetection: 0
   m_Constraints: 0
+--- !u!114 &731747146263354758
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3855193392533343068}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ffc49eff0e430e246a286d4e5da75b20, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  poolKey: 0
+  maxHP: 5
+  moveSpeed: 6
+  chaseRange: 15
+  baseExp: 10
+  thornRadius: 1.5
+  timeDrainOnThornHit: 10
+  thornTickRate: 0.3
+  safeDuration: 4
+  thornDuration: 1
+  thornScaleMultiplier: 1.15
+  thornAnimator: {fileID: 2473135831307922019}
+--- !u!114 &2473135831307922019
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3855193392533343068}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7b86203aa0c9bc04281cb6eca4d2e414, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  animations: {fileID: 11400000, guid: e0a50109154d91a46bbf74a6aaea0dd9, type: 2}

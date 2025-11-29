@@ -34,7 +34,7 @@ TextureImporter:
   maxTextureSize: 2048
   textureSettings:
     serializedVersion: 2
-    filterMode: 1
+    filterMode: 0
     aniso: 1
     mipBias: 0
     wrapU: 1
@@ -43,12 +43,12 @@ TextureImporter:
   nPOTScale: 0
   lightmap: 0
   compressionQuality: 50
-  spriteMode: 1
+  spriteMode: 2
   spriteExtrude: 1
   spriteMeshType: 1
   alignment: 0
   spritePivot: {x: 0.5, y: 0.5}
-  spritePixelsToUnits: 100
+  spritePixelsToUnits: 300
   spriteBorder: {x: 0, y: 0, z: 0, w: 0}
   spriteGenerateFallbackPhysicsShape: 1
   alphaUsage: 1
@@ -72,7 +72,7 @@ TextureImporter:
     maxTextureSize: 2048
     resizeAlgorithm: 0
     textureFormat: -1
-    textureCompression: 1
+    textureCompression: 0
     compressionQuality: 50
     crunchedCompression: 0
     allowsAlphaSplitting: 0
@@ -108,7 +108,70 @@ TextureImporter:
     forceMaximumCompressionQuality_BC6H_BC7: 0
   spriteSheet:
     serializedVersion: 2
-    sprites: []
+    sprites:
+    - serializedVersion: 2
+      name: "Thi\u1EBFt k\u1EBF ch\u01B0a c\xF3 t\xEAn (8)_0"
+      rect:
+        serializedVersion: 2
+        x: 317
+        y: 478
+        width: 219
+        height: 288
+      alignment: 7
+      pivot: {x: 0.5, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: bdce577f6dd942f4fb72ba92c5b9cb02
+      internalID: -142182050
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: "Thi\u1EBFt k\u1EBF ch\u01B0a c\xF3 t\xEAn (8)_1"
+      rect:
+        serializedVersion: 2
+        x: 710
+        y: 477
+        width: 230
+        height: 288
+      alignment: 7
+      pivot: {x: 0.5, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 3e53b2fa14fe4da498d06d7da6e3ac7b
+      internalID: -80813135
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: "Thi\u1EBFt k\u1EBF ch\u01B0a c\xF3 t\xEAn (8)_2"
+      rect:
+        serializedVersion: 2
+        x: 688
+        y: 80
+        width: 321
+        height: 136
+      alignment: 7
+      pivot: {x: 0.5, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: e5f85bdba93c8584d851e5034b1c80c4
+      internalID: 1309748889
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
     outline: []
     physicsShape: []
     bones: []
@@ -119,7 +182,10 @@ TextureImporter:
     edges: []
     weights: []
     secondaryTextures: []
-    nameFileIdTable: {}
+    nameFileIdTable:
+      "Thi\u1EBFt k\u1EBF ch\u01B0a c\xF3 t\xEAn (8)_0": -142182050
+      "Thi\u1EBFt k\u1EBF ch\u01B0a c\xF3 t\xEAn (8)_1": -80813135
+      "Thi\u1EBFt k\u1EBF ch\u01B0a c\xF3 t\xEAn (8)_2": 1309748889
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 

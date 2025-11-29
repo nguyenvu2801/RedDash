@@ -20,7 +20,10 @@ public class RoomManager : GameSingleton<RoomManager>
     private int enemiesToSpawn;
 
     public int CurrentRoomNumber => currentRoom;
-
+    private void Start()
+    {
+        StartRoom();
+    }
     private void Update()
     {
         if (GameManager.Instance.IsGameOver) return;
@@ -45,7 +48,6 @@ public class RoomManager : GameSingleton<RoomManager>
     {
         currentHealthMultiplier = Mathf.Pow(healthMultiplierPerRoom, currentRoom - 1);
         enemiesToSpawn = baseEnemiesPerRoom + (currentRoom - 1) * additionalEnemiesPerRoom;
-
         // Spawn enemies
         SpawnEnemyManager.Instance.StartSpawning(enemiesToSpawn, currentHealthMultiplier);
 
