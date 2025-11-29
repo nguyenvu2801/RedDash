@@ -559,8 +559,8 @@ MonoBehaviour:
   m_ShadowVolumeIntensityEnabled: 0
   m_ShadowVolumeIntensity: 0.75
   m_LocalBounds:
-    m_Center: {x: -0.54684997, y: 0.61300004, z: 0}
-    m_Extent: {x: 4.2473497, y: 3.9688, z: 0}
+    m_Center: {x: -0.53910005, y: 0.6086, z: 0}
+    m_Extent: {x: 4.2453, y: 3.9696999, z: 0}
   m_PointLightInnerAngle: 360
   m_PointLightOuterAngle: 360
   m_PointLightInnerRadius: 0
@@ -2881,6 +2881,42 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 4419693110202590937, guid: b50d0b167a51fc84d93d2eb2755e0ebb, type: 3}
+      propertyPath: m_ChunkCullingBounds.x
+      value: 100
+      objectReference: {fileID: 0}
+    - target: {fileID: 4419693110202590937, guid: b50d0b167a51fc84d93d2eb2755e0ebb, type: 3}
+      propertyPath: m_ChunkCullingBounds.y
+      value: 100
+      objectReference: {fileID: 0}
+    - target: {fileID: 4419693110202590937, guid: b50d0b167a51fc84d93d2eb2755e0ebb, type: 3}
+      propertyPath: m_DetectChunkCullingBounds
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 4697352870367222714, guid: b50d0b167a51fc84d93d2eb2755e0ebb, type: 3}
+      propertyPath: m_ChunkCullingBounds.x
+      value: 100
+      objectReference: {fileID: 0}
+    - target: {fileID: 4697352870367222714, guid: b50d0b167a51fc84d93d2eb2755e0ebb, type: 3}
+      propertyPath: m_ChunkCullingBounds.y
+      value: 100
+      objectReference: {fileID: 0}
+    - target: {fileID: 4697352870367222714, guid: b50d0b167a51fc84d93d2eb2755e0ebb, type: 3}
+      propertyPath: m_DetectChunkCullingBounds
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 5110622282545807661, guid: b50d0b167a51fc84d93d2eb2755e0ebb, type: 3}
+      propertyPath: m_ChunkCullingBounds.x
+      value: 100
+      objectReference: {fileID: 0}
+    - target: {fileID: 5110622282545807661, guid: b50d0b167a51fc84d93d2eb2755e0ebb, type: 3}
+      propertyPath: m_ChunkCullingBounds.y
+      value: 100
+      objectReference: {fileID: 0}
+    - target: {fileID: 5110622282545807661, guid: b50d0b167a51fc84d93d2eb2755e0ebb, type: 3}
+      propertyPath: m_DetectChunkCullingBounds
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 5994958486426367183, guid: b50d0b167a51fc84d93d2eb2755e0ebb, type: 3}
       propertyPath: m_Name
       value: Grid
@@ -9705,6 +9741,42 @@ PrefabInstance:
       propertyPath: m_Layer
       value: 7
       objectReference: {fileID: 0}
+    - target: {fileID: 7324776722563179868, guid: b50d0b167a51fc84d93d2eb2755e0ebb, type: 3}
+      propertyPath: m_ChunkCullingBounds.x
+      value: 100
+      objectReference: {fileID: 0}
+    - target: {fileID: 7324776722563179868, guid: b50d0b167a51fc84d93d2eb2755e0ebb, type: 3}
+      propertyPath: m_ChunkCullingBounds.y
+      value: 100
+      objectReference: {fileID: 0}
+    - target: {fileID: 7324776722563179868, guid: b50d0b167a51fc84d93d2eb2755e0ebb, type: 3}
+      propertyPath: m_DetectChunkCullingBounds
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 7440583921781257574, guid: b50d0b167a51fc84d93d2eb2755e0ebb, type: 3}
+      propertyPath: m_ChunkCullingBounds.x
+      value: 100
+      objectReference: {fileID: 0}
+    - target: {fileID: 7440583921781257574, guid: b50d0b167a51fc84d93d2eb2755e0ebb, type: 3}
+      propertyPath: m_ChunkCullingBounds.y
+      value: 100
+      objectReference: {fileID: 0}
+    - target: {fileID: 7440583921781257574, guid: b50d0b167a51fc84d93d2eb2755e0ebb, type: 3}
+      propertyPath: m_DetectChunkCullingBounds
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 9051315522107703004, guid: b50d0b167a51fc84d93d2eb2755e0ebb, type: 3}
+      propertyPath: m_ChunkCullingBounds.x
+      value: 100
+      objectReference: {fileID: 0}
+    - target: {fileID: 9051315522107703004, guid: b50d0b167a51fc84d93d2eb2755e0ebb, type: 3}
+      propertyPath: m_ChunkCullingBounds.y
+      value: 100
+      objectReference: {fileID: 0}
+    - target: {fileID: 9051315522107703004, guid: b50d0b167a51fc84d93d2eb2755e0ebb, type: 3}
+      propertyPath: m_DetectChunkCullingBounds
+      value: 1
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -10171,6 +10243,7 @@ GameObject:
   - component: {fileID: 1571859697}
   - component: {fileID: 1571859699}
   - component: {fileID: 1571859700}
+  - component: {fileID: 1571859701}
   m_Layer: 0
   m_Name: cm
   m_TagString: Untagged
@@ -10227,6 +10300,23 @@ MonoBehaviour:
   m_YawDamping: 0
   m_RollDamping: 0
   m_AngularDamping: 0
+--- !u!114 &1571859701
+MonoBehaviour:
+  m_ObjectHideFlags: 3
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1571859696}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 68bb026fafb42b14791938953eaace77, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_NoiseProfile: {fileID: 11400000, guid: 69ce8388f6785dd4c8c39915efece2f4, type: 2}
+  m_PivotOffset: {x: 0, y: 0, z: 0}
+  m_AmplitudeGain: 0
+  m_FrequencyGain: 1.5
+  mNoiseOffsets: {x: 0, y: 0, z: 0}
 --- !u!1 &1597934959
 GameObject:
   m_ObjectHideFlags: 0

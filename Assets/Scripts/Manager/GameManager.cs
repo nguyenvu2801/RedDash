@@ -58,7 +58,7 @@ public class GameManager : GameSingleton<GameManager>
            fadeBackground.DOFade(0.18f, 0.45f);  // softer red, slower fade
 
         // *** 1c. Camera SHAKE ***
-        StartCoroutine(ShakeCamera(0.2f, 0.4f));
+        StartCoroutine(ShakeCamera(0.5f, 1f));
 
         // *** 2. Camera DRAG DOWN (Hades style) ***
         if (framing != null)
@@ -92,19 +92,32 @@ public class GameManager : GameSingleton<GameManager>
     }
 
     // *** CAMERA SHAKE FUNCTION ***
-    private IEnumerator ShakeCamera(float duration, float intensity)
+    public IEnumerator ShakeCamera(float duration, float intensity)
     {
-        if (shakeNoise == null)
+        if (vcam == null || framing == null)
             yield break;
 
-        shakeNoise.m_AmplitudeGain = intensity;
+        Vector3 originalOffset = framing.m_TrackedObjectOffset;
+        float elapsed = 0f;
 
-        yield return new WaitForSecondsRealtime(duration);
+        while (elapsed < duration)
+        {
+            elapsed += Time.unscaledDeltaTime;
 
-        // smooth out
-        DOTween.To(() => shakeNoise.m_AmplitudeGain,
-                   x => shakeNoise.m_AmplitudeGain = x,
-                   0f, 0.6f);
+            // Smooth shake using sine + random
+            float shakeX = (Mathf.PerlinNoise(Time.unscaledTime * 20f, 0f) - 0.5f) * 2f * intensity;
+            float shakeY = (Mathf.PerlinNoise(0f, Time.unscaledTime * 20f) - 0.5f) * 2f * intensity;
+
+            framing.m_TrackedObjectOffset = originalOffset + new Vector3(shakeX, shakeY, 0f);
+
+            yield return null;
+        }
+
+        // Return to original offset smoothly
+        DOTween.To(() => framing.m_TrackedObjectOffset,
+                   x => framing.m_TrackedObjectOffset = x,
+                   originalOffset, 0.3f)
+               .SetEase(Ease.OutQuad);
     }
 
     public void ReturnToSafeHouse()

@@ -3,6 +3,8 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine.SceneManagement;
+using Cinemachine;
+using DG.Tweening;
 
 [RequireComponent(typeof(Rigidbody2D))]
 public class Movement : MonoBehaviour
@@ -16,7 +18,10 @@ public class Movement : MonoBehaviour
     [SerializeField] private LayerMask wallMask;
     [SerializeField] private AnimationCurve dashCurve = AnimationCurve.EaseInOut(0, 0, 1, 1);
     [SerializeField] private Transform visualTransform;
-
+    [Header("Camera Dash FX")]
+    [SerializeField] private float dashCamZoomAmount = 0.15f;
+    [SerializeField] private float dashCamOffsetAmount = 0.25f;
+    [SerializeField] private float dashCamDuration = 0.15f;
     private float DashRange;
     private float DashCooldown;
     private float DashPenalty; //remember to compute these 2 stats
@@ -39,6 +44,8 @@ public class Movement : MonoBehaviour
     [SerializeField] private SpriteRenderer sr;
     private bool recoveringRotation = false;
     private bool isDead = false;  // Prevent multiple deaths
+    private CinemachineVirtualCamera vcam;
+    private CinemachineFramingTransposer framing;
     private Coroutine hurtCoroutine = null;
 
     private void OnEnable() => SceneManager.sceneLoaded += TrySubscribe;
@@ -66,6 +73,10 @@ public class Movement : MonoBehaviour
         TrySubscribe(default, default);
         player = this;
         rb = GetComponent<Rigidbody2D>();
+        vcam = FindObjectOfType<CinemachineVirtualCamera>();
+        if (vcam)
+            framing = vcam.GetCinemachineComponent<CinemachineFramingTransposer>();
+
         if (dashCurve == null)
             dashCurve = AnimationCurve.EaseInOut(0, 0, 1, 1);
         UpgradeManager.OnUpgradeSuccessful += HandleUpgrade;
@@ -119,53 +130,42 @@ public class Movement : MonoBehaviour
 
     void TryStartDashFromDrag(Vector2 start, Vector2 end)
     {
-        if (isDead) return;
         Vector2 raw = end - start;
         if (raw.sqrMagnitude < minDragDistance * minDragDistance)
-        {
-            // treat as short tap: default to current facing/up
             raw = Vector2.up;
-        }
+
         Vector2 dir = raw.normalized;
-        // scale distance by drag length but clamp to max
         float dragLen = Mathf.Clamp(raw.magnitude, 0f, DashRange);
         float distance = Mathf.Lerp(DashRange * 0.4f, DashRange, dragLen / DashRange);
+
         StartCoroutine(DashRoutine(dir, distance));
     }
+
 
     IEnumerator DashRoutine(Vector2 direction, float distance)
     {
         dashing = true;
         dashHitSomething = false;
         currentDashDirection = direction;
-        OnDashStart?.Invoke();
+        storedVelocityBeforeDash = rb.velocity;
+        rb.velocity = Vector2.zero;
 
-        // Attack animation + face direction (flip off, full rotation)
-        if (animator != null)
-        {
-            animator.PlayAnimation("Attack");
-        }
-        sr.flipX = false;  // Rotation handles all directions
+        // Play dash animation
+        animator?.PlayAnimation("Attack");
+
+        // Face correct direction
+        sr.flipX = false;
         float angle = Mathf.Atan2(direction.y, direction.x) * Mathf.Rad2Deg;
         visualTransform.rotation = Quaternion.Euler(0f, 0f, angle);
 
-        storedVelocityBeforeDash = rb.velocity;
-        rb.velocity = Vector2.zero;
+        // --- Camera Dash FX ---
+        StartCoroutine(DashCameraEffect(direction));
+
+        // Wall check
         Vector2 startPos = rb.position;
-
-        // 1) Wall check (unchanged)
         RaycastHit2D hit = Physics2D.Raycast(startPos, direction, distance, wallMask);
-        Vector2 targetPos;
-        if (hit.collider != null)
-        {
-            targetPos = hit.point - direction * 0.1f;
-        }
-        else
-        {
-            targetPos = startPos + direction * distance;
-        }
+        Vector2 targetPos = hit.collider != null ? hit.point - direction * 0.1f : startPos + direction * distance;
 
-        // 2) Perform dash using curve (unchanged)
         float elapsed = 0f;
         while (elapsed < dashDuration)
         {
@@ -177,43 +177,72 @@ public class Movement : MonoBehaviour
         }
         rb.position = targetPos;
 
-        // 3) Hit or miss logic (unchanged)
-        if (TimerManager.Instance != null)
-        {
-            if (dashHitSomething) TimerManager.Instance.AddTime(1f);
-            else TimerManager.Instance.ReduceTime(1f);
-        }
-        OnDashEnd?.Invoke(dashHitSomething);
+        // Hit logic
+        if (dashHitSomething && GameManager.Instance)
+            StartCoroutine(GameManager.Instance.ShakeCamera(0.1f, 2f));
 
-        // cooldown
+        // Cooldown
         cooldownTimer = DashCooldown;
         if (!isDead && hurtCoroutine == null)
-        {
             animator?.PlayAnimation("Idle");
-        }
-        recoveringRotation = true;
 
+        // Reset rotation
         Quaternion startRotation = visualTransform.rotation;
         float blendTime = 0.08f;
         float timer = 0f;
-
         while (timer < blendTime)
         {
             float t = timer / blendTime;
             visualTransform.rotation = Quaternion.RotateTowards(startRotation, Quaternion.identity, 720f * t);
-
             rb.velocity = Vector2.Lerp(Vector2.zero, storedVelocityBeforeDash, t);
-
             timer += Time.deltaTime;
             yield return null;
         }
-
         visualTransform.rotation = Quaternion.identity;
         rb.velocity = storedVelocityBeforeDash;
-        recoveringRotation = false;
-       
 
         dashing = false;
+    }
+    private IEnumerator DashCameraEffect(Vector2 dashDirection)
+    {
+        if (framing == null || vcam == null) yield break;
+
+        Vector3 originalOffset = framing.m_TrackedObjectOffset;
+        Vector3 dashOffset = new Vector3(dashDirection.x, dashDirection.y, 0) * dashCamOffsetAmount * vcam.m_Lens.OrthographicSize;
+
+        // Smooth offset
+        DOTween.To(() => framing.m_TrackedObjectOffset,
+                   x => framing.m_TrackedObjectOffset = x,
+                   originalOffset + dashOffset,
+                   dashCamDuration / 2f)
+               .SetEase(Ease.OutQuad)
+               .OnComplete(() =>
+               {
+                   DOTween.To(() => framing.m_TrackedObjectOffset,
+                              x => framing.m_TrackedObjectOffset = x,
+                              originalOffset,
+                              dashCamDuration / 2f)
+                         .SetEase(Ease.InQuad);
+               });
+
+        // Zoom effect
+       float zoomAmount = 0.1f;
+        float originalSize = vcam.m_Lens.OrthographicSize;
+        DOTween.To(() => vcam.m_Lens.OrthographicSize,
+                   x => vcam.m_Lens.OrthographicSize = x,
+                   originalSize - zoomAmount,
+                   dashCamDuration / 2f)
+               .SetEase(Ease.OutQuad)
+               .OnComplete(() =>
+               {
+                   DOTween.To(() => vcam.m_Lens.OrthographicSize,
+                              x => vcam.m_Lens.OrthographicSize = x,
+                              originalSize,
+                              dashCamDuration / 2f)
+                         .SetEase(Ease.InQuad);
+               });
+
+        yield return new WaitForSeconds(dashCamDuration);
     }
 
     private void OnTriggerEnter2D(Collider2D other)
