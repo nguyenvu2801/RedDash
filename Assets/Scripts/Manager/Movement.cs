@@ -293,10 +293,16 @@ public class Movement : MonoBehaviour
             animator.PlayAnimation("Die");
         }
 
-        // Optional: flash red, screen shake, etc.
-        // StartCoroutine(DeathEffect());
 
-        // Let GameManager handle Game Over screen, sound, etc.
+        StartCoroutine(DeathSequenceBeforeGameOver());
+    }
+    private IEnumerator DeathSequenceBeforeGameOver()
+    {
+        Time.timeScale = 0.1f;
+        yield return new WaitForSecondsRealtime(0.06f);
+        Time.timeScale = 1f;
+        yield return new WaitForSeconds(0.4f);
+        yield return new WaitForSeconds(0.4f);
         GameManager.Instance.TriggerGameOver();
     }
     void OnDrawGizmosSelected()

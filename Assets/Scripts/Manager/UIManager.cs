@@ -43,7 +43,7 @@ public class UIManager : GameSingleton<UIManager>
     void UpdateUI(float percent)
     {
         timerBar.fillAmount = percent;
-        screenEdgeWarning.color = new Color(1, 0, 0, Mathf.Lerp(0f, 1f, 1 - percent));
+        screenEdgeWarning.color = new Color(0.8f, 0.1f, 0.1f, Mathf.Lerp(0f, 0.15f, 1 - percent));
         if (CurrencyManager.Instance != null)
         {
             currencyText.text = "Essence: " + CurrencyManager.Instance.GetCurrency().ToString();
