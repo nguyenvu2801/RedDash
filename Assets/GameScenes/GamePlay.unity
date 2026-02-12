@@ -1545,7 +1545,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   persistAcrossScenes: 0
-  maxTimer: 20
+  maxTimer: 300
   currentTimer: 0
   decayRate: 1
   isActive: 1
@@ -1762,7 +1762,7 @@ MonoBehaviour:
   spawnCenter: {fileID: 1440884907}
   spawnRadius: 10
   maxActiveEnemies: 15
-  spawnInterval: 1
+  spawnInterval: 5
 --- !u!1 &817818096
 GameObject:
   m_ObjectHideFlags: 0
@@ -1990,8 +1990,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   persistAcrossScenes: 0
   maxCombo: 999
-  comboResetTime: 3
-  damageMultiplierPerCombo: 0.05
+  comboResetTime: 15
+  damageMultiplierPerCombo: 5
   extraTimePerEnemyBase: 0.25
 --- !u!1 &913786879
 GameObject:

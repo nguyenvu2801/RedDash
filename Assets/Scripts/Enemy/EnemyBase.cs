@@ -120,6 +120,8 @@ public class EnemyBase : MonoBehaviour
         // Damage
         float mult = ComboManager.Instance != null ? ComboManager.Instance.GetDamageMultiplier() : 1f;
         int damage = Mathf.CeilToInt(power * mult);
+        Debug.Log($"Power: {power}, Combo Mult: {mult}, Final Damage: {damage}, Enemy HP: {currentHP}");
+
         TakeDamage(damage);
 
         // Combo

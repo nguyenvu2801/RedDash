@@ -17,7 +17,6 @@ public class Movement : MonoBehaviour
     [SerializeField] private LayerMask dashHitMask; // which layers count as hit (Enemy, EnergyNode)
     [SerializeField] private LayerMask wallMask;
     [SerializeField] private AnimationCurve dashCurve = AnimationCurve.EaseInOut(0, 0, 1, 1);
-    [SerializeField] private Transform visualTransform;
     [Header("Camera Dash FX")]
     [SerializeField] private float dashCamZoomAmount = 0.15f;
     [SerializeField] private float dashCamOffsetAmount = 0.25f;
@@ -42,7 +41,6 @@ public class Movement : MonoBehaviour
     private Vector2 currentDashDirection;
     [SerializeField] private CharacterAnimator animator;
     [SerializeField] private SpriteRenderer sr;
-    private bool recoveringRotation = false;
     private bool isDead = false;  // Prevent multiple deaths
     private CinemachineVirtualCamera vcam;
     private CinemachineFramingTransposer framing;
@@ -89,11 +87,14 @@ public class Movement : MonoBehaviour
         if (isDead) return;
         // timers
         cooldownTimer -= Time.deltaTime;
-        if (!dashing && !recoveringRotation)
+
+        // Always face mouse direction when not dashing
+        if (!dashing)
         {
             Vector2 mouseWorldPos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
             sr.flipX = (mouseWorldPos.x < transform.position.x);
         }
+
         // input allowed only if not currently dashing and off cooldown
         if (!dashing && cooldownTimer <= 0f)
         {
@@ -125,7 +126,6 @@ public class Movement : MonoBehaviour
                 StartCoroutine(DashRoutine(dashDirection, distance));
             }
         }
-        Debug.Log(isDead);
     }
 
     void TryStartDashFromDrag(Vector2 start, Vector2 end)
@@ -153,10 +153,8 @@ public class Movement : MonoBehaviour
         // Play dash animation
         animator?.PlayAnimation("Attack");
 
-        // Face correct direction
-        sr.flipX = false;
-        float angle = Mathf.Atan2(direction.y, direction.x) * Mathf.Rad2Deg;
-        visualTransform.rotation = Quaternion.Euler(0f, 0f, angle);
+        // Face dash direction using only sprite flip
+        sr.flipX = (direction.x < 0);
 
         // --- Camera Dash FX ---
         StartCoroutine(DashCameraEffect(direction));
@@ -186,23 +184,21 @@ public class Movement : MonoBehaviour
         if (!isDead && hurtCoroutine == null)
             animator?.PlayAnimation("Idle");
 
-        // Reset rotation
-        Quaternion startRotation = visualTransform.rotation;
+        // Blend velocity back
         float blendTime = 0.08f;
         float timer = 0f;
         while (timer < blendTime)
         {
             float t = timer / blendTime;
-            visualTransform.rotation = Quaternion.RotateTowards(startRotation, Quaternion.identity, 720f * t);
             rb.velocity = Vector2.Lerp(Vector2.zero, storedVelocityBeforeDash, t);
             timer += Time.deltaTime;
             yield return null;
         }
-        visualTransform.rotation = Quaternion.identity;
         rb.velocity = storedVelocityBeforeDash;
 
         dashing = false;
     }
+
     private IEnumerator DashCameraEffect(Vector2 dashDirection)
     {
         if (framing == null || vcam == null) yield break;
@@ -226,7 +222,7 @@ public class Movement : MonoBehaviour
                });
 
         // Zoom effect
-       float zoomAmount = 0.1f;
+        float zoomAmount = 0.1f;
         float originalSize = vcam.m_Lens.OrthographicSize;
         DOTween.To(() => vcam.m_Lens.OrthographicSize,
                    x => vcam.m_Lens.OrthographicSize = x,
@@ -280,6 +276,7 @@ public class Movement : MonoBehaviour
         DashCooldown = UpgradeManager.Instance.ComputeStat(UpgradeType.DashCooldown);
         DashPenalty = UpgradeManager.Instance.ComputeStat(UpgradeType.DashPenalty);
     }
+
     private void HandleDamage(float amount)
     {
         if (isDead) return;
@@ -306,9 +303,9 @@ public class Movement : MonoBehaviour
         }
         hurtCoroutine = null;
     }
+
     private void HandleDeath()
     {
-
         if (isDead) return;
         isDead = true;
 
@@ -322,9 +319,9 @@ public class Movement : MonoBehaviour
             animator.PlayAnimation("Die");
         }
 
-
         StartCoroutine(DeathSequenceBeforeGameOver());
     }
+
     private IEnumerator DeathSequenceBeforeGameOver()
     {
         // Small hit-stop effect
@@ -341,6 +338,7 @@ public class Movement : MonoBehaviour
 
         GameManager.Instance.TriggerGameOver();
     }
+
     void OnDrawGizmosSelected()
     {
         // visualize dash hit radius at player position

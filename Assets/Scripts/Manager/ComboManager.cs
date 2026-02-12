@@ -6,9 +6,7 @@ public class ComboManager : GameSingleton<ComboManager>
     [Header("Combo Settings")]
     [SerializeField] private int maxCombo = 999;
     [SerializeField] private float comboResetTime = 3.0f;
-
-    [SerializeField] private float damageMultiplierPerCombo = 0.05f; 
-
+    [SerializeField] private float damageMultiplierPerCombo = 5f; // Now in whole percentage (5 = 5%)
     [SerializeField] private float extraTimePerEnemyBase = 0.25f;
 
     public Action<int, float> OnComboChanged; // (currentCombo, percentTimeLeft)
@@ -45,17 +43,16 @@ public class ComboManager : GameSingleton<ComboManager>
 
     public int GetCombo() => currentCombo;
 
-    // CLEAN & SIMPLE — this is all you need now
     public float GetDamageMultiplier()
     {
         if (currentCombo <= 0) return 1f;
 
-        // Every combo after the first gives +X%
-        float multiplier = 1f + (currentCombo - 1) * damageMultiplierPerCombo;
+        // Convert percentage to decimal (5% becomes 0.05)
+        float multiplier = 1f + (currentCombo - 1) * (damageMultiplierPerCombo / 100f);
+        Debug.Log($"Combo: {currentCombo}, PerCombo: {damageMultiplierPerCombo}, Multiplier: {multiplier}");
 
-        return Mathf.Max(1f, multiplier); // never go below 1x
+        return Mathf.Max(1f, multiplier);
     }
-
     public void ResetCombo()
     {
         if (currentCombo >= 20)
