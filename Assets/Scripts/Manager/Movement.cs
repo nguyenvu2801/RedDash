@@ -88,7 +88,7 @@ public class Movement : MonoBehaviour
         // timers
         cooldownTimer -= Time.deltaTime;
 
-        // Always face mouse direction when not dashing
+        // Only flip left/right when idle (not dashing)
         if (!dashing)
         {
             Vector2 mouseWorldPos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
@@ -153,7 +153,11 @@ public class Movement : MonoBehaviour
         // Play dash animation
         animator?.PlayAnimation("Attack");
 
-        // Face dash direction using only sprite flip
+        // Face dash direction - calculate angle and rotate transform
+        float angle = Mathf.Atan2(direction.y, direction.x) * Mathf.Rad2Deg;
+        transform.rotation = Quaternion.Euler(0, 0, angle);
+
+        // Also flip sprite if needed (for left-facing)
         sr.flipX = (direction.x < 0);
 
         // --- Camera Dash FX ---
@@ -174,6 +178,9 @@ public class Movement : MonoBehaviour
             yield return null;
         }
         rb.position = targetPos;
+
+        // Reset rotation to flat (0,0,0) after dash
+        transform.rotation = Quaternion.identity;
 
         // Hit logic
         if (dashHitSomething && GameManager.Instance)
