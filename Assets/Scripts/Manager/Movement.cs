@@ -150,20 +150,13 @@ public class Movement : MonoBehaviour
         storedVelocityBeforeDash = rb.velocity;
         rb.velocity = Vector2.zero;
 
-        // Play dash animation
         animator?.PlayAnimation("Attack");
 
-        // Face dash direction - calculate angle and rotate transform
-        float angle = Mathf.Atan2(direction.y, direction.x) * Mathf.Rad2Deg;
-        transform.rotation = Quaternion.Euler(0, 0, angle);
-
-        // Also flip sprite if needed (for left-facing)
+        // Flip sprite to face dash direction
         sr.flipX = (direction.x < 0);
 
-        // --- Camera Dash FX ---
         StartCoroutine(DashCameraEffect(direction));
 
-        // Wall check
         Vector2 startPos = rb.position;
         RaycastHit2D hit = Physics2D.Raycast(startPos, direction, distance, wallMask);
         Vector2 targetPos = hit.collider != null ? hit.point - direction * 0.1f : startPos + direction * distance;
@@ -179,19 +172,15 @@ public class Movement : MonoBehaviour
         }
         rb.position = targetPos;
 
-        // Reset rotation to flat (0,0,0) after dash
-        transform.rotation = Quaternion.identity;
+        // NO transform.rotation reset needed anymore
 
-        // Hit logic
         if (dashHitSomething && GameManager.Instance)
             StartCoroutine(GameManager.Instance.ShakeCamera(0.1f, 2f));
 
-        // Cooldown
         cooldownTimer = DashCooldown;
         if (!isDead && hurtCoroutine == null)
             animator?.PlayAnimation("Idle");
 
-        // Blend velocity back
         float blendTime = 0.08f;
         float timer = 0f;
         while (timer < blendTime)
@@ -202,7 +191,6 @@ public class Movement : MonoBehaviour
             yield return null;
         }
         rb.velocity = storedVelocityBeforeDash;
-
         dashing = false;
     }
 
