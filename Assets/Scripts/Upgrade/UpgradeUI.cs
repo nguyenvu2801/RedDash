@@ -48,7 +48,7 @@ public class UpgradeUI : MonoBehaviour
     {
         List<UpgradeType>[] groups = new List<UpgradeType>[]
         {
-            new List<UpgradeType> { UpgradeType.MaxTimer, UpgradeType.TimerDecayRate, UpgradeType.KillRechargeAmount, UpgradeType.AnotherLife },
+            new List<UpgradeType> { UpgradeType.MaxTimer, UpgradeType.TimerDecayRate, UpgradeType.KillRechargeAmount, UpgradeType.DashPower },
             new List<UpgradeType> { UpgradeType.DashRange, UpgradeType.DashCooldown, UpgradeType.DashDamage, UpgradeType.DashPenalty, UpgradeType.FinalDash },
             new List<UpgradeType> { UpgradeType.Crit, UpgradeType.ComboDamage, UpgradeType.EssenceGain, UpgradeType.ComboDuration, UpgradeType.Magnet }
         };

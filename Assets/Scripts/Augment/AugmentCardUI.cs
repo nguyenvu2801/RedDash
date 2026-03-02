@@ -34,8 +34,8 @@ public class AugmentCardUI : MonoBehaviour
         AugmentType.IncreaseLifeForcedMax => "Expand Life Force",
         AugmentType.LifeForceGained => "Life Force Gain",
         AugmentType.ReduceDashCD => "Swift Dash",
-        AugmentType.SuccessDash => "Dash Mastery",
-        AugmentType.EnemyExplode => "Death Explosion",
+        AugmentType.Combo => "Combo Mastery",
+        AugmentType.Magnet => "Enormous Magnet",
         AugmentType.IncreaseDamage => "Raw Power",
         AugmentType.IncreaseCurrency => "Essence Hoard",
         _ => type.ToString()
@@ -46,8 +46,8 @@ public class AugmentCardUI : MonoBehaviour
         AugmentType.IncreaseLifeForcedMax => $"+{baseVal * 100:0}% max Life Force",
         AugmentType.LifeForceGained => $"+{baseVal * 100:0}% Life Force on pickup",
         AugmentType.ReduceDashCD => $"-{baseVal * 100:0}% dash cooldown",
-        AugmentType.SuccessDash => $"+{baseVal * 100:0}% dash success chance",
-        AugmentType.EnemyExplode => $"Enemies explode for {baseVal} damage on death",
+        AugmentType.Combo => $"+{baseVal * 100:0} time on combo duration",
+        AugmentType.Magnet => $"increase {baseVal} magnet range",
         AugmentType.IncreaseDamage => $"+{baseVal * 100:0}% damage",
         AugmentType.IncreaseCurrency => $"+{baseVal * 100:0}% essence gained",
         _ => ""

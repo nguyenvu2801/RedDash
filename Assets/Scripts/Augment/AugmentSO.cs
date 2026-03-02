@@ -8,8 +8,8 @@ public enum AugmentType
     IncreaseLifeForcedMax,
     LifeForceGained,
     ReduceDashCD,
-    SuccessDash,
-    EnemyExplode,
+    Combo,
+    Magnet,
     IncreaseDamage,
     IncreaseCurrency
 }
@@ -30,9 +30,9 @@ public class AugmentSO : ScriptableObject
         new AugmentEntry { type = AugmentType.IncreaseCurrency,baseValue = 0.1f},
         new AugmentEntry { type = AugmentType.IncreaseDamage,baseValue = 0.05f},
         new AugmentEntry { type = AugmentType.LifeForceGained,baseValue = 0.1f},
-        new AugmentEntry { type = AugmentType.EnemyExplode,baseValue = 10f},
+        new AugmentEntry { type = AugmentType.Magnet,baseValue = 10f},
         new AugmentEntry { type = AugmentType.ReduceDashCD,baseValue = 0.1f},
-        new AugmentEntry { type = AugmentType.SuccessDash,baseValue = 0.05f},
+        new AugmentEntry { type = AugmentType.Combo,baseValue = 0.05f},
     };
     public AugmentEntry GetUpgrade(AugmentType type)
     {

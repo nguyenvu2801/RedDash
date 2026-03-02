@@ -24,7 +24,7 @@ public class PlayerStats :ScriptableObject
     {
         new UpgradeEntry { type = UpgradeType.MaxTimer,baseValue = 300f, incrementPerLevel = 30f,maxLevel =10,baseCost = 200},
         new UpgradeEntry { type = UpgradeType.TimerDecayRate,baseValue = 5.0f, incrementPerLevel = -0.3f,maxLevel =7,baseCost = 200},
-        new UpgradeEntry { type = UpgradeType.AnotherLife,baseValue = 0f, incrementPerLevel = 1f,maxLevel =3,baseCost = 200},
+        new UpgradeEntry { type = UpgradeType.DashPower,baseValue = 1f, incrementPerLevel = 1f,maxLevel =10,baseCost = 200},
         new UpgradeEntry { type = UpgradeType.DashRange,baseValue = 3f, incrementPerLevel = 0.5f,maxLevel =6,baseCost = 200},
         new UpgradeEntry { type = UpgradeType.DashPenalty,baseValue = 5f, incrementPerLevel = -0.2f,maxLevel =7,baseCost = 200},
         new UpgradeEntry { type = UpgradeType.DashCooldown,baseValue = 0.25f, incrementPerLevel = -0.05f,maxLevel =5,baseCost = 200},
