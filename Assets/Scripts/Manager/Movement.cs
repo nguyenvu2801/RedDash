@@ -1,7 +1,6 @@
 using UnityEngine;
 using System;
 using System.Collections;
-using System.Collections.Generic;
 using UnityEngine.SceneManagement;
 using Cinemachine;
 using DG.Tweening;
@@ -10,38 +9,47 @@ using DG.Tweening;
 public class Movement : MonoBehaviour
 {
     public static Movement player;
+
     [Header("Dash settings")]
     [SerializeField] private float dashDuration = 0.18f;
     [SerializeField] private float minDragDistance = 0.1f;
     [SerializeField] private float dashHitRadius = 1.0f;
-    [SerializeField] private LayerMask dashHitMask; // which layers count as hit (Enemy, EnergyNode)
+    [SerializeField] private LayerMask dashHitMask;
     [SerializeField] private LayerMask wallMask;
     [SerializeField] private AnimationCurve dashCurve = AnimationCurve.EaseInOut(0, 0, 1, 1);
+
     [Header("Camera Dash FX")]
     [SerializeField] private float dashCamZoomAmount = 0.15f;
     [SerializeField] private float dashCamOffsetAmount = 0.25f;
     [SerializeField] private float dashCamDuration = 0.15f;
+
+    // Base stats from UpgradeManager
     private float DashRange;
     private float DashCooldown;
-    private float DashPenalty; //remember to compute these 2 stats
-    private float DashPower = 1;
-    // movement / physics
+    private float DashPenalty;
+    private float DashPower;
+
+    // Augment bonuses stacked on top of upgrades
+    private float augmentDashPowerBonus = 0f;
+    private float augmentCooldownReduction = 0f; // fraction, e.g. 0.3 = 30% shorter CD
+
     Rigidbody2D rb;
     Vector2 storedVelocityBeforeDash = Vector2.zero;
-    // input / drag
+
     bool isDragging = false;
     Vector2 startDragPos;
-    // state
     bool dashing = false;
     float cooldownTimer = 0f;
-    // Events
+
     public Action OnDashStart;
-    public Action<bool> OnDashEnd; // bool = hit or miss
+    public Action<bool> OnDashEnd;
     private bool dashHitSomething = false;
     private Vector2 currentDashDirection;
+
     [SerializeField] private CharacterAnimator animator;
     [SerializeField] private SpriteRenderer sr;
-    private bool isDead = false;  // Prevent multiple deaths
+    private bool isDead = false;
+
     private CinemachineVirtualCamera vcam;
     private CinemachineFramingTransposer framing;
     private Coroutine hurtCoroutine = null;
@@ -66,6 +74,7 @@ public class Movement : MonoBehaviour
             TimerManager.Instance.OnTimerDepleted -= HandleDeath;
         }
     }
+
     void Awake()
     {
         TrySubscribe(default, default);
@@ -77,28 +86,24 @@ public class Movement : MonoBehaviour
 
         if (dashCurve == null)
             dashCurve = AnimationCurve.EaseInOut(0, 0, 1, 1);
+
         UpgradeManager.OnUpgradeSuccessful += HandleUpgrade;
-        // Compute all stats
         ComputeDashStats();
     }
 
     void Update()
     {
         if (isDead) return;
-        // timers
         cooldownTimer -= Time.deltaTime;
 
-        // Only flip left/right when idle (not dashing)
         if (!dashing)
         {
             Vector2 mouseWorldPos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
             sr.flipX = (mouseWorldPos.x < transform.position.x);
         }
 
-        // input allowed only if not currently dashing and off cooldown
         if (!dashing && cooldownTimer <= 0f)
         {
-            // Touch input
             if (Input.touchCount > 0)
             {
                 Touch touch = Input.GetTouch(0);
@@ -114,16 +119,14 @@ public class Movement : MonoBehaviour
                     isDragging = false;
                 }
             }
+
             if (Input.GetKeyDown(KeyCode.Space))
             {
                 if (isDead) return;
                 Vector2 playerPos = rb.position;
                 Vector2 mouseWorldPos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
-
                 Vector2 dashDirection = (mouseWorldPos - playerPos).normalized;
-                float distance = DashRange;
-
-                StartCoroutine(DashRoutine(dashDirection, distance));
+                StartCoroutine(DashRoutine(dashDirection, DashRange));
             }
         }
     }
@@ -141,7 +144,6 @@ public class Movement : MonoBehaviour
         StartCoroutine(DashRoutine(dir, distance));
     }
 
-
     IEnumerator DashRoutine(Vector2 direction, float distance)
     {
         dashing = true;
@@ -151,10 +153,7 @@ public class Movement : MonoBehaviour
         rb.velocity = Vector2.zero;
 
         animator?.PlayAnimation("Attack");
-
-        // Flip sprite to face dash direction
         sr.flipX = (direction.x < 0);
-
         StartCoroutine(DashCameraEffect(direction));
 
         Vector2 startPos = rb.position;
@@ -164,20 +163,17 @@ public class Movement : MonoBehaviour
         float elapsed = 0f;
         while (elapsed < dashDuration)
         {
-            float t = elapsed / dashDuration;
-            float eased = dashCurve.Evaluate(t);
-            rb.position = Vector2.Lerp(startPos, targetPos, eased);
+            rb.position = Vector2.Lerp(startPos, targetPos, dashCurve.Evaluate(elapsed / dashDuration));
             elapsed += Time.deltaTime;
             yield return null;
         }
         rb.position = targetPos;
 
-        // NO transform.rotation reset needed anymore
-
         if (dashHitSomething && GameManager.Instance)
             StartCoroutine(GameManager.Instance.ShakeCamera(0.1f, 2f));
 
         cooldownTimer = DashCooldown;
+
         if (!isDead && hurtCoroutine == null)
             animator?.PlayAnimation("Idle");
 
@@ -185,8 +181,7 @@ public class Movement : MonoBehaviour
         float timer = 0f;
         while (timer < blendTime)
         {
-            float t = timer / blendTime;
-            rb.velocity = Vector2.Lerp(Vector2.zero, storedVelocityBeforeDash, t);
+            rb.velocity = Vector2.Lerp(Vector2.zero, storedVelocityBeforeDash, timer / blendTime);
             timer += Time.deltaTime;
             yield return null;
         }
@@ -201,37 +196,16 @@ public class Movement : MonoBehaviour
         Vector3 originalOffset = framing.m_TrackedObjectOffset;
         Vector3 dashOffset = new Vector3(dashDirection.x, dashDirection.y, 0) * dashCamOffsetAmount * vcam.m_Lens.OrthographicSize;
 
-        // Smooth offset
-        DOTween.To(() => framing.m_TrackedObjectOffset,
-                   x => framing.m_TrackedObjectOffset = x,
-                   originalOffset + dashOffset,
-                   dashCamDuration / 2f)
-               .SetEase(Ease.OutQuad)
-               .OnComplete(() =>
-               {
-                   DOTween.To(() => framing.m_TrackedObjectOffset,
-                              x => framing.m_TrackedObjectOffset = x,
-                              originalOffset,
-                              dashCamDuration / 2f)
-                         .SetEase(Ease.InQuad);
-               });
+        DOTween.To(() => framing.m_TrackedObjectOffset, x => framing.m_TrackedObjectOffset = x,
+                   originalOffset + dashOffset, dashCamDuration / 2f).SetEase(Ease.OutQuad)
+               .OnComplete(() => DOTween.To(() => framing.m_TrackedObjectOffset,
+                   x => framing.m_TrackedObjectOffset = x, originalOffset, dashCamDuration / 2f).SetEase(Ease.InQuad));
 
-        // Zoom effect
-        float zoomAmount = 0.1f;
         float originalSize = vcam.m_Lens.OrthographicSize;
-        DOTween.To(() => vcam.m_Lens.OrthographicSize,
-                   x => vcam.m_Lens.OrthographicSize = x,
-                   originalSize - zoomAmount,
-                   dashCamDuration / 2f)
-               .SetEase(Ease.OutQuad)
-               .OnComplete(() =>
-               {
-                   DOTween.To(() => vcam.m_Lens.OrthographicSize,
-                              x => vcam.m_Lens.OrthographicSize = x,
-                              originalSize,
-                              dashCamDuration / 2f)
-                         .SetEase(Ease.InQuad);
-               });
+        DOTween.To(() => vcam.m_Lens.OrthographicSize, x => vcam.m_Lens.OrthographicSize = x,
+                   originalSize - 0.1f, dashCamDuration / 2f).SetEase(Ease.OutQuad)
+               .OnComplete(() => DOTween.To(() => vcam.m_Lens.OrthographicSize,
+                   x => vcam.m_Lens.OrthographicSize = x, originalSize, dashCamDuration / 2f).SetEase(Ease.InQuad));
 
         yield return new WaitForSeconds(dashCamDuration);
     }
@@ -244,58 +218,70 @@ public class Movement : MonoBehaviour
             dashHitSomething = true;
             EnemyBase enemy = other.GetComponent<EnemyBase>();
             if (enemy != null)
-            {
                 enemy.OnDashHit(currentDashDirection, DashPower);
-            }
         }
     }
+
+    // Augment Hooks 
+
+    /// <summary>IncreaseDamage augment: stacks a flat bonus on top of upgrade-based DashPower.</summary>
+    public void AddDashPowerBonus(float bonus)
+    {
+        augmentDashPowerBonus += bonus;
+        // Recompute so the new bonus is baked in immediately
+        ComputeDashStats();
+    }
+
+    /// <summary>ReduceDashCD augment: each level cuts cooldown by baseValue fraction.</summary>
+    public void AddDashCooldownReduction(float bonus)
+    {
+        augmentCooldownReduction = Mathf.Min(augmentCooldownReduction + bonus, 0.9f); // hard cap at 90%
+        ComputeDashStats();
+    }
+
+    // Upgrade Hooks 
 
     private void HandleUpgrade(UpgradeType type)
     {
         if (IsDashRelevant(type))
-        {
             ComputeDashStats();
-        }
     }
 
-    private bool IsDashRelevant(UpgradeType type)
-    {
-        return type == UpgradeType.DashRange ||
-               type == UpgradeType.DashCooldown ||
-               type == UpgradeType.DashPenalty;
-    }
+    private bool IsDashRelevant(UpgradeType type) =>
+        type == UpgradeType.DashRange ||
+        type == UpgradeType.DashCooldown ||
+        type == UpgradeType.DashPower ||
+        type == UpgradeType.DashPenalty;
 
     public void ComputeDashStats()
     {
         DashRange = UpgradeManager.Instance.ComputeStat(UpgradeType.DashRange);
-        DashCooldown = UpgradeManager.Instance.ComputeStat(UpgradeType.DashCooldown);
         DashPenalty = UpgradeManager.Instance.ComputeStat(UpgradeType.DashPenalty);
+
+        // Augment multiplies down the upgrade-computed cooldown
+        float baseCooldown = UpgradeManager.Instance.ComputeStat(UpgradeType.DashCooldown);
+        DashCooldown = baseCooldown * (1f - augmentCooldownReduction);
+
+        // Augment adds a flat bonus on top of upgrade-computed power
+        float basePower = UpgradeManager.Instance.ComputeStat(UpgradeType.DashPower);
+        DashPower = basePower + augmentDashPowerBonus;
     }
+
+    // Damage / Death 
 
     private void HandleDamage(float amount)
     {
         if (isDead) return;
-
-        // Stop any previous hurt coroutine
-        if (hurtCoroutine != null)
-            StopCoroutine(hurtCoroutine);
-
-        // Play hurt animation
+        if (hurtCoroutine != null) StopCoroutine(hurtCoroutine);
         animator?.PlayAnimation("Hurt");
-
-        // Force return to Idle after fixed time (even if dashing!)
         hurtCoroutine = StartCoroutine(ReturnToIdleAfterHurt());
     }
 
     private IEnumerator ReturnToIdleAfterHurt()
     {
-        yield return new WaitForSeconds(0.25f); // Slightly longer than before
-
-        // Only go back to Idle if we're not dashing and not dead
+        yield return new WaitForSeconds(0.25f);
         if (!isDead && !dashing)
-        {
             animator?.PlayAnimation("Idle");
-        }
         hurtCoroutine = null;
     }
 
@@ -303,40 +289,23 @@ public class Movement : MonoBehaviour
     {
         if (isDead) return;
         isDead = true;
-
-        // Stop all movement
         rb.velocity = Vector2.zero;
         dashing = false;
-
-        // Play death animation and STAY on it
-        if (animator != null)
-        {
-            animator.PlayAnimation("Die");
-        }
-
+        animator?.PlayAnimation("Die");
         StartCoroutine(DeathSequenceBeforeGameOver());
     }
 
     private IEnumerator DeathSequenceBeforeGameOver()
     {
-        // Small hit-stop effect
         Time.timeScale = 0.1f;
         yield return new WaitForSecondsRealtime(0.06f);
-
         Time.timeScale = 1f;
-
-        // Allow animation to play a bit
-        yield return new WaitForSeconds(0.4f);
-
-        // Extra delay for dramatic effect
-        yield return new WaitForSeconds(0.4f);
-
+        yield return new WaitForSeconds(0.8f);
         GameManager.Instance.TriggerGameOver();
     }
 
     void OnDrawGizmosSelected()
     {
-        // visualize dash hit radius at player position
         Gizmos.color = Color.cyan;
         Gizmos.DrawWireSphere(transform.position, dashHitRadius);
     }

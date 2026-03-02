@@ -8,6 +8,8 @@ public class TimerManager : GameSingleton<TimerManager>
     [Header("Timer Settings")]
     public float maxTimer = 5f;
     public float currentTimer;
+    private float maxTimerBonus = 0f;
+    private float lifeForceGainMultiplier = 1f;
     public float decayRate = 1f; // per second
     public bool isActive = true;
     public event Action OnTimerDepleted;
@@ -37,8 +39,23 @@ public class TimerManager : GameSingleton<TimerManager>
 
     public void AddTime(float amount)
     {
-        currentTimer = Mathf.Min(currentTimer + amount, maxTimer);
+        float scaled = amount * lifeForceGainMultiplier;
+        currentTimer = Mathf.Min(currentTimer + scaled, maxTimer);
         OnTimerChanged?.Invoke(currentTimer / maxTimer);
+    }
+
+    public void AddMaxLifeForceBonus(float bonus)
+    {
+        float ratio = currentTimer / maxTimer;   // preserve fill %
+        maxTimerBonus += bonus;
+        maxTimer += bonus;                        // grow the bar
+        currentTimer = maxTimer * ratio;
+        OnTimerChanged?.Invoke(currentTimer / maxTimer);
+    }
+
+    public void AddLifeForceGainMultiplier(float bonus)
+    {
+        lifeForceGainMultiplier += bonus;         // e.g. 1.1, 1.2, 1.3...
     }
 
     public void ReduceTime(float seconds)

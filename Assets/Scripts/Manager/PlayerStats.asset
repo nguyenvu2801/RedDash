@@ -30,10 +30,10 @@ MonoBehaviour:
     costIncrement: 50
     costMultiplier: 1.5
   - type: 4
-    baseValue: 0
+    baseValue: 5
     icon: {fileID: 0}
-    incrementPerLevel: 1
-    maxLevel: 3
+    incrementPerLevel: -0.2
+    maxLevel: 7
     baseCost: 200
     costIncrement: 50
     costMultiplier: 1.5
@@ -46,10 +46,10 @@ MonoBehaviour:
     costIncrement: 50
     costMultiplier: 1.5
   - type: 8
-    baseValue: 5
+    baseValue: 1
     icon: {fileID: 0}
-    incrementPerLevel: -0.2
-    maxLevel: 7
+    incrementPerLevel: 1
+    maxLevel: 10
     baseCost: 200
     costIncrement: 50
     costMultiplier: 1.5

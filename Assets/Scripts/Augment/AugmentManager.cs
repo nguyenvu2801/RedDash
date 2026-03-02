@@ -5,7 +5,6 @@ public class AugmentManager : GameSingleton<AugmentManager>
 {
     [SerializeField] private AugmentSO augmentData;
 
-    // How many times each augment has been upgraded
     private Dictionary<AugmentType, int> augmentLevels = new Dictionary<AugmentType, int>();
 
     public AugmentSO AugmentData => augmentData;
@@ -22,7 +21,14 @@ public class AugmentManager : GameSingleton<AugmentManager>
         return entry != null && GetAugmentLevel(type) >= entry.maxLevel;
     }
 
-    /// <summary>Applies one level of the augment and returns the new total bonus value.</summary>
+    /// <summary>Get the total accumulated bonus for a given augment type.</summary>
+    public float GetTotalBonus(AugmentType type)
+    {
+        var entry = augmentData.GetUpgrade(type);
+        if (entry == null) return 0f;
+        return GetAugmentLevel(type) * entry.baseValue;
+    }
+
     public void ApplyAugment(AugmentType type)
     {
         if (IsMaxed(type)) return;
@@ -31,27 +37,45 @@ public class AugmentManager : GameSingleton<AugmentManager>
         augmentLevels[type] = current + 1;
 
         var entry = augmentData.GetUpgrade(type);
-        float totalBonus = augmentLevels[type] * entry.baseValue;
+        float bonus = entry.baseValue; // single level bonus
 
-        Debug.Log($"[Augment] {type} upgraded to level {augmentLevels[type]}, total bonus: {totalBonus}");
+        Debug.Log($"[Augment] {type} -> level {augmentLevels[type]}, bonus this level: {bonus}");
 
-        // Hook your actual game systems here:
         switch (type)
         {
             case AugmentType.IncreaseDamage:
-                // e.g. PlayerStats.Instance.AddDamageBonus(entry.baseValue);
+                // DashPower is computed from UpgradeManager; we store augment bonus separately
+                Movement.player?.AddDashPowerBonus(bonus);
                 break;
-            case AugmentType.IncreaseCurrency:
-                // e.g. CurrencyManager.Instance.AddMultiplier(entry.baseValue);
-                break;
+
             case AugmentType.ReduceDashCD:
-                // e.g. PlayerDash.Instance.ReduceCooldown(entry.baseValue);
+                Movement.player?.AddDashCooldownReduction(bonus);
                 break;
-                // ... add the rest
+
+            case AugmentType.IncreaseLifeForcedMax:
+                TimerManager.Instance?.AddMaxLifeForceBonus(bonus);
+                break;
+
+            case AugmentType.LifeForceGained:
+                TimerManager.Instance?.AddLifeForceGainMultiplier(bonus);
+                break;
+
+            case AugmentType.IncreaseCurrency:
+                CurrencyManager.Instance?.AddCurrencyMultiplier(bonus);
+                break;
+
+            case AugmentType.Magnet:
+                // CurrencyMagnet reads GetTotalBonus(Magnet) dynamically — no call needed here
+                // but we log it for clarity
+                Debug.Log($"[Augment] Magnet radius bonus now: {GetTotalBonus(AugmentType.Magnet)}");
+                break;
+
+            case AugmentType.Combo:
+                ComboManager.Instance?.AddComboDurationBonus(bonus);
+                break;
         }
     }
 
-    /// <summary>Returns 3 random augments that are not yet maxed.</summary>
     public List<AugmentType> GetRandomChoices(int count = 3)
     {
         var available = new List<AugmentType>();
@@ -61,7 +85,6 @@ public class AugmentManager : GameSingleton<AugmentManager>
                 available.Add(entry.type);
         }
 
-        // Shuffle
         for (int i = available.Count - 1; i > 0; i--)
         {
             int j = Random.Range(0, i + 1);
@@ -70,6 +93,7 @@ public class AugmentManager : GameSingleton<AugmentManager>
 
         return available.GetRange(0, Mathf.Min(count, available.Count));
     }
+
     public void ResetAugments()
     {
         augmentLevels.Clear();

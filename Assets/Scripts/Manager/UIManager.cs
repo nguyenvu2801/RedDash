@@ -3,7 +3,8 @@ using System.Collections.Generic;
 using DG.Tweening;
 using UnityEngine;
 using UnityEngine.UI;
-using TMPro; 
+using TMPro;
+
 public class UIManager : GameSingleton<UIManager>
 {
     public GameObject enemyHealthBarPrefab;
@@ -11,32 +12,36 @@ public class UIManager : GameSingleton<UIManager>
     [SerializeField] private Image screenEdgeWarning;
 
     [Header("Combo UI")]
-    [SerializeField] private Image comboMeterFill;    // circular or horizontal fill image
-    [SerializeField] private RectTransform comboPopupRoot; // scale/animate this when combo grows
-    [SerializeField] private TextMeshProUGUI comboText; // use TextMeshProUGUI if desired
+    [SerializeField] private Image comboMeterFill;
+    [SerializeField] private RectTransform comboPopupRoot;
+    [SerializeField] private TextMeshProUGUI comboText;
     [SerializeField] private TextMeshProUGUI currencyText;
     [SerializeField] private float comboPopupScale = 1.6f;
     [SerializeField] private float comboPopupTime = 0.25f;
+
     [Header("Experience UI")]
-    [SerializeField] private Image experienceFill;      // Assign the fill image in Inspector
-    [SerializeField] private TextMeshProUGUI xpText;     // Text to show "currentXP / maxXP"
+    [SerializeField] private Image experienceFill;
+    [SerializeField] private TextMeshProUGUI xpText;
     [SerializeField] private float expFillTweenTime = 0.25f;
+
     private Tween scaleTween;
     private Tween popupTween;
     private Tween expTween;
+
     void Start()
     {
         TimerManager.Instance.OnTimerChanged += UpdateUI;
-        // subscribe to combo events
+
         if (ComboManager.Instance != null)
         {
-            ComboManager.Instance.OnComboChanged += UpdateComboUI;
+            ComboManager.Instance.OnComboChanged += HandleComboChanged;
             ComboManager.Instance.OnComboReset += ResetComboUI;
         }
+
         if (ExperienceManager.Instance != null)
         {
             ExperienceManager.Instance.OnExperienceChanged += UpdateExperienceUI;
-            UpdateExperienceUI(); // initialize UI at start
+            UpdateExperienceUI();
         }
     }
 
@@ -44,40 +49,41 @@ public class UIManager : GameSingleton<UIManager>
     {
         timerBar.fillAmount = percent;
         screenEdgeWarning.color = new Color(0.8f, 0.1f, 0.1f, Mathf.Lerp(0f, 0.15f, 1 - percent));
+
         if (CurrencyManager.Instance != null)
-        {
             currencyText.text = "Essence: " + CurrencyManager.Instance.GetCurrency().ToString();
-        }
-        // Scale effect: from 2x when timer starts to 1x when timer ends
+
         scaleTween?.Kill();
-
-        // Calculate target scale (2 -> 1 as timer decreases)
         float targetScale = Mathf.Lerp(2f, 1f, 1 - percent);
-
-        // Tween the scale smoothly
-        scaleTween = screenEdgeWarning.rectTransform.DOScale(targetScale, 0.25f)
-            .SetEase(Ease.OutQuad);
+        scaleTween = screenEdgeWarning.rectTransform.DOScale(targetScale, 0.25f).SetEase(Ease.OutQuad);
     }
+
     public void UpdateExperienceUI()
-{
-    if (experienceFill == null || ExperienceManager.Instance == null) return;
-
-    int currentExp = ExperienceManager.Instance.currentExp;
-    int currentLevel = ExperienceManager.Instance.currentLevel;
-    int expForNextLevel = ExperienceManager.Instance.GetExpForLevel(currentLevel);
-
-    float targetFill = Mathf.Clamp01((float)currentExp / expForNextLevel);
-
-    // Smooth fill animation
-    expTween?.Kill();
-    expTween = experienceFill.DOFillAmount(targetFill, expFillTweenTime).SetEase(Ease.OutQuad);
-
-    // Update text: "current / max"
-    if (xpText != null)
     {
-        xpText.text = $"{currentExp} / {expForNextLevel}";
+        if (experienceFill == null || ExperienceManager.Instance == null) return;
+
+        int currentExp = ExperienceManager.Instance.currentExp;
+        int currentLevel = ExperienceManager.Instance.currentLevel;
+        int expForNextLevel = ExperienceManager.Instance.GetExpForLevel(currentLevel);
+
+        float targetFill = Mathf.Clamp01((float)currentExp / expForNextLevel);
+
+        expTween?.Kill();
+        expTween = experienceFill.DOFillAmount(targetFill, expFillTweenTime).SetEase(Ease.OutQuad);
+
+        if (xpText != null)
+            xpText.text = $"{currentExp} / {expForNextLevel}";
     }
-}
+
+    // Bridges the single-int event to UpdateComboUI by fetching the timer separately
+    private void HandleComboChanged(int combo)
+    {
+        float timerPercent = ComboManager.Instance != null
+            ? ComboManager.Instance.GetComboTimerNormalized()
+            : 0f;
+
+        UpdateComboUI(combo, timerPercent);
+    }
 
     private void UpdateComboUI(int combo, float percentTimeLeft)
     {
@@ -90,13 +96,11 @@ public class UIManager : GameSingleton<UIManager>
         if (comboText != null)
         {
             comboText.text = "x" + combo;
-            // pop effect
             popupTween?.Kill();
             comboPopupRoot.localScale = Vector3.one;
-            popupTween = comboPopupRoot.DOScale(comboPopupScale, comboPopupTime).SetEase(Ease.OutBack).OnComplete(() =>
-            {
-                comboPopupRoot.DOScale(1f, 0.15f).SetEase(Ease.OutQuad);
-            });
+            popupTween = comboPopupRoot.DOScale(comboPopupScale, comboPopupTime)
+                .SetEase(Ease.OutBack)
+                .OnComplete(() => comboPopupRoot.DOScale(1f, 0.15f).SetEase(Ease.OutQuad));
         }
 
         if (comboMeterFill != null)
