@@ -8,7 +8,7 @@ public class EnemyBase : MonoBehaviour
 
     [Header("Enemy Stats")]
     [SerializeField] private int maxHP = 3;
-    [SerializeField] private float moveSpeed = 2f;
+    protected float moveSpeed = 2f;
     [SerializeField] private float chaseRange = 8f;
     [Header("Experience Settings")]
     [SerializeField] private int baseExp = 10;
@@ -17,8 +17,8 @@ public class EnemyBase : MonoBehaviour
     protected Transform player;
     protected bool isStunned;
     protected bool isDead = false;
-    private Rigidbody2D rb;
-    private EnemyHealthBar healthBar;
+    protected Rigidbody2D rb;
+    protected EnemyHealthBar healthBar;
 
     // We track the coroutine handle so we can stop it later
     private Coroutine knockbackCoroutine;

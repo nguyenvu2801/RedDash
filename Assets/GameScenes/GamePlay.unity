@@ -458,6 +458,12 @@ MonoBehaviour:
   - poolKey: 4
     prefab: {fileID: 8958846733081109359, guid: a5650d73ba8caa64db192b6a6dacd2d9, type: 3}
     quantity: 5
+  - poolKey: 4
+    prefab: {fileID: 4579046929067782651, guid: 39fb1bc3d89ce1d49b4c7c52a3dd88bc, type: 3}
+    quantity: 20
+  - poolKey: 5
+    prefab: {fileID: 3855193392533343068, guid: 6712b041cf49bb549bd3ddeb5a8e5b5a, type: 3}
+    quantity: 20
 --- !u!1 &131516269
 GameObject:
   m_ObjectHideFlags: 0
@@ -2505,7 +2511,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   persistAcrossScenes: 0
-  enemyPoolKeys: 00000000
+  enemyPoolKeys: 0000000005000000
   spawnCenter: {fileID: 1440884907}
   spawnRadius: 10
   maxActiveEnemies: 15
@@ -2737,10 +2743,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   persistAcrossScenes: 0
-  maxCombo: 999
-  comboResetTime: 15
+  baseComboDuration: 2
   damageMultiplierPerCombo: 5
-  extraTimePerEnemyBase: 0.25
+  maxComboCount: 10
 --- !u!1 &913786879
 GameObject:
   m_ObjectHideFlags: 0

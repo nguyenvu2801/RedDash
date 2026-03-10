@@ -61,6 +61,8 @@ public enum PoolKey
    damagePopup,
    enemyHealthBar,
    experience,
+   enemyProjectile,
+   rangedEnemy,
    reward
 }
 
