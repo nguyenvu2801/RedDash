@@ -1,0 +1,52 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1cc633c8df59e74438c81a847028ded1, type: 3}
+  m_Name: Leach
+  m_EditorClassIdentifier: 
+  idle:
+    frames:
+    - {fileID: 1702299723, guid: 9be52c172c6ff9744b992d6fd39c5dd0, type: 3}
+    - {fileID: 2108274860, guid: 9be52c172c6ff9744b992d6fd39c5dd0, type: 3}
+    - {fileID: -526735917, guid: 9be52c172c6ff9744b992d6fd39c5dd0, type: 3}
+    - {fileID: 1971629659, guid: 9be52c172c6ff9744b992d6fd39c5dd0, type: 3}
+    frameRate: 5
+    loop: 1
+  attack:
+    frames:
+    - {fileID: -1321514589, guid: 60f3a2a75e6b9c646b8739b8f93dabee, type: 3}
+    - {fileID: 296198867, guid: 60f3a2a75e6b9c646b8739b8f93dabee, type: 3}
+    - {fileID: -191208081, guid: 60f3a2a75e6b9c646b8739b8f93dabee, type: 3}
+    - {fileID: -2057268656, guid: 60f3a2a75e6b9c646b8739b8f93dabee, type: 3}
+    - {fileID: -1334354459, guid: 60f3a2a75e6b9c646b8739b8f93dabee, type: 3}
+    - {fileID: 2087255896, guid: 60f3a2a75e6b9c646b8739b8f93dabee, type: 3}
+    - {fileID: -1026258483, guid: 60f3a2a75e6b9c646b8739b8f93dabee, type: 3}
+    - {fileID: -58549429, guid: 60f3a2a75e6b9c646b8739b8f93dabee, type: 3}
+    frameRate: 10
+    loop: 1
+  hurt:
+    frames:
+    - {fileID: -425405351, guid: 957478df3ba743a4da747f83b9236a37, type: 3}
+    - {fileID: -1677939850, guid: 957478df3ba743a4da747f83b9236a37, type: 3}
+    - {fileID: -1217506561, guid: 957478df3ba743a4da747f83b9236a37, type: 3}
+    - {fileID: -831987373, guid: 957478df3ba743a4da747f83b9236a37, type: 3}
+    frameRate: 10
+    loop: 0
+  die:
+    frames:
+    - {fileID: 1997252087, guid: 477fb1909e534d946baf4459e91fd563, type: 3}
+    - {fileID: 913935257, guid: 477fb1909e534d946baf4459e91fd563, type: 3}
+    - {fileID: 410642406, guid: 477fb1909e534d946baf4459e91fd563, type: 3}
+    - {fileID: -310333216, guid: 477fb1909e534d946baf4459e91fd563, type: 3}
+    - {fileID: 726581582, guid: 477fb1909e534d946baf4459e91fd563, type: 3}
+    - {fileID: 418026130, guid: 477fb1909e534d946baf4459e91fd563, type: 3}
+    frameRate: 10
+    loop: 0

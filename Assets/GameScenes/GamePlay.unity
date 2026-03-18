@@ -455,7 +455,7 @@ MonoBehaviour:
   - poolKey: 3
     prefab: {fileID: 6642921443973204472, guid: 6728a4273f50105479786c977deacd5e, type: 3}
     quantity: 20
-  - poolKey: 4
+  - poolKey: 6
     prefab: {fileID: 8958846733081109359, guid: a5650d73ba8caa64db192b6a6dacd2d9, type: 3}
     quantity: 5
   - poolKey: 4
@@ -2511,7 +2511,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   persistAcrossScenes: 0
-  enemyPoolKeys: 0000000005000000
+  enemyPoolKeys: 05000000
   spawnCenter: {fileID: 1440884907}
   spawnRadius: 10
   maxActiveEnemies: 15

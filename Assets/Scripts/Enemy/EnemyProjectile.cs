@@ -1,35 +1,45 @@
 using UnityEngine;
+using System.Collections;
 
 public class EnemyProjectile : MonoBehaviour
 {
     private Rigidbody2D rb;
 
-    [SerializeField] private float lifetime = 5f;         
-    [SerializeField] private float timePenalty = 8f;     
+    [SerializeField] private float lifetime = 5f;
+    [SerializeField] private float timePenalty = 8f;
 
-    private bool hasHit;  
+    private bool hasHit;
 
     private void Awake()
     {
         rb = GetComponent<Rigidbody2D>();
-        if (rb == null)
-        {
-            Debug.LogError("EnemyProjectile missing Rigidbody2D!", this);
-        }
     }
 
     public void Launch(Vector2 direction, float speed, int damageAmount)
     {
-        
         hasHit = false;
 
         if (rb != null)
         {
-            rb.velocity = direction.normalized * speed;
-        }
-        Destroy(gameObject, lifetime);
+            Vector2 vel = direction.normalized * speed;
+            rb.velocity = vel;
 
-      
+            float angle = Mathf.Atan2(vel.y, vel.x) * Mathf.Rad2Deg;
+            transform.rotation = Quaternion.Euler(0, 180, -angle);
+        }
+
+        StopAllCoroutines();
+        StartCoroutine(AutoReturnAfterDelay());
+    }
+
+    private IEnumerator AutoReturnAfterDelay()
+    {
+        yield return new WaitForSeconds(lifetime);
+
+        if (!hasHit)
+        {
+            ReturnToPool();
+        }
     }
 
     private void OnTriggerEnter2D(Collider2D other)
@@ -44,28 +54,31 @@ public class EnemyProjectile : MonoBehaviour
             {
                 TimerManager.Instance.ReduceTime(timePenalty);
             }
-            else
-            {
-                Debug.LogWarning("TimerManager.Instance is null - cannot reduce time!");
-            }
-            if (PoolManager.Instance != null)
-            {
-                PoolManager.Instance.ReturnToPool(PoolKey.enemyProjectile, gameObject);
-            }
-            else
-            {
-                Destroy(gameObject);
-            }
+
+            ReturnToPool();
         }
-        // Optional: also hit walls / obstacles?
-        // else if (other.CompareTag("Wall") || other.gameObject.layer == LayerMask.NameToLayer("Environment"))
-        // {
-        //     hasHit = true;
-        //     ReturnToPoolOrDestroy();
-        // }
     }
 
-    // Safety cleanup
+    private void ReturnToPool()
+    {
+        if (rb != null)
+        {
+            rb.velocity = Vector2.zero;
+            rb.angularVelocity = 0f;
+        }
+
+        transform.rotation = Quaternion.identity;
+
+        if (PoolManager.Instance != null)
+        {
+            PoolManager.Instance.ReturnToPool(PoolKey.enemyProjectile, gameObject);
+        }
+        else
+        {
+            gameObject.SetActive(false);
+        }
+    }
+
     private void OnDisable()
     {
         if (rb != null)
@@ -74,5 +87,7 @@ public class EnemyProjectile : MonoBehaviour
             rb.angularVelocity = 0f;
         }
         hasHit = false;
+
+        StopAllCoroutines();
     }
 }
