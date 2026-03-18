@@ -144,6 +144,7 @@ MonoBehaviour:
   maxHP: 3
   chaseRange: 15
   baseExp: 10
+  mainSpriteRenderer: {fileID: 8292416537743114172}
   shootRange: 3
   shootDelay: 1
   projectileSpeed: 7

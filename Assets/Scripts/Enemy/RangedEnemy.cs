@@ -61,11 +61,13 @@ public class RangedEnemy : EnemyBase
 
     private void ChasePlayer(Vector2 direction)
     {
+        FacePlayer(direction);
         rb.MovePosition(rb.position + direction.normalized * moveSpeed * Time.deltaTime);
     }
 
     private void TryShoot(Vector2 direction)
     {
+        FacePlayer(direction);
         if (!canShoot) return;
 
         Shoot(direction);

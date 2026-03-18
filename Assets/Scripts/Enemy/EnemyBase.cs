@@ -19,13 +19,17 @@ public class EnemyBase : MonoBehaviour
     protected bool isDead = false;
     protected Rigidbody2D rb;
     protected EnemyHealthBar healthBar;
-
+    [SerializeField] protected SpriteRenderer mainSpriteRenderer;
     // We track the coroutine handle so we can stop it later
     private Coroutine knockbackCoroutine;
 
     protected virtual void Awake()
     {
         rb = GetComponent<Rigidbody2D>();
+        if (mainSpriteRenderer == null)
+        {
+            mainSpriteRenderer = GetComponent<SpriteRenderer>();
+        }
         var playerObj = GameObject.FindGameObjectWithTag("Player");
         if (playerObj != null)
             player = playerObj.transform;
@@ -63,12 +67,21 @@ public class EnemyBase : MonoBehaviour
         if (GameManager.Instance.IsGameOver || isDead || isStunned || player == null) return; 
 
         Vector2 dir = player.position - transform.position;
+        FacePlayer(dir);
         if (dir.sqrMagnitude < chaseRange * chaseRange)
         {
             rb.MovePosition(rb.position + dir.normalized * moveSpeed * Time.deltaTime);
         }
     }
+    protected virtual void FacePlayer(Vector2 directionToPlayer)
+    {
+        if (mainSpriteRenderer == null) return;
 
+        if (Mathf.Abs(directionToPlayer.x) > 0.02f)
+        {
+            mainSpriteRenderer.flipX = directionToPlayer.x > 0;
+        }
+    }
     public virtual void TakeDamage(int dmg)
     {
         currentHP -= dmg;
