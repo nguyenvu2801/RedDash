@@ -63,6 +63,7 @@ public enum PoolKey
    experience,
    enemyProjectile,
    rangedEnemy,
+   explodeEnemy,
    reward
 }
 

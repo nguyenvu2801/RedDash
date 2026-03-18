@@ -10,8 +10,10 @@ public class RangedEnemy : EnemyBase
     [SerializeField] private int projectileDamage = 1;
 
     [Header("Projectile")]
-    [SerializeField] private GameObject projectilePrefab;     
+    [SerializeField] private GameObject projectilePrefab;
 
+    [Header("Animation")]
+    [SerializeField] private CharacterAnimator rangedAnimator;
     private bool isInShootRange;
     private bool canShoot = true;
     private Coroutine shootCooldownRoutine;
@@ -101,5 +103,29 @@ public class RangedEnemy : EnemyBase
         yield return new WaitForSeconds(shootDelay);
         canShoot = true;
         shootCooldownRoutine = null;
+    }
+    protected override IEnumerator HitVFX()
+    {
+        rangedAnimator?.PlayAnimation("Hurt");
+        yield return new WaitForSeconds(0.2f);
+        rangedAnimator?.PlayAnimation("Idle");
+    }
+    protected override void OnDeathStarted()
+    {
+        // Play death animation
+        rangedAnimator?.PlayAnimation("Die");
+
+        // Delay despawn so player can see the death animation
+        StartCoroutine(DelayedDespawn());
+    }
+
+    private IEnumerator DelayedDespawn()
+    {
+        // Wait for the length of your Die animation (or a fixed time)
+        float deathAnimLength = 0.6f; // Adjust to match your Die clip length
+        yield return new WaitForSeconds(deathAnimLength);
+
+        // Now actually return to pool
+        SpawnEnemyManager.Instance.DespawnEnemy(this);
     }
 }
