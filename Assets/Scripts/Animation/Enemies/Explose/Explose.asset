@@ -14,11 +14,12 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   idle:
     frames:
-    - {fileID: 44116106, guid: cebcbf867fc246146915eb253f31601e, type: 3}
-    - {fileID: -145202785, guid: cebcbf867fc246146915eb253f31601e, type: 3}
-    - {fileID: -457196083, guid: cebcbf867fc246146915eb253f31601e, type: 3}
-    - {fileID: -2132515142, guid: cebcbf867fc246146915eb253f31601e, type: 3}
-    - {fileID: -712794152, guid: cebcbf867fc246146915eb253f31601e, type: 3}
+    - {fileID: 967597465, guid: cebcbf867fc246146915eb253f31601e, type: 3}
+    - {fileID: -707127135, guid: cebcbf867fc246146915eb253f31601e, type: 3}
+    - {fileID: 1418388590, guid: cebcbf867fc246146915eb253f31601e, type: 3}
+    - {fileID: -1553153508, guid: cebcbf867fc246146915eb253f31601e, type: 3}
+    - {fileID: 1704785791, guid: cebcbf867fc246146915eb253f31601e, type: 3}
+    - {fileID: 1376161423, guid: cebcbf867fc246146915eb253f31601e, type: 3}
     frameRate: 5
     loop: 1
   attack:

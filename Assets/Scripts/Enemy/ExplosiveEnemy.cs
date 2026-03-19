@@ -4,12 +4,18 @@ using UnityEngine;
 public class ExplosiveEnemy : EnemyBase
 {
     [SerializeField] private float explosionRange = 2.5f;
-    [SerializeField] private float fuseTime = 3f;
+    [SerializeField] private float fuseTime = 2f;
     [SerializeField] private float explosionDamageTime = 12f;
     [SerializeField] private float explosionRadius = 4f;
 
-    [Header("Animation")]
     [SerializeField] private CharacterAnimator enemyAnimator;
+
+    [Header("Warning Circle")]
+    [SerializeField] private SpriteRenderer warningCircle;
+    [SerializeField] private Color warningBaseColor = new Color(1f, 0.25f, 0.1f);
+    [SerializeField] private float minAlpha = 0.2f;
+    [SerializeField] private float maxAlpha = 0.9f;
+    [SerializeField] private float pulseSpeed = 4f;
 
     private bool isPrimedForExplosion;
     private Coroutine fuseCoroutine;
@@ -18,6 +24,7 @@ public class ExplosiveEnemy : EnemyBase
     protected override void Awake()
     {
         base.Awake();
+        base.moveSpeed = 5f;
     }
 
     public override void Initialize(SpawnEnemyManager manager, PoolKey key, float healthMult = 1f)
@@ -25,6 +32,15 @@ public class ExplosiveEnemy : EnemyBase
         base.Initialize(manager, key, healthMult);
         isPrimedForExplosion = false;
         StopTrackedCoroutines();
+
+        if (warningCircle != null)
+        {
+            warningCircle.enabled = false;
+            warningCircle.color = new Color(warningBaseColor.r, warningBaseColor.g, warningBaseColor.b, 0f);
+        }
+
+        if (enemyAnimator != null)
+            enemyAnimator.PlayAnimation("Idle");
     }
 
     protected override void Update()
@@ -50,6 +66,8 @@ public class ExplosiveEnemy : EnemyBase
 
     private void PrimeExplosion()
     {
+        if (!gameObject.activeInHierarchy) return;
+
         isPrimedForExplosion = true;
         rb.velocity = Vector2.zero;
 
@@ -59,16 +77,11 @@ public class ExplosiveEnemy : EnemyBase
         if (enemyAnimator != null)
             enemyAnimator.PlayAnimation("Attack");
 
-        // Use manager coroutine so it survives pool deactivation
-        fuseCoroutine = manager.RunCoroutine(StartFuseDelayed());
-    }
-
-    private IEnumerator StartFuseDelayed()
-    {
-        yield return null; // wait one frame
-
-        if (!gameObject.activeInHierarchy || isDead || !isPrimedForExplosion)
-            yield break;
+        if (warningCircle != null)
+        {
+            warningCircle.enabled = true;
+            warningCircle.transform.localScale = Vector3.one * explosionRadius * 2f;
+        }
 
         fuseCoroutine = manager.RunCoroutine(FuseCountdown());
     }
@@ -76,12 +89,21 @@ public class ExplosiveEnemy : EnemyBase
     private IEnumerator FuseCountdown()
     {
         float remaining = fuseTime;
+
         while (remaining > 0f)
         {
             if (!gameObject.activeInHierarchy || isDead)
                 yield break;
 
             remaining -= Time.deltaTime;
+
+            if (warningCircle != null)
+            {
+                float t = Mathf.Sin(Time.time * pulseSpeed) * 0.5f + 0.5f;
+                float alpha = Mathf.Lerp(minAlpha, maxAlpha, t);
+                warningCircle.color = new Color(warningBaseColor.r, warningBaseColor.g, warningBaseColor.b, alpha);
+            }
+
             yield return null;
         }
 
@@ -107,19 +129,30 @@ public class ExplosiveEnemy : EnemyBase
         if (enemyAnimator != null)
             enemyAnimator.PlayAnimation("Die");
 
-        // Use manager coroutine so it survives pool deactivation
+        if (warningCircle != null)
+        {
+            warningCircle.color = new Color(1f, 0.95f, 0.6f, 1f);
+            StartCoroutine(FadeOutWarning(0.35f));
+        }
+
         despawnCoroutine = manager.RunCoroutine(DelayedDespawn());
     }
 
-    private IEnumerator DelayedDespawn()
+    private IEnumerator FadeOutWarning(float duration)
     {
-        float deathAnimationLength = 0.7f;
-        yield return new WaitForSeconds(deathAnimationLength);
+        float elapsed = 0f;
+        Color startColor = warningCircle.color;
 
-        if (gameObject.activeInHierarchy)
+        while (elapsed < duration)
         {
-            manager?.DespawnEnemy(this);
+            elapsed += Time.deltaTime;
+            float t = elapsed / duration;
+            warningCircle.color = Color.Lerp(startColor, new Color(startColor.r, startColor.g, startColor.b, 0f), t);
+            yield return null;
         }
+
+        if (warningCircle != null)
+            warningCircle.enabled = false;
     }
 
     protected override void Die()
@@ -144,8 +177,8 @@ public class ExplosiveEnemy : EnemyBase
         StopTrackedCoroutines();
         isPrimedForExplosion = false;
 
-        if (enemyAnimator != null)
-            enemyAnimator.PlayAnimation("Idle");
+        if (warningCircle != null)
+            warningCircle.enabled = false;
     }
 
     private void StopTrackedCoroutines()
@@ -155,11 +188,22 @@ public class ExplosiveEnemy : EnemyBase
             manager?.StopCoroutine(fuseCoroutine);
             fuseCoroutine = null;
         }
-
         if (despawnCoroutine != null)
         {
             manager?.StopCoroutine(despawnCoroutine);
             despawnCoroutine = null;
         }
     }
+
+private IEnumerator DelayedDespawn()
+    {
+        float deathAnimationLength = 0.7f;
+        yield return new WaitForSeconds(deathAnimationLength);
+
+        if (gameObject.activeInHierarchy)
+        {
+            manager?.DespawnEnemy(this);
+        }
+    }
+
 }
