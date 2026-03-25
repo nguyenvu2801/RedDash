@@ -8,22 +8,38 @@ public class BossCore : MonoBehaviour
     private int currentBossHP;
 
     [SerializeField] private List<BossHeart> hearts = new List<BossHeart>();
-
+    [HideInInspector] public BossSpawner spawner;
     [SerializeField] private GameObject projectilePrefab;
     [SerializeField] private Transform[] shootPoints;
     [SerializeField] private float projectileSpeed = 8f;
     [SerializeField] private float shootInterval = 1.5f;
 
-    [SerializeField] private GameObject[] enemyPrefabsToSpawn;
-    [SerializeField] private Transform[] spawnPoints;
-    [SerializeField] private float spawnInterval = 8f;
-    [SerializeField] private int enemiesPerSpawn = 2;
+    [Header("Enemy Spawn Settings - Same style as SpawnEnemyManager")]
+    [SerializeField] private List<PoolKey> enemyPoolKeys = new List<PoolKey>();
+    [SerializeField] private float spawnRadius = 10f;
+    [SerializeField] private int maxActiveEnemies = 12;
+    [SerializeField] private float spawnInterval = 5f;
+    [SerializeField] private int enemiesToSpawnPerWave = 8;
+    [SerializeField] private float healthMultiplier = 1.5f;
 
-    [SerializeField] private float aoeDamageInterval = 2f;
+    [Header("AoE Damage Settings")]
+    [SerializeField] private float aoeDamageInterval = 4f;
     [SerializeField] private float aoeRadius = 2.5f;
-    [SerializeField] private int aoeDamage = 15;
+
+    [Header("Warning Indicator")]
+    [SerializeField] private SpriteRenderer warningCirclePrefab;
+    [SerializeField] private Color warningBaseColor = new Color(1f, 0.25f, 0.1f);
+    [SerializeField] private float minAlpha = 0.2f;
+    [SerializeField] private float maxAlpha = 0.9f;
+    [SerializeField] private float pulseSpeed = 4f;
+    [SerializeField] private float warningDuration = 1.8f;
 
     private bool isBossDead = false;
+    private List<EnemyBase> activeSpawnedEnemies = new List<EnemyBase>();
+    private float spawnTimer;
+    private int spawnedThisWave;
+
+    private List<SpriteRenderer> activeWarningCircles = new List<SpriteRenderer>();
 
     private void Awake()
     {
@@ -32,6 +48,7 @@ public class BossCore : MonoBehaviour
 
     private void Start()
     {
+        SpawnEnemyManager.Instance?.StopSpawning();
         foreach (var heart in hearts)
         {
             if (heart != null)
@@ -39,8 +56,60 @@ public class BossCore : MonoBehaviour
         }
 
         StartCoroutine(ProjectileAttackRoutine());
-        StartCoroutine(SpawnEnemiesRoutine());
         StartCoroutine(AoeDamageRoutine());
+
+        StartSpawningWave();
+    }
+
+    private void StartSpawningWave()
+    {
+        spawnedThisWave = 0;
+        spawnTimer = 0f;
+    }
+
+    private void Update()
+    {
+        if (isBossDead || GameManager.Instance.IsGameOver) return;
+
+        spawnTimer -= Time.deltaTime;
+
+        if (spawnTimer <= 0f && activeSpawnedEnemies.Count < maxActiveEnemies && spawnedThisWave < enemiesToSpawnPerWave)
+        {
+            SpawnPooledEnemy();
+            spawnedThisWave++;
+            spawnTimer = spawnInterval;
+        }
+    }
+
+    private void SpawnPooledEnemy()
+    {
+        if (enemyPoolKeys.Count == 0) return;
+
+        PoolKey key = enemyPoolKeys[Random.Range(0, enemyPoolKeys.Count)];
+        GameObject enemyObj = PoolManager.Instance.GetFromPool(key);
+        if (enemyObj == null) return;
+
+        // Spawn in circle around boss
+        Vector2 randomCircle = Random.insideUnitCircle * spawnRadius;
+        Vector3 spawnPos = transform.position + new Vector3(randomCircle.x, randomCircle.y, 0f);
+
+        enemyObj.transform.position = spawnPos;
+
+        EnemyBase enemy = enemyObj.GetComponent<EnemyBase>();
+        if (enemy != null)
+        {
+            // Fix: Pass SpawnEnemyManager.Instance instead of "this"
+            enemy.Initialize(SpawnEnemyManager.Instance, key, healthMultiplier);
+            activeSpawnedEnemies.Add(enemy);
+        }
+    }
+
+    public void DespawnEnemy(EnemyBase enemy)
+    {
+        if (activeSpawnedEnemies.Remove(enemy))
+        {
+            PoolManager.Instance.ReturnToPool(enemy.poolKey, enemy.gameObject);
+        }
     }
 
     public void TakeDamage(int dmg)
@@ -58,22 +127,33 @@ public class BossCore : MonoBehaviour
 
     private void BossDefeated()
     {
+        if (spawner != null)
+            spawner.OnBossDefeated();
         isBossDead = true;
         StopAllCoroutines();
+        ClearAllWarnings();
+
+        foreach (var enemy in activeSpawnedEnemies.ToArray())
+        {
+            if (enemy != null)
+                DespawnEnemy(enemy);
+        }
+        SpawnEnemyManager.Instance?.ResumeSpawning();
     }
+
+
 
     public void OnHeartDestroyed(BossHeart destroyedHeart)
     {
         if (isBossDead) return;
 
         hearts.Remove(destroyedHeart);
-
         TakeDamage(200);
 
         if (hearts.Count <= 2)
         {
             shootInterval = Mathf.Max(0.6f, shootInterval * 0.7f);
-            spawnInterval = Mathf.Max(3.5f, spawnInterval * 0.7f);
+            spawnInterval = Mathf.Max(3f, spawnInterval * 0.7f);
         }
 
         if (hearts.Count == 0)
@@ -99,43 +179,73 @@ public class BossCore : MonoBehaviour
         }
     }
 
-    private IEnumerator SpawnEnemiesRoutine()
-    {
-        while (!isBossDead)
-        {
-            yield return new WaitForSeconds(spawnInterval);
-
-            for (int i = 0; i < enemiesPerSpawn; i++)
-            {
-                if (enemyPrefabsToSpawn.Length == 0 || spawnPoints.Length == 0) break;
-                int p = Random.Range(0, enemyPrefabsToSpawn.Length);
-                int s = Random.Range(0, spawnPoints.Length);
-
-                Instantiate(enemyPrefabsToSpawn[p], spawnPoints[s].position, Quaternion.identity);
-            }
-        }
-    }
-
     private IEnumerator AoeDamageRoutine()
     {
         while (!isBossDead)
         {
             yield return new WaitForSeconds(aoeDamageInterval);
 
+            ClearAllWarnings();
+
             foreach (var heart in hearts)
             {
                 if (heart == null || !heart.gameObject.activeInHierarchy) continue;
 
-                Collider2D[] hits = Physics2D.OverlapCircleAll(heart.transform.position, aoeRadius);
-                foreach (var hit in hits)
+                if (warningCirclePrefab != null)
                 {
-                    if (hit.CompareTag("Player"))
-                    {
-                        TimerManager.Instance?.ReduceTime(30f);
-                    }
+                    SpriteRenderer warning = Instantiate(warningCirclePrefab, heart.transform.position, Quaternion.identity);
+                    warning.transform.localScale = Vector3.one * aoeRadius * 2f;
+                    warning.color = new Color(warningBaseColor.r, warningBaseColor.g, warningBaseColor.b, 0f);
+                    activeWarningCircles.Add(warning);
+
+                    StartCoroutine(PulseWarning(warning));
                 }
+
+                StartCoroutine(ApplyAoeAfterWarning(heart.transform.position));
             }
         }
     }
 
+    private IEnumerator PulseWarning(SpriteRenderer warning)
+    {
+        float elapsed = 0f;
+        while (elapsed < warningDuration && warning != null)
+        {
+            elapsed += Time.deltaTime;
+            float t = Mathf.Sin(Time.time * pulseSpeed) * 0.5f + 0.5f;
+            float alpha = Mathf.Lerp(minAlpha, maxAlpha, t);
+            warning.color = new Color(warningBaseColor.r, warningBaseColor.g, warningBaseColor.b, alpha);
+            yield return null;
+        }
+        if (warning != null)
+            Destroy(warning.gameObject);
+    }
+
+    private IEnumerator ApplyAoeAfterWarning(Vector2 heartPosition)
+    {
+        yield return new WaitForSeconds(warningDuration);
+
+        Collider2D[] hits = Physics2D.OverlapCircleAll(heartPosition, aoeRadius);
+        foreach (var hit in hits)
+        {
+            if (hit.CompareTag("Player"))
+            {
+                TimerManager.Instance?.ReduceTime(30f);
+            }
+        }
+    }
+
+    private void ClearAllWarnings()
+    {
+        foreach (var w in activeWarningCircles)
+        {
+            if (w != null) Destroy(w.gameObject);
+        }
+        activeWarningCircles.Clear();
+    }
+
+    private void OnDisable()
+    {
+        ClearAllWarnings();
+    }
 }
