@@ -25,6 +25,8 @@ public class BossCore : MonoBehaviour
     [Header("AoE Damage Settings")]
     [SerializeField] private float aoeDamageInterval = 4f;
     [SerializeField] private float aoeRadius = 2.5f;
+    [Header("Player Reference")]
+    private Transform player;
 
     [Header("Warning Indicator")]
     [SerializeField] private SpriteRenderer warningCirclePrefab;
@@ -44,10 +46,6 @@ public class BossCore : MonoBehaviour
     private void Awake()
     {
         currentBossHP = maxBossHP;
-    }
-
-    private void Start()
-    {
         SpawnEnemyManager.Instance?.StopSpawning();
         foreach (var heart in hearts)
         {
@@ -59,6 +57,11 @@ public class BossCore : MonoBehaviour
         StartCoroutine(AoeDamageRoutine());
 
         StartSpawningWave();
+    }
+
+    private void Start()
+    {
+       
     }
 
     private void StartSpawningWave()
@@ -115,7 +118,7 @@ public class BossCore : MonoBehaviour
     public void TakeDamage(int dmg)
     {
         if (isBossDead) return;
-
+        Debug.Log(currentBossHP);
         currentBossHP -= dmg;
         DamagePopUpManager.Instance.ShowDamage(dmg, transform.position + Vector3.up * 2f);
 
@@ -166,14 +169,38 @@ public class BossCore : MonoBehaviour
         {
             yield return new WaitForSeconds(shootInterval);
 
+            // Cache player reference once (same way your enemies do it)
+            if (player == null)
+            {
+                // Try to find player the same way EnemyBase does
+                if (SpawnEnemyManager.Instance != null && SpawnEnemyManager.Instance.spawnCenter != null)
+                    player = SpawnEnemyManager.Instance.spawnCenter;
+                else if (GameManager.Instance != null)
+                    player = GameManager.Instance.transform.Find("Player")?.GetComponent<Transform>(); // fallback
+
+                if (player == null)
+                {
+                    Debug.LogWarning("BossCore: Player reference not found!");
+                    yield return new WaitForSeconds(0.5f); // retry after delay
+                    continue;
+                }
+            }
+
+            // Now shoot toward the player
             foreach (var point in shootPoints)
             {
                 if (point == null) continue;
+
                 GameObject proj = Instantiate(projectilePrefab, point.position, Quaternion.identity);
+
                 if (proj.TryGetComponent<Rigidbody2D>(out var rb))
                 {
-                    Vector2 dir = (point.position - transform.position).normalized;
-                    rb.velocity = dir * projectileSpeed;
+                    Vector2 direction = (player.position - point.position).normalized;
+                    rb.velocity = direction * projectileSpeed;
+
+                    // Optional: make projectile face the direction it's flying
+                    float angle = Mathf.Atan2(direction.y, direction.x) * Mathf.Rad2Deg;
+                    proj.transform.rotation = Quaternion.Euler(0, 180, -angle);
                 }
             }
         }
@@ -187,13 +214,11 @@ public class BossCore : MonoBehaviour
 
             ClearAllWarnings();
 
-            foreach (var heart in hearts)
-            {
-                if (heart == null || !heart.gameObject.activeInHierarchy) continue;
-
+        
+               
                 if (warningCirclePrefab != null)
                 {
-                    SpriteRenderer warning = Instantiate(warningCirclePrefab, heart.transform.position, Quaternion.identity);
+                    SpriteRenderer warning = Instantiate(warningCirclePrefab, this.transform.position, Quaternion.identity);
                     warning.transform.localScale = Vector3.one * aoeRadius * 2f;
                     warning.color = new Color(warningBaseColor.r, warningBaseColor.g, warningBaseColor.b, 0f);
                     activeWarningCircles.Add(warning);
@@ -201,8 +226,8 @@ public class BossCore : MonoBehaviour
                     StartCoroutine(PulseWarning(warning));
                 }
 
-                StartCoroutine(ApplyAoeAfterWarning(heart.transform.position));
-            }
+                StartCoroutine(ApplyAoeAfterWarning(this.transform.position));
+            
         }
     }
 

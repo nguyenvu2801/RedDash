@@ -66,11 +66,7 @@ public class BossHeart : MonoBehaviour
 
     private void OnTriggerEnter2D(Collider2D other)
     {
-        if (other.CompareTag("Player"))
-        {
-            TakeDamage(40);         
-            
-        }
+        
     }
 
     private void OnDisable()

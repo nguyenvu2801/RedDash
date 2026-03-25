@@ -65,7 +65,7 @@ public class CurrencyMagnet : MonoBehaviour
     void Collect()
     {
         moveTween?.Kill();
-        CurrencyManager.Instance.AddCurrency(1);
+        CurrencyManager.Instance.AddCurrency(0);
         // Return to pool or destroy here
     }
 }
