@@ -26,6 +26,7 @@ public class BossHeart : MonoBehaviour
             heartHealthBar.Init(transform);
             heartHealthBar.gameObject.SetActive(true);
             heartHealthBar.SetHP(currentHP, maxHeartHP);
+            heartHealthBar.ForceShow();
         }
     }
 

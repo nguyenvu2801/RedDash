@@ -31,7 +31,7 @@ MonoBehaviour:
     costMultiplier: 1.5
   - type: 4
     baseValue: 5
-    icon: {fileID: 0}
+    icon: {fileID: 21300000, guid: 2800804ea4316e04ba8e572b34670c70, type: 3}
     incrementPerLevel: -0.2
     maxLevel: 7
     baseCost: 200
@@ -39,7 +39,7 @@ MonoBehaviour:
     costMultiplier: 1.5
   - type: 5
     baseValue: 3
-    icon: {fileID: 0}
+    icon: {fileID: 21300000, guid: 3887982938bf6824f859e6e70bce0fbc, type: 3}
     incrementPerLevel: 0.5
     maxLevel: 6
     baseCost: 200
@@ -47,7 +47,7 @@ MonoBehaviour:
     costMultiplier: 1.5
   - type: 8
     baseValue: 1
-    icon: {fileID: 0}
+    icon: {fileID: -257733633, guid: 43528fa8363aa2941995f448e229b2f0, type: 3}
     incrementPerLevel: 1
     maxLevel: 10
     baseCost: 200
@@ -55,7 +55,7 @@ MonoBehaviour:
     costMultiplier: 1.5
   - type: 6
     baseValue: 0.5
-    icon: {fileID: 0}
+    icon: {fileID: 1723113810, guid: 43528fa8363aa2941995f448e229b2f0, type: 3}
     incrementPerLevel: -0.05
     maxLevel: 5
     baseCost: 200
@@ -63,7 +63,7 @@ MonoBehaviour:
     costMultiplier: 1.5
   - type: 9
     baseValue: 0.01
-    icon: {fileID: 0}
+    icon: {fileID: 1262367356, guid: 43528fa8363aa2941995f448e229b2f0, type: 3}
     incrementPerLevel: 0.02
     maxLevel: 10
     baseCost: 200
@@ -71,7 +71,7 @@ MonoBehaviour:
     costMultiplier: 1.5
   - type: 10
     baseValue: 0.01
-    icon: {fileID: 0}
+    icon: {fileID: 21300000, guid: 70e497c946535b549ab49d8141a0ec47, type: 3}
     incrementPerLevel: 0.01
     maxLevel: 5
     baseCost: 200
@@ -79,7 +79,7 @@ MonoBehaviour:
     costMultiplier: 1.5
   - type: 11
     baseValue: 0
-    icon: {fileID: 0}
+    icon: {fileID: 569706349, guid: 43528fa8363aa2941995f448e229b2f0, type: 3}
     incrementPerLevel: 0.05
     maxLevel: 10
     baseCost: 200
@@ -87,7 +87,7 @@ MonoBehaviour:
     costMultiplier: 1.5
   - type: 3
     baseValue: 3
-    icon: {fileID: 0}
+    icon: {fileID: 246145212, guid: 43528fa8363aa2941995f448e229b2f0, type: 3}
     incrementPerLevel: 1
     maxLevel: 7
     baseCost: 200
@@ -95,7 +95,7 @@ MonoBehaviour:
     costMultiplier: 1.5
   - type: 7
     baseValue: 1
-    icon: {fileID: 0}
+    icon: {fileID: 198361296, guid: 43528fa8363aa2941995f448e229b2f0, type: 3}
     incrementPerLevel: 1
     maxLevel: 8
     baseCost: 200
@@ -103,7 +103,7 @@ MonoBehaviour:
     costMultiplier: 1.5
   - type: 12
     baseValue: 1
-    icon: {fileID: 0}
+    icon: {fileID: 21300000, guid: efa0f80c7c18044459397fa33954f67d, type: 3}
     incrementPerLevel: 0.5
     maxLevel: 5
     baseCost: 200
@@ -111,7 +111,7 @@ MonoBehaviour:
     costMultiplier: 1.5
   - type: 13
     baseValue: 0
-    icon: {fileID: 0}
+    icon: {fileID: 21300000, guid: fe210bbe248580441b07425f2bdf2b05, type: 3}
     incrementPerLevel: 1
     maxLevel: 3
     baseCost: 200
@@ -119,7 +119,7 @@ MonoBehaviour:
     costMultiplier: 1.5
   - type: 2
     baseValue: 2
-    icon: {fileID: 0}
+    icon: {fileID: 21300000, guid: cbc0fcbfe19503f41a20b24395bd4eea, type: 3}
     incrementPerLevel: 0.5
     maxLevel: 6
     baseCost: 200

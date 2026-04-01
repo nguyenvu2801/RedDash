@@ -47,9 +47,8 @@ public class EnemyHealthBar : MonoBehaviour
         this.target = target;
         isInitialized = true;
 
-        canvasGroup.alpha = 0f;
-        visible = false;
-
+        canvasGroup.alpha = 1f; 
+        visible = true;
         originalLocalPos = visual.localPosition;
 
         flashImage.color = new Color(1, 1, 1, 0);
@@ -150,7 +149,11 @@ public class EnemyHealthBar : MonoBehaviour
         StopCoroutine("Fade");
         StartCoroutine(Fade(0f));
     }
-
+    public void ForceShow()
+    {
+        visible = true;
+        canvasGroup.alpha = 1f;
+    }
     private IEnumerator Fade(float targetAlpha)
     {
         while (!Mathf.Approximately(canvasGroup.alpha, targetAlpha))

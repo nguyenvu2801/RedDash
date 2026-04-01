@@ -27,7 +27,7 @@ public class BossSpawner : MonoBehaviour
         }
     }
 
-    private void SpawnBoss()
+    public void SpawnBoss()
     {
         if (bossPrefab == null || presetSpawnPoints.Length == 0)
         {

@@ -14,6 +14,7 @@ public class RoomManager : GameSingleton<RoomManager>
     [SerializeField] private TextMeshProUGUI enemiesLeftText; // Assign in inspector
     [SerializeField] private TextMeshProUGUI roomsPassedText;
 
+    public BossSpawner boss;
     private int currentRoom = 1;
     private float currentHealthMultiplier = 1f;
     private bool roomActive = false;
@@ -42,6 +43,7 @@ public class RoomManager : GameSingleton<RoomManager>
         {
             RoomCleared();
         }
+        if (currentRoom == 10) { boss.SpawnBoss(); }
     }
 
     public void StartRoom()
