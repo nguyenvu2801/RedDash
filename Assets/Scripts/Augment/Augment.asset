@@ -14,23 +14,30 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   Augment:
   - type: 0
+    icon: {fileID: -232997553, guid: 43528fa8363aa2941995f448e229b2f0, type: 3}
     baseValue: 0.1
     maxLevel: 5
   - type: 6
+    icon: {fileID: 569706349, guid: 43528fa8363aa2941995f448e229b2f0, type: 3}
     baseValue: 0.1
     maxLevel: 5
   - type: 5
+    icon: {fileID: 687288507, guid: 43528fa8363aa2941995f448e229b2f0, type: 3}
     baseValue: 0.05
     maxLevel: 5
   - type: 1
+    icon: {fileID: -232997553, guid: 43528fa8363aa2941995f448e229b2f0, type: 3}
     baseValue: 0.1
     maxLevel: 5
   - type: 4
+    icon: {fileID: 21300000, guid: 02ee2d58bc1ff7f4db99e8ba580a3e4f, type: 3}
     baseValue: 10
     maxLevel: 5
   - type: 2
+    icon: {fileID: 21300000, guid: 71d300abcad7a8745a99711ecd498dd2, type: 3}
     baseValue: 0.1
     maxLevel: 5
   - type: 3
+    icon: {fileID: 21300000, guid: 539ce730326164649b65f0e5fcbf5b0d, type: 3}
     baseValue: 0.05
     maxLevel: 5

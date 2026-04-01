@@ -20,6 +20,7 @@ public class AugmentSO : ScriptableObject
     public class AugmentEntry
     {
         public AugmentType type;
+        public Sprite icon;
         public float baseValue;
         public int maxLevel = 5;
 

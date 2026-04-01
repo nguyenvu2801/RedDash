@@ -7,7 +7,8 @@ public class AugmentCardUI : MonoBehaviour
 {
     [SerializeField] private TextMeshProUGUI titleText;
     [SerializeField] private TextMeshProUGUI descriptionText;
-    [SerializeField] private TextMeshProUGUI levelText;
+    [SerializeField] private Image iconImage;         // NEW: drag your UI Image here
+    [SerializeField] private Image levelFillImage;    // NEW: Image set to Filled type
     [SerializeField] private Button selectButton;
 
     private AugmentType augmentType;
@@ -23,7 +24,26 @@ public class AugmentCardUI : MonoBehaviour
 
         titleText.text = GetFriendlyName(type);
         descriptionText.text = GetDescription(type, entry.baseValue);
-        levelText.text = $"Level {currentLevel}  {currentLevel + 1} / {entry.maxLevel}";
+
+        // Icon
+        if (iconImage != null && entry.icon != null)
+        {
+            iconImage.sprite = entry.icon;
+            iconImage.enabled = true;
+        }
+        else if (iconImage != null)
+        {
+            iconImage.enabled = false;
+        }
+
+        // Level fill bar: fillAmount = currentLevel / maxLevel
+        if (levelFillImage != null)
+        {
+            float fill = entry.maxLevel > 0
+                ? (float)currentLevel / entry.maxLevel
+                : 0f;
+            levelFillImage.fillAmount = fill;
+        }
 
         selectButton.onClick.RemoveAllListeners();
         selectButton.onClick.AddListener(() => onChosen?.Invoke(augmentType));
@@ -46,8 +66,8 @@ public class AugmentCardUI : MonoBehaviour
         AugmentType.IncreaseLifeForcedMax => $"+{baseVal * 100:0}% max Life Force",
         AugmentType.LifeForceGained => $"+{baseVal * 100:0}% Life Force on pickup",
         AugmentType.ReduceDashCD => $"-{baseVal * 100:0}% dash cooldown",
-        AugmentType.Combo => $"+{baseVal * 100:0} time on combo duration",
-        AugmentType.Magnet => $"increase {baseVal} magnet range",
+        AugmentType.Combo => $"+{baseVal * 100:0}s combo duration",
+        AugmentType.Magnet => $"+{baseVal} magnet range",
         AugmentType.IncreaseDamage => $"+{baseVal * 100:0}% damage",
         AugmentType.IncreaseCurrency => $"+{baseVal * 100:0}% essence gained",
         _ => ""
