@@ -79,15 +79,6 @@ public class SpawnEnemyManager : GameSingleton<SpawnEnemyManager>
             // Check win condition here or let RoomManager poll
         }
     }
-    public void StopSpawning()
-    {
-        enabled = false;                                   
-        foreach (var enemy in activeEnemies.ToArray())
-                                   DespawnEnemy(enemy);
-    }
-    public void ResumeSpawning()
-    {
-        enabled = true;    // Resume normal spawning
-    }
+   
     public bool IsRoomCleared => ActiveEnemiesCount <= 0;
 }

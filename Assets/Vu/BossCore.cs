@@ -45,8 +45,23 @@ public class BossCore : MonoBehaviour
 
     private void Awake()
     {
+        
+    }
+
+    private void Start()
+    {
         currentBossHP = maxBossHP;
-        SpawnEnemyManager.Instance?.StopSpawning();
+
+        // Auto-find all BossHeart objects in the scene
+        BossHeart[] foundHearts = FindObjectsByType<BossHeart>(FindObjectsSortMode.None);
+        hearts.Clear();
+        foreach (var heart in foundHearts)
+        {
+            hearts.Add(heart);
+        }
+
+        Debug.Log("BossCore found " + hearts.Count + " hearts");
+
         foreach (var heart in hearts)
         {
             if (heart != null)
@@ -55,13 +70,7 @@ public class BossCore : MonoBehaviour
 
         StartCoroutine(ProjectileAttackRoutine());
         StartCoroutine(AoeDamageRoutine());
-
         StartSpawningWave();
-    }
-
-    private void Start()
-    {
-       
     }
 
     private void StartSpawningWave()
@@ -141,7 +150,6 @@ public class BossCore : MonoBehaviour
             if (enemy != null)
                 DespawnEnemy(enemy);
         }
-        SpawnEnemyManager.Instance?.ResumeSpawning();
     }
 
 
@@ -151,6 +159,7 @@ public class BossCore : MonoBehaviour
         if (isBossDead) return;
 
         hearts.Remove(destroyedHeart);
+        Debug.Log(currentBossHP);
         TakeDamage(200);
 
         if (hearts.Count <= 2)

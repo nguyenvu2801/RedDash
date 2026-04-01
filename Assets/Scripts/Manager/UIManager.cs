@@ -30,7 +30,8 @@ public class UIManager : GameSingleton<UIManager>
 
     void Start()
     {
-        TimerManager.Instance.OnTimerChanged += UpdateUI;
+        if (TimerManager.Instance != null)
+            TimerManager.Instance.OnTimerChanged += UpdateUI;
 
         if (ComboManager.Instance != null)
         {

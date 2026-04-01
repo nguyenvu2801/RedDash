@@ -28,8 +28,10 @@ public class EnemyHealthBar : MonoBehaviour
     private Vector3 originalLocalPos;
     private float shakeTimer = 0f;
     private bool visible = false;
+    private bool isInitialized = false;
     private void OnEnable()
     {
+        isInitialized = false;
         canvasGroup.alpha = 0f;
         flashImage.color = new Color(1, 1, 1, 0);
         visual.localPosition = Vector3.zero;
@@ -43,6 +45,7 @@ public class EnemyHealthBar : MonoBehaviour
     public void Init(Transform target)
     {
         this.target = target;
+        isInitialized = true;
 
         canvasGroup.alpha = 0f;
         visible = false;
@@ -69,13 +72,13 @@ public class EnemyHealthBar : MonoBehaviour
 
     void LateUpdate()
     {
-        
-            if (target == null)
-            {
-                PoolManager.Instance.ReturnToPool(PoolKey.enemyHealthBar, gameObject);
-                return;
-           }
-        
+        if (!isInitialized) return; // wait for Init
+
+        if (target == null)
+        {
+            PoolManager.Instance.ReturnToPool(PoolKey.enemyHealthBar, gameObject);
+            return;
+        }
 
         // FOLLOW TARGET
         transform.position = target.position + Vector3.up * followYOffset;
