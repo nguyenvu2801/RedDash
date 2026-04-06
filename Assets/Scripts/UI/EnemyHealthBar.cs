@@ -111,6 +111,7 @@ public class EnemyHealthBar : MonoBehaviour
 
     private void Flash()
     {
+        if (!gameObject.activeInHierarchy) return;
         StopCoroutine("FlashRoutine");
         StartCoroutine("FlashRoutine");
     }
@@ -138,6 +139,7 @@ public class EnemyHealthBar : MonoBehaviour
 
     private void Show()
     {
+        if (!gameObject.activeInHierarchy) return;
         visible = true;
         StopCoroutine("Fade");
         StartCoroutine(Fade(1f));
@@ -145,6 +147,7 @@ public class EnemyHealthBar : MonoBehaviour
 
     private void Hide()
     {
+        if (!gameObject.activeInHierarchy) return;
         visible = false;
         StopCoroutine("Fade");
         StartCoroutine(Fade(0f));
