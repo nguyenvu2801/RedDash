@@ -15,7 +15,7 @@ public class ShopInteractable : InteractableBase
     public void Update()
     {
        
-        if (Input.GetKeyDown(KeyCode.Escape)) { CurrencyManager.Instance.AddCurrency(10); };
+        if (Input.GetKeyDown(KeyCode.Escape)) { CloseShop(); };
     }
     public override void Interact(GameObject interactor)
     {
@@ -25,6 +25,6 @@ public class ShopInteractable : InteractableBase
 
     public void CloseShop()
     {
-        if (instance != null) Destroy(instance);
+        shopPanelPrefab.SetActive(false);
     }
 }
