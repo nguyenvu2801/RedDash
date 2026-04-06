@@ -101,7 +101,7 @@ public class UIManager : GameSingleton<UIManager>
             comboPopupRoot.localScale = Vector3.one;
             popupTween = comboPopupRoot.DOScale(comboPopupScale, comboPopupTime)
                 .SetEase(Ease.OutBack)
-                .OnComplete(() => comboPopupRoot.DOScale(1f, 0.15f).SetEase(Ease.OutQuad));
+                .OnComplete(() => comboPopupRoot.DOScale(2.5f, 1f).SetEase(Ease.OutQuad));
         }
 
         if (comboMeterFill != null)
