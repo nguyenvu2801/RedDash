@@ -2,12 +2,15 @@ using UnityEngine;
 using UnityEngine.Rendering;
 using UnityEngine.Rendering.Universal;
 using DG.Tweening;
+using UnityEngine.UI;
+using UnityEngine.SceneManagement;
 
 public class PauseMenu : MonoBehaviour
 {
     [Header("UI References")]
     public RectTransform pausePanel;
-
+    public Slider musicSlider;
+    public Slider sfxSlider;
     [Header("Post Processing")]
     public Volume globalVolume;
     private ColorAdjustments colorAdjustments;
@@ -37,21 +40,23 @@ public class PauseMenu : MonoBehaviour
         {
             Debug.LogError(" Global Volume is not assigned!");
         }
-    }
-    public void OnMusicSliderChanged(float value)
-    {
-        SoundManager.Instance.SetMusicVolume(value);
-    }
+        if (musicSlider != null)
+        {
+            musicSlider.value = PlayerPrefs.GetFloat("MusicVolume", 1f);
+            musicSlider.onValueChanged.AddListener(val => SoundManager.Instance?.SetMusicVolume(val));
+        }
 
-    public void OnSFXSliderChanged(float value)
-    {
-        SoundManager.Instance.SetSFXVolume(value);
+        if (sfxSlider != null)
+        {
+            sfxSlider.value = PlayerPrefs.GetFloat("SFXVolume", 1f);
+            sfxSlider.onValueChanged.AddListener(val => SoundManager.Instance?.SetSFXVolume(val));
+        }
     }
     void Update()
     {
         if (Input.GetKeyDown(KeyCode.Escape))
         {
-            print("aaa");
+            SoundManager.Instance.PlaySFX("Button");
             TogglePause();
         }
     }
@@ -106,5 +111,19 @@ public class PauseMenu : MonoBehaviour
                 ).SetUpdate(true);
             }
         }
+
+    }
+    public void QuitToMainMenu()
+    {
+        Time.timeScale = 1f;
+        SoundManager.Instance?.PlaySFX("Button");
+
+        pausePanel.DOScale(0f, duration)
+            .SetEase(closeEase)
+            .SetUpdate(true)
+            .OnComplete(() =>
+            {
+                SceneManager.LoadScene("MainMenu");
+            });
     }
 }

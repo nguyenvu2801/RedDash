@@ -43,7 +43,7 @@ public class SoundManager : MonoBehaviour
         {
   
             musicSource.clip = sound.clip;
-            musicSource.volume = sound.volume;
+            musicSource.volume = PlayerPrefs.GetFloat("MusicVolume", sound.volume);
             musicSource.pitch = sound.pitch;
             musicSource.loop = sound.loop;
             musicSource.Play();

@@ -544,6 +544,82 @@ MonoBehaviour:
     mipBias: 0
     varianceClampScale: 0.9
     contrastAdaptiveSharpening: 0
+--- !u!1 &229456451
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 229456452}
+  - component: {fileID: 229456454}
+  - component: {fileID: 229456453}
+  m_Layer: 5
+  m_Name: Image (1)
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!224 &229456452
+RectTransform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 229456451}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 948371311}
+  m_RootOrder: -1
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_AnchorMin: {x: 0, y: 0}
+  m_AnchorMax: {x: 1, y: 1}
+  m_AnchoredPosition: {x: 0, y: 0}
+  m_SizeDelta: {x: 0, y: 0}
+  m_Pivot: {x: 0.5, y: 0.5}
+--- !u!114 &229456453
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 229456451}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fe87c0e1cc204ed48ad3b37840f39efc, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_Material: {fileID: 0}
+  m_Color: {r: 0, g: 0, b: 0, a: 1}
+  m_RaycastTarget: 0
+  m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
+  m_Maskable: 0
+  m_OnCullStateChanged:
+    m_PersistentCalls:
+      m_Calls: []
+  m_Sprite: {fileID: 0}
+  m_Type: 0
+  m_PreserveAspect: 0
+  m_FillCenter: 1
+  m_FillMethod: 4
+  m_FillAmount: 1
+  m_FillClockwise: 1
+  m_FillOrigin: 0
+  m_UseSpriteMesh: 0
+  m_PixelsPerUnitMultiplier: 1
+--- !u!222 &229456454
+CanvasRenderer:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 229456451}
+  m_CullTransparentMesh: 1
 --- !u!21 &244559021
 Material:
   serializedVersion: 8
@@ -1280,7 +1356,7 @@ MonoBehaviour:
   musicSounds:
   - name: Background
     clip: {fileID: 8300000, guid: de96d111f0c474b43a9c715f4f603cea, type: 3}
-    volume: 1
+    volume: 0.5
     pitch: 1
     loop: 0
     useRandomPitch: 0
@@ -1288,7 +1364,7 @@ MonoBehaviour:
     randomPitchMax: 0
   - name: PreRunLobby
     clip: {fileID: 8300000, guid: 0ddc2b11a387a7b4683412588b89fd3b, type: 3}
-    volume: 1
+    volume: 0.5
     pitch: 1
     loop: 0
     useRandomPitch: 0
@@ -1296,7 +1372,7 @@ MonoBehaviour:
     randomPitchMax: 0
   - name: Gameplay
     clip: {fileID: 8300000, guid: c80ce0f5ee0c9874d9ab154142ac198e, type: 3}
-    volume: 1
+    volume: 0.5
     pitch: 1
     loop: 0
     useRandomPitch: 0
@@ -1304,7 +1380,7 @@ MonoBehaviour:
     randomPitchMax: 0
   - name: Boss
     clip: {fileID: 8300000, guid: e36ee9b587293c246b0d76f8f8edb67f, type: 3}
-    volume: 1
+    volume: 0.5
     pitch: 1
     loop: 0
     useRandomPitch: 0
@@ -1313,7 +1389,7 @@ MonoBehaviour:
   sfxSounds:
   - name: Button
     clip: {fileID: 8300000, guid: 4555c90fd5513d940b19a7c6dd6c02ed, type: 3}
-    volume: 1
+    volume: 0.5
     pitch: 1
     loop: 0
     useRandomPitch: 0
@@ -1329,7 +1405,7 @@ MonoBehaviour:
     randomPitchMax: 0
   - name: Upgrade
     clip: {fileID: 8300000, guid: 6b605d38c33703046a8b96ebec5f92ed, type: 3}
-    volume: 1
+    volume: 0.75
     pitch: 1
     loop: 0
     useRandomPitch: 0
@@ -1337,7 +1413,7 @@ MonoBehaviour:
     randomPitchMax: 0
   - name: Augment
     clip: {fileID: 8300000, guid: 9ebcf9ed213d5be4893f07695271312b, type: 3}
-    volume: 1
+    volume: 0.75
     pitch: 1
     loop: 0
     useRandomPitch: 0
@@ -1345,7 +1421,7 @@ MonoBehaviour:
     randomPitchMax: 0
   - name: Hit
     clip: {fileID: 8300000, guid: 099dd94af168d274381fc4556ba915ad, type: 3}
-    volume: 1
+    volume: 0.5
     pitch: 1
     loop: 0
     useRandomPitch: 0
@@ -1353,15 +1429,15 @@ MonoBehaviour:
     randomPitchMax: 0
   - name: Detail
     clip: {fileID: 8300000, guid: d9caebb19d146174e9bd3708b94dfc01, type: 3}
-    volume: 1
+    volume: 0.75
     pitch: 1
     loop: 0
     useRandomPitch: 0
     randomPitchMin: 0
     randomPitchMax: 0
-  - name: Collect
-    clip: {fileID: 8300000, guid: d9caebb19d146174e9bd3708b94dfc01, type: 3}
-    volume: 1
+  - name: Reward
+    clip: {fileID: 8300000, guid: 8aafb13d5e9a8844bb8d7f0683226b8b, type: 3}
+    volume: 0.25
     pitch: 1
     loop: 0
     useRandomPitch: 0
@@ -2091,6 +2167,7 @@ RectTransform:
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 1658487614}
+  - {fileID: 229456452}
   - {fileID: 359877778}
   m_Father: {fileID: 0}
   m_RootOrder: 1
@@ -2822,6 +2899,10 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   settingsPanel: {fileID: 359877777}
+  musicSlider: {fileID: 59511661}
+  sfxSlider: {fileID: 373771422}
+  transitionPanel: {fileID: 229456453}
+  transitionDuration: 0.5
 --- !u!1 &1833956072
 GameObject:
   m_ObjectHideFlags: 0

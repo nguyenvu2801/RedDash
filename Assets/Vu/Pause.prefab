@@ -868,7 +868,19 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 5235478829441422009}
   m_OnClick:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 0}
+        m_TargetAssemblyTypeName: 
+        m_MethodName: 
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: 
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
 --- !u!1 &4938233243114201339
 GameObject:
   m_ObjectHideFlags: 0
@@ -1451,11 +1463,11 @@ RectTransform:
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 1821364543150516998}
-  - {fileID: 3632649379364958638}
   - {fileID: 3612882464089064479}
   - {fileID: 8016552674394592145}
   - {fileID: 6127322171702977999}
   - {fileID: 7235942068609383430}
+  - {fileID: 3632649379364958638}
   m_Father: {fileID: 0}
   m_RootOrder: -1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}

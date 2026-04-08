@@ -10,7 +10,7 @@ public class UIManager : GameSingleton<UIManager>
     public GameObject enemyHealthBarPrefab;
     [SerializeField] private Image timerBar;
     [SerializeField] private Image screenEdgeWarning;
-
+  
     [Header("Combo UI")]
     [SerializeField] private Image comboMeterFill;
     [SerializeField] private RectTransform comboPopupRoot;
@@ -27,7 +27,12 @@ public class UIManager : GameSingleton<UIManager>
     private Tween scaleTween;
     private Tween popupTween;
     private Tween expTween;
+    [Header("Generic UI Popup")]
+    [SerializeField] private GameObject popupUI;
+    [SerializeField] private float popupDuration = 0.3f;
 
+    private Tween popupAnim;
+    private bool isVisible = false;
     void Start()
     {
         if (TimerManager.Instance != null)
@@ -45,7 +50,18 @@ public class UIManager : GameSingleton<UIManager>
             UpdateExperienceUI();
         }
     }
+    void Update()
+    {
+        if (Input.GetKeyDown(KeyCode.Tab))
+        {
+            if (isVisible)
+                HidePopup();
+            else
+                ShowPopup();
 
+            isVisible = !isVisible;
+        }
+    }
     void UpdateUI(float percent)
     {
         timerBar.fillAmount = percent;
@@ -114,5 +130,44 @@ public class UIManager : GameSingleton<UIManager>
         if (comboMeterFill != null) comboMeterFill.fillAmount = 0f;
         popupTween?.Kill();
         if (comboPopupRoot != null) comboPopupRoot.localScale = Vector3.one;
+    }
+    public void ShowPopup()
+    {
+        if (popupUI == null) return;
+
+        popupAnim?.Kill();
+
+        popupUI.SetActive(true);
+
+        RectTransform rect = popupUI.GetComponent<RectTransform>();
+        CanvasGroup cg = popupUI.GetComponent<CanvasGroup>();
+
+        if (cg == null) cg = popupUI.AddComponent<CanvasGroup>();
+
+        rect.localScale = Vector3.zero;
+        cg.alpha = 0f;
+
+        popupAnim = DOTween.Sequence()
+            .Append(rect.DOScale(1.15f, popupDuration).SetEase(Ease.OutBack))
+            .Append(rect.DOScale(1f, 0.1f).SetEase(Ease.OutQuad))
+            .Join(cg.DOFade(1f, popupDuration));
+    }
+
+    public void HidePopup()
+    {
+        if (popupUI == null) return;
+
+        popupAnim?.Kill();
+
+        RectTransform rect = popupUI.GetComponent<RectTransform>();
+        CanvasGroup cg = popupUI.GetComponent<CanvasGroup>();
+
+        if (cg == null) cg = popupUI.AddComponent<CanvasGroup>();
+
+        popupAnim = DOTween.Sequence()
+            .Append(rect.DOScale(0.8f, 0.15f).SetEase(Ease.InQuad))
+            .Append(rect.DOScale(0f, 0.15f).SetEase(Ease.InBack))
+            .Join(cg.DOFade(0f, 0.2f))
+            .OnComplete(() => popupUI.SetActive(false));
     }
 }

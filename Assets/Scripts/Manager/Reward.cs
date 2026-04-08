@@ -9,6 +9,7 @@ public class Reward : InteractableBase
     {
         if (other.CompareTag("Player"))
         {
+            SoundManager.Instance.PlaySFX("Reward");
             CurrencyManager.Instance.AddCurrency(10);
             RoomManager.Instance.AdvanceToNextRoom();
             PoolManager.Instance.ReturnToPool(PoolKey.reward, gameObject);

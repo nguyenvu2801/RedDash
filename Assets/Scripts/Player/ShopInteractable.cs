@@ -16,7 +16,7 @@ public class ShopInteractable : InteractableBase
     public void Update()
     {
        
-        if (Input.GetKeyDown(KeyCode.Escape)) { CloseShop(); };
+        if (Input.GetKeyDown(KeyCode.S) && shopPanelPrefab.activeInHierarchy) { CloseShop(); };
     }
     public override void Interact(GameObject interactor)
     {
