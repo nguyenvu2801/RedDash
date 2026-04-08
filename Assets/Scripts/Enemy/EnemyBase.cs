@@ -84,6 +84,7 @@ public class EnemyBase : MonoBehaviour
     }
     public virtual void TakeDamage(int dmg)
     {
+        SoundManager.Instance.PlaySFX("Hit");
         currentHP -= dmg;
         healthBar?.SetHP(currentHP, maxHP);
         DamagePopUpManager.Instance.ShowDamage(dmg, transform.position);

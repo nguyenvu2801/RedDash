@@ -123,6 +123,7 @@ public class Movement : MonoBehaviour
             if (Input.GetKeyDown(KeyCode.Space))
             {
                 if (isDead) return;
+                SoundManager.Instance.PlaySFX("Dash");
                 Vector2 playerPos = rb.position;
                 Vector2 mouseWorldPos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
                 Vector2 dashDirection = (mouseWorldPos - playerPos).normalized;

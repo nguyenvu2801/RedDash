@@ -33,11 +33,13 @@ public class UpgradeItemsUI : MonoBehaviour
 
     private void OpenDetails()
     {
+        SoundManager.Instance.PlaySFX("Detail");
         UpgradeDetailPanel.Instance?.Show(upgradeType);
     }
 
     private void TryPerformUpgrade()
     {
+        SoundManager.Instance.PlaySFX("Upgrade");
         if (UpgradeManager.Instance.TryUpgrade(upgradeType, out string msg))
         {
             Debug.Log(msg);

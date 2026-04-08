@@ -31,19 +31,27 @@ public class SoundManager : MonoBehaviour
         foreach (var sound in sfxSounds)
             sfxDict[sound.name] = sound;
 
-        musicSource.volume = 0.7f;
-        sfxSource.volume = 1f;
+       
     }
 
     public void PlayMusic(string name)
     {
+        Debug.Log($"PlayMusic called with: '{name}'");
+        Debug.Log($"Dict has {musicDict.Count} entries");
+
         if (musicDict.TryGetValue(name, out Sound sound))
         {
+  
             musicSource.clip = sound.clip;
             musicSource.volume = sound.volume;
             musicSource.pitch = sound.pitch;
             musicSource.loop = sound.loop;
             musicSource.Play();
+            Debug.Log($"IsPlaying: {musicSource.isPlaying}");
+        }
+        else
+        {
+            Debug.LogWarning($"'{name}' NOT found! Available keys: {string.Join(", ", musicDict.Keys)}");
         }
     }
 
@@ -83,7 +91,4 @@ public class SoundManager : MonoBehaviour
         sfxSource.volume = Mathf.Clamp01(volume);
         PlayerPrefs.SetFloat("SFXVolume", volume);
     }
-
-    public float GetMusicVolume() => PlayerPrefs.GetFloat("MusicVolume", 0.7f);
-    public float GetSFXVolume() => PlayerPrefs.GetFloat("SFXVolume", 1f);
 }

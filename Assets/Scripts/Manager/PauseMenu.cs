@@ -38,7 +38,15 @@ public class PauseMenu : MonoBehaviour
             Debug.LogError(" Global Volume is not assigned!");
         }
     }
+    public void OnMusicSliderChanged(float value)
+    {
+        SoundManager.Instance.SetMusicVolume(value);
+    }
 
+    public void OnSFXSliderChanged(float value)
+    {
+        SoundManager.Instance.SetSFXVolume(value);
+    }
     void Update()
     {
         if (Input.GetKeyDown(KeyCode.Escape))

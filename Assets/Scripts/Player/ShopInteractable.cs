@@ -11,6 +11,7 @@ public class ShopInteractable : InteractableBase
     public void Start()
     {
         shopPanelPrefab.SetActive(false);
+        SoundManager.Instance.PlayMusic("PreRunLobby");
     }
     public void Update()
     {

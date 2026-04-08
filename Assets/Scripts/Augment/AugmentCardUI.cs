@@ -46,7 +46,11 @@ public class AugmentCardUI : MonoBehaviour
         }
 
         selectButton.onClick.RemoveAllListeners();
-        selectButton.onClick.AddListener(() => onChosen?.Invoke(augmentType));
+        selectButton.onClick.AddListener(() =>
+        {
+            SoundManager.Instance.PlaySFX("Augment");
+            onChosen?.Invoke(augmentType);
+        });
     }
 
     private string GetFriendlyName(AugmentType type) => type switch

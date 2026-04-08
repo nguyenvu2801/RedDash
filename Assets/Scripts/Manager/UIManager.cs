@@ -32,7 +32,7 @@ public class UIManager : GameSingleton<UIManager>
     {
         if (TimerManager.Instance != null)
             TimerManager.Instance.OnTimerChanged += UpdateUI;
-
+        SoundManager.Instance.PlayMusic("Gameplay");
         if (ComboManager.Instance != null)
         {
             ComboManager.Instance.OnComboChanged += HandleComboChanged;

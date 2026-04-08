@@ -50,6 +50,7 @@ public class BossCore : MonoBehaviour
 
     private void Start()
     {
+        SoundManager.Instance.PlayMusic("Boss");
         currentBossHP = maxBossHP;
 
         // Auto-find all BossHeart objects in the scene
